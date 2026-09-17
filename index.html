@@ -14,7 +14,7 @@
   --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#22d3ee;
   --grad: linear-gradient(90deg, #7c3aed, #22d3ee);
   --entry:#6b7280; --inter:#22d3ee; --expert:#a78bfa;
-  --danger:#e0577e;
+  --danger:#e0577e; --redflag:#ff5252;
   --radius:10px;
   --glow: 0 0 24px rgba(139,92,246,0.28);
 }
@@ -35,9 +35,6 @@ body{
   font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   line-height:1.45;
   min-height:100vh;
-  background-image:
-    radial-gradient(circle at 15% 0%, rgba(139,92,246,0.07), transparent 45%),
-    radial-gradient(circle at 85% 15%, rgba(34,211,238,0.05), transparent 40%);
   background-attachment:fixed;
 }
 .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px;}
@@ -52,6 +49,7 @@ header.top{
 }
 .brand .sub{color:var(--text-dim); font-size:13px;}
 .meta-line{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint);}
+.sync-time{color:var(--cyan); font-weight:700; font-size:13px;}
 .stats{display:flex; gap:18px; margin:18px 0 16px; flex-wrap:wrap;}
 .stat{font-family:'IBM Plex Mono',monospace;}
 .stat .n{font-size:22px; font-weight:600; display:block; line-height:1;}
@@ -136,6 +134,8 @@ select:focus{outline:2px solid var(--violet); outline-offset:1px;}
 .reject-btn:hover{background:rgba(224,87,126,0.12);}
 .undo-btn:hover{background:rgba(34,211,238,0.12);}
 .job-id{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint);}
+.scraped-flag{color:var(--redflag); font-weight:600;}
+.hourly-flag{color:var(--redflag); font-weight:600;}
 
 .empty{text-align:center; padding:60px 20px; color:var(--text-dim);}
 .empty .big{font-size:15px; margin-bottom:6px; color:var(--text);}
@@ -162,8 +162,8 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
       <span class="sub">Upwork · AI &amp; web design leads</span>
     </div>
     <div style="text-align:right;">
-      <div class="meta-line" id="syncedLine">synced —</div>
-      <div class="meta-line" id="versionLine" style="margin-top:2px; color:var(--violet); font-weight:600;">v2.0</div>
+      <div class="meta-line sync-time" id="syncedLine">synced Sep 17, 2026 · 2:23 AM EDT</div>
+      <div class="meta-line" id="versionLine" style="margin-top:2px; color:var(--violet); font-weight:600;">v2.1</div>
     </div>
   </header>
 
@@ -289,8 +289,10 @@ function render(rows, wantRejected){
         <div class="row-left">
           <div class="row-title"><span class="cat-dot ${r.cat}"></span>${escapeHtml(r.title)}</div>
           <div class="row-sub">
-            <span class="badge ${ec}">${escapeHtml(r.exp||'—')}</span>
-            <span>scraped ${escapeHtml(r.scraped||'—')}</span>
+            <span style="display:flex; gap:8px; align-items:center;">
+              <span class="badge ${ec}">${escapeHtml(r.exp||'—')}</span>
+              <span class="scraped-flag">scraped ${escapeHtml(r.scraped||'—')}</span>
+            </span>
             <span class="job-id">Job #${escapeHtml(r.jobid||'—')}</span>
             <span class="job-id">ID ${escapeHtml(r.bid||'—')}</span>
           </div>
@@ -298,7 +300,7 @@ function render(rows, wantRejected){
         <div class="row-right">
           <div class="posted-time">${escapeHtml(r.posted||'')}</div>
           <div class="row-sub-right">
-            <span>${escapeHtml(r.ctype||'—')}</span>
+            <span class="${/hourly/i.test(r.ctype||'') ? 'hourly-flag' : ''}">${escapeHtml(r.ctype||'—')}</span>
             <span>${escapeHtml(r.budget||'—')}</span>
             <span>${escapeHtml(r.duration||'—')}</span>
           </div>
