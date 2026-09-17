@@ -12,7 +12,12 @@
   --bg:#000000; --bg2:#0a0a0a; --card:#0f0f10; --line:#232326;
   --text:#f2f1f8; --text-dim:#9a9ab3; --text-faint:#5f5f7a;
   --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#22d3ee;
+  --orange:#f2761e; --orange-deep:#c65a0f;
+  --neutral:#5b8dbe; --neutral-deep:#3d5f7d;
   --grad: linear-gradient(90deg, #7c3aed, #22d3ee);
+  --grad-ai: linear-gradient(90deg, #8b5cf6, #6d28d9);
+  --grad-web: linear-gradient(90deg, #f2761e, #ffb648);
+  --grad-neutral: linear-gradient(90deg, #5b8dbe, #3d5f7d);
   --entry:#6b7280; --inter:#22d3ee; --expert:#a78bfa;
   --danger:#e0577e; --redflag:#ff5252;
   --radius:10px;
@@ -45,7 +50,7 @@ header.top{
 .brand{display:flex; align-items:baseline; gap:10px;}
 .brand h1{
   font-size:21px; font-weight:700; margin:0; letter-spacing:-0.01em;
-  background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  color:var(--neutral);
 }
 .brand .sub{color:var(--text-dim); font-size:13px;}
 .meta-line{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint);}
@@ -55,7 +60,7 @@ header.top{
 .stat .n{font-size:22px; font-weight:600; display:block; line-height:1;}
 .stat .l{font-size:11px; color:var(--text-dim); text-transform:lowercase;}
 .stat.ai .n{color:var(--violet);}
-.stat.web .n{color:var(--cyan);}
+.stat.web .n{color:var(--orange);}
 .stat.rej .n{color:var(--danger);}
 
 .controls{
@@ -68,17 +73,19 @@ header.top{
   padding:6px 12px; font-size:13px; font-weight:500; border-radius:6px; cursor:pointer;
   color:var(--text-dim); user-select:none; white-space:nowrap;
 }
-.tab.active{background:var(--grad); color:#fff; box-shadow:var(--glow);}
+.tab.active{background:var(--neutral); color:#fff;}
+.tab.active[data-cat="AI"]{background:var(--grad-ai); box-shadow:0 0 20px rgba(139,92,246,.3);}
+.tab.active[data-cat="Website"]{background:var(--grad-web); box-shadow:0 0 20px rgba(242,118,30,.3);}
 .search{
   flex:1; min-width:160px; background:var(--bg2); border:1px solid var(--line); color:var(--text);
   padding:7px 11px; border-radius:7px; font-size:13px; font-family:inherit;
 }
-.search:focus{outline:2px solid var(--violet); outline-offset:1px;}
+.search:focus{outline:2px solid var(--neutral); outline-offset:1px;}
 select{
   background:var(--bg2); border:1px solid var(--line); color:var(--text);
   padding:7px 10px; border-radius:7px; font-size:13px; font-family:inherit; cursor:pointer;
 }
-select:focus{outline:2px solid var(--violet); outline-offset:1px;}
+select:focus{outline:2px solid var(--neutral); outline-offset:1px;}
 .count-line{font-size:12px; color:var(--text-faint); margin:0 0 10px 2px; font-family:'IBM Plex Mono',monospace;}
 
 .rows{display:flex; flex-direction:column; gap:8px;}
@@ -87,14 +94,18 @@ select:focus{outline:2px solid var(--violet); outline-offset:1px;}
   padding:14px 16px; cursor:pointer; position:relative;
   transition:border-color .15s ease;
 }
-.row:hover{border-color:var(--violet);}
-.row.open{border-color:var(--violet); box-shadow:var(--glow);}
+.row:hover{border-color:var(--neutral);}
+.row.open{border-color:var(--neutral); box-shadow:0 0 24px rgba(91,141,190,.25);}
+.row.cat-AI:hover{border-color:var(--violet);}
+.row.cat-AI.open{border-color:var(--violet); box-shadow:0 0 24px rgba(139,92,246,.28);}
+.row.cat-Website:hover{border-color:var(--orange);}
+.row.cat-Website.open{border-color:var(--orange); box-shadow:0 0 24px rgba(242,118,30,.28);}
 .row-grid{display:flex; gap:16px; justify-content:space-between;}
 .row-left{flex:1; min-width:0;}
 .row-title{font-size:14.5px; font-weight:600; line-height:1.3;}
 .row-title .cat-dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:8px; position:relative; top:-1px; box-shadow:0 0 6px currentColor;}
 .cat-dot.AI{background:var(--violet); color:var(--violet);}
-.cat-dot.Website{background:var(--cyan); color:var(--cyan);}
+.cat-dot.Website{background:var(--orange); color:var(--orange);}
 .row-sub{
   display:flex; flex-direction:column; gap:4px; margin-top:9px; align-items:flex-start;
   font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint);
@@ -123,9 +134,11 @@ select:focus{outline:2px solid var(--violet); outline-offset:1px;}
 }
 .action-col{display:flex; flex-direction:column; gap:8px; flex-shrink:0; align-items:stretch; min-width:130px;}
 .apply-btn{
-  background:var(--grad); color:#fff; text-decoration:none; font-size:12.5px; font-weight:600;
-  padding:8px 16px; border-radius:7px; display:inline-block; text-align:center; box-shadow:var(--glow);
+  background:var(--grad-neutral); color:#fff; text-decoration:none; font-size:12.5px; font-weight:600;
+  padding:8px 16px; border-radius:7px; display:inline-block; text-align:center; box-shadow:0 0 20px rgba(91,141,190,.3);
 }
+.apply-btn.cat-AI{background:var(--grad-ai); box-shadow:0 0 20px rgba(139,92,246,.35);}
+.apply-btn.cat-Website{background:var(--grad-web); box-shadow:0 0 20px rgba(242,118,30,.35);}
 .reject-btn, .undo-btn{
   background:transparent; color:var(--danger); border:1px solid var(--danger);
   font-size:12.5px; font-weight:600; padding:7px 16px; border-radius:7px; cursor:pointer; font-family:inherit;
@@ -162,8 +175,8 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
       <span class="sub">Upwork · AI &amp; web design leads</span>
     </div>
     <div style="text-align:right;">
-      <div class="meta-line sync-time" id="syncedLine">synced Sep 17, 2026 · 2:23 AM EDT</div>
-      <div class="meta-line" id="versionLine" style="margin-top:2px; color:var(--violet); font-weight:600;">v2.1</div>
+      <div class="meta-line sync-time" id="syncedLine">synced Sep 17, 2026 · 3:05 AM EDT</div>
+      <div class="meta-line" id="versionLine" style="margin-top:2px; color:var(--violet); font-weight:600;">v2.2</div>
     </div>
   </header>
 
@@ -284,7 +297,8 @@ function render(rows, wantRejected){
     const actionBtn = wantRejected
       ? `<button class="undo-btn" data-key="${escapeHtml(k)}">Undo</button>`
       : `<button class="reject-btn" data-key="${escapeHtml(k)}">Reject</button>`;
-    return `<div class="row" data-idx="${i}">
+    const rowCatClass = wantRejected ? '' : 'cat-' + r.cat;
+    return `<div class="row ${rowCatClass}" data-idx="${i}">
       <div class="row-grid">
         <div class="row-left">
           <div class="row-title"><span class="cat-dot ${r.cat}"></span>${escapeHtml(r.title)}</div>
@@ -310,7 +324,7 @@ function render(rows, wantRejected){
         <div class="expand-grid">
           <div class="row-desc">${escapeHtml(r.desc)}</div>
           <div class="action-col">
-            <a class="apply-btn" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open on Upwork</a>
+            <a class="apply-btn ${rowCatClass}" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open on Upwork</a>
             ${actionBtn}
           </div>
         </div>
