@@ -9,6 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
+  --bg:#f3f2fa; --bg2:#ffffff; --card:#ffffff; --line:#e3e0f2;
+  --text:#191a24; --text-dim:#5b5d70; --text-faint:#8a8ca0;
+  --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#0891a8;
+  --orange:#c65a0f; --orange-deep:#a34a0c;
+  --neutral:#3d6a94; --neutral-deep:#2c4d6c;
+  --grad: linear-gradient(90deg, #7c3aed, #0891a8);
+  --grad-ai: linear-gradient(90deg, #8b5cf6, #6d28d9);
+  --grad-web: linear-gradient(90deg, #f2761e, #c65a0f);
+  --grad-neutral: linear-gradient(90deg, #3d6a94, #2c4d6c);
+  --entry:#6b7280; --inter:#0891a8; --expert:#7c3aed;
+  --danger:#c9425f; --redflag:#d63a3a;
+  --radius:10px;
+  --glow: 0 0 24px rgba(139,92,246,0.18);
+}
+:root[data-theme="dark"]{
   --bg:#000000; --bg2:#0a0a0a; --card:#0f0f10; --line:#232326;
   --text:#f2f1f8; --text-dim:#9a9ab3; --text-faint:#5f5f7a;
   --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#22d3ee;
@@ -20,14 +35,8 @@
   --grad-neutral: linear-gradient(90deg, #5b8dbe, #3d5f7d);
   --entry:#6b7280; --inter:#22d3ee; --expert:#a78bfa;
   --danger:#e0577e; --redflag:#ff5252;
-  --radius:10px;
   --glow: 0 0 24px rgba(139,92,246,0.28);
 }
-:root[data-theme="light"]{
-  --bg:#f3f2fa; --bg2:#ffffff; --card:#ffffff; --line:#e3e0f2;
-  --text:#191a24; --text-dim:#5b5d70; --text-faint:#8a8ca0;
-}
-/* dashboard is dark-only by design; no system light-mode override */
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
@@ -36,19 +45,7 @@ body{
   line-height:1.45;
   min-height:100vh;
   background-attachment:fixed;
-  transition:background-color .3s ease;
-}
-body[data-tab="all"]{
-  background-image: repeating-linear-gradient(135deg, rgba(91,141,190,0.05) 0px, rgba(91,141,190,0.05) 1px, transparent 1px, transparent 16px);
-}
-body[data-tab="AI"]{
-  background-image: repeating-linear-gradient(135deg, rgba(139,92,246,0.06) 0px, rgba(139,92,246,0.06) 1px, transparent 1px, transparent 16px);
-}
-body[data-tab="Website"]{
-  background-image: repeating-linear-gradient(135deg, rgba(242,118,30,0.06) 0px, rgba(242,118,30,0.06) 1px, transparent 1px, transparent 16px);
-}
-body[data-tab="rejected"]{
-  background-image: repeating-linear-gradient(135deg, rgba(239,68,68,0.06) 0px, rgba(239,68,68,0.06) 1px, transparent 1px, transparent 16px);
+  transition:background-color .2s ease, color .2s ease;
 }
 .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px;}
 header.top{
@@ -162,6 +159,13 @@ select:focus{outline:2px solid var(--neutral); outline-offset:1px;}
 .empty .big{font-size:15px; margin-bottom:6px; color:var(--text);}
 
 footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:center; font-family:'IBM Plex Mono',monospace;}
+.theme-toggle{
+  display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;
+  background:var(--bg2); border:1px solid var(--line); color:var(--text-dim);
+  padding:5px 12px; border-radius:20px; font-size:11.5px; font-family:'IBM Plex Mono',monospace;
+  cursor:pointer; user-select:none;
+}
+.theme-toggle:hover{border-color:var(--neutral); color:var(--text);}
 
 @media (max-width:640px){
   .row-grid{flex-direction:column; gap:6px;}
@@ -182,9 +186,10 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
       <h1>AI & Website Project Finder</h1>
       <span class="sub">Upwork · AI &amp; web design leads</span>
     </div>
-    <div style="text-align:right;">
-      <div class="meta-line sync-time" id="syncedLine">synced Sep 17, 2026 · 3:05 AM EDT</div>
-      <div class="meta-line" id="versionLine" style="margin-top:2px; color:var(--violet); font-weight:600;">v2.3</div>
+    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <button class="theme-toggle" id="themeToggle" type="button">☀️ Light mode</button>
+      <div class="meta-line sync-time" id="syncedLine">synced —</div>
+      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.4</div>
     </div>
   </header>
 
@@ -228,6 +233,20 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
 </div>
 
 <script>
+const THEME_KEY = 'ld_theme_v1';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('themeToggle');
+  if(btn) btn.textContent = t === 'dark' ? '\ud83c\udf19 Dark mode' : '\u2600\ufe0f Light mode';
+}
+let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
+applyTheme(currentTheme);
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, currentTheme);
+  applyTheme(currentTheme);
+});
+
 let DATA = [];
 // synced time now comes from data.json, set after fetch
 
@@ -359,10 +378,8 @@ document.getElementById('tabs').addEventListener('click', e=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   state.cat = t.dataset.cat;
-  document.body.setAttribute('data-tab', t.dataset.cat);
   applyState();
 });
-document.body.setAttribute('data-tab','all');
 document.getElementById('search').addEventListener('input', e=>{ state.q = e.target.value; applyState(); });
 document.getElementById('expFilter').addEventListener('change', e=>{ state.exp = e.target.value; applyState(); });
 document.getElementById('sortBy').addEventListener('change', e=>{ state.sort = e.target.value; applyState(); });
