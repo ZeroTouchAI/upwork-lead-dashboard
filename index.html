@@ -118,12 +118,12 @@ select:focus{outline:2px solid var(--neutral); outline-offset:1px;}
   font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint);
 }
 .badge{
-  padding:2px 8px; border-radius:5px; font-size:10.5px; font-weight:600;
-  border:1px solid currentColor; white-space:nowrap;
+  padding:2px 9px; border-radius:5px; font-size:10.5px; font-weight:700;
+  color:#fff; white-space:nowrap; border:none;
 }
-.badge.entry{color:var(--entry);}
-.badge.inter{color:var(--inter);}
-.badge.expert{color:var(--expert);}
+.badge.entry{background:var(--entry);}
+.badge.inter{background:var(--inter);}
+.badge.expert{background:var(--expert);}
 .row-right{text-align:right; flex-shrink:0;}
 .posted-time{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); white-space:nowrap;}
 .row-sub-right{
@@ -191,7 +191,7 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
     <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <button class="theme-toggle" id="themeToggle" type="button">☀️ Light mode</button>
       <div class="meta-line sync-time" id="syncedLine">synced —</div>
-      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.6</div>
+      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.7</div>
     </div>
   </header>
 
@@ -353,7 +353,7 @@ function render(rows, wantRejected){
           <div class="row-sub-right">
             <span class="${/hourly/i.test(r.ctype||'') ? 'hourly-flag' : ''}">${escapeHtml(r.ctype||'—')}</span>
             <span>${escapeHtml(r.budget||'—')}</span>
-            <span>${escapeHtml(r.duration||'—')}</span>
+            <span class="hourly-flag">${escapeHtml(r.duration||'—')}</span>
           </div>
         </div>
       </div>
