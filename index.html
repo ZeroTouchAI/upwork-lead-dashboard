@@ -191,7 +191,7 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
     <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <button class="theme-toggle" id="themeToggle" type="button">☀️ Light mode</button>
       <div class="meta-line sync-time" id="syncedLine">synced —</div>
-      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.5</div>
+      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.6</div>
     </div>
   </header>
 
@@ -297,10 +297,19 @@ function applyState(){
     }
     return true;
   });
+  function scrapedValue(s){
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  }
   if(state.sort === 'budget'){
     rows = rows.slice().sort((a,b)=>budgetValue(b.budget)-budgetValue(a.budget));
   } else if(state.sort === 'title'){
     rows = rows.slice().sort((a,b)=>a.title.localeCompare(b.title));
+  } else {
+    // 'newest' (default) and 'posted' both fall back to actual scrape-date order,
+    // so AI and Website leads interleave correctly by real recency instead of
+    // sitting in two separate unsorted blocks.
+    rows = rows.slice().sort((a,b)=>scrapedValue(b.scraped)-scrapedValue(a.scraped));
   }
   document.getElementById('emptySub').textContent = wantRejected
     ? 'Nothing rejected yet.'
