@@ -2,10 +2,11 @@ name: Refresh Upwork lead data
 
 on:
   schedule:
-    # Runs at 12:00 and 13:00 UTC daily; the script only proceeds if it's ~8am US/Eastern,
-    # so this covers 8am both during EDT and EST without maintaining two separate cron lines.
+    # GitHub's scheduler can run these anywhere from on-time to a few hours late,
+    # so no time-of-day gating here anymore -- whenever this fires, it just refreshes.
     - cron: '0 12 * * *'
     - cron: '0 13 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -17,38 +18,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check it's ~8am Eastern (or manual run)
-        id: gate
-        run: |
-          hour_et=$(TZ="America/New_York" date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$hour_et" = "08" ]; then
-            echo "proceed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Set up Python
-        if: steps.gate.outputs.proceed == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install deps
-        if: steps.gate.outputs.proceed == 'true'
         run: pip install google-auth google-auth-httplib2 google-api-python-client
 
       - name: Rebuild data.json from Google Sheet
-        if: steps.gate.outputs.proceed == 'true'
         env:
           GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.LEADS_SHEET_ID }}
         run: python scripts/refresh_data.py
 
       - name: Commit and push if changed
-        if: steps.gate.outputs.proceed == 'true'
         run: |
           git config user.name "lead-dashboard-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data.json
-          git diff --cached --quiet && echo "No changes" || git commit -m "Automated daily refresh"
+          git diff --cached --quiet && echo "No changes" || git commit -m "Automated data refresh"
           git push
