@@ -19,7 +19,7 @@
   --grad-web: linear-gradient(90deg, #f2761e, #c65a0f);
   --grad-neutral: linear-gradient(90deg, #3d6a94, #2c4d6c);
   --entry:#6b7280; --inter:#0891a8; --expert:#7c3aed;
-  --danger:#c9425f; --redflag:#d63a3a;
+  --danger:#c9425f; --redflag:#d63a3a; --pink:#d6307f;
   --radius:10px;
   --glow: 0 0 24px rgba(139,92,246,0.18);
 }
@@ -34,7 +34,7 @@
   --grad-web: linear-gradient(90deg, #f2761e, #ffb648);
   --grad-neutral: linear-gradient(90deg, #5b8dbe, #3d5f7d);
   --entry:#6b7280; --inter:#22d3ee; --expert:#a78bfa;
-  --danger:#e0577e; --redflag:#ff5252;
+  --danger:#e0577e; --redflag:#ff5252; --pink:#ff7ac0;
   --glow: 0 0 24px rgba(139,92,246,0.28);
 }
 *{box-sizing:border-box;}
@@ -153,6 +153,7 @@ select:focus{outline:2px solid var(--neutral); outline-offset:1px;}
 .undo-btn{color:var(--cyan); border-color:var(--cyan);}
 .reject-btn:hover{background:rgba(224,87,126,0.12);}
 .undo-btn:hover{background:rgba(34,211,238,0.12);}
+.us-flag{color:var(--pink); font-weight:700; margin-left:8px; white-space:nowrap; font-size:12.5px;}
 .job-id{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint);}
 .scraped-flag{color:var(--redflag); font-weight:600;}
 .hourly-flag{color:var(--redflag); font-weight:600;}
@@ -191,7 +192,7 @@ footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:ce
     <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <button class="theme-toggle" id="themeToggle" type="button">☀️ Light mode</button>
       <div class="meta-line sync-time" id="syncedLine">synced —</div>
-      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.7</div>
+      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.8</div>
     </div>
   </header>
 
@@ -248,6 +249,26 @@ document.getElementById('themeToggle').addEventListener('click', ()=>{
   localStorage.setItem(THEME_KEY, currentTheme);
   applyTheme(currentTheme);
 });
+
+const US_PATTERNS = [
+  /\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]merican)s?[\s\-]*(?:[Oo]nly|[Bb]ased|[Rr]esidents?|[Cc]itizens?)\b/,
+  /\b(?:[Oo]nly|[Ee]xclusively)\s+(?:for\s+)?(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]mericans?)\b/,
+  /\b[Mm]ust\s+(?:be\s+(?:located|based|residing|living|a\s+resident|a\s+citizen|authorized)|reside|live)[^.\n]{0,30}\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b/,
+  /\b(?:someone|developer|freelancer|contractor|candidate|designer|engineer|talent|person|individual)\s+(?:who\s+is\s+|that\s+is\s+)?(?:located|based|residing|living)\s+in\s+the\s+(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b/,
+  /\b[Aa]uthorized\s+to\s+work\s+in\s+the\s+(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b/,
+  /\b[Hh]iring\s+(?:only\s+)?[Aa]mericans?\b/
+];
+function usRequired(r){
+  const text = (r.title || '') + ' . ' + (r.desc || '');
+  for(const re of US_PATTERNS){
+    const m = re.exec(text);
+    if(m){
+      const s = Math.max(0, m.index - 30);
+      return text.slice(s, m.index + m[0].length + 30).replace(/\s+/g,' ').trim();
+    }
+  }
+  return null;
+}
 
 let DATA = [];
 // synced time now comes from data.json, set after fetch
@@ -335,10 +356,11 @@ function render(rows, wantRejected){
       ? `<button class="undo-btn" data-key="${escapeHtml(k)}">Undo</button>`
       : `<button class="reject-btn" data-key="${escapeHtml(k)}">Reject</button>`;
     const rowCatClass = wantRejected ? '' : 'cat-' + r.cat;
+    const usHit = usRequired(r);
     return `<div class="row ${rowCatClass}" data-idx="${i}">
       <div class="row-grid">
         <div class="row-left">
-          <div class="row-title"><span class="cat-dot ${r.cat}"></span>${escapeHtml(r.title)}</div>
+          <div class="row-title"><span class="cat-dot ${r.cat}"></span>${escapeHtml(r.title)}${usHit ? `<span class="us-flag" title="${escapeHtml('Matched: “' + usHit + '”')}">[U.S. required]</span>` : ''}</div>
           <div class="row-sub">
             <span style="display:flex; gap:8px; align-items:center;">
               <span class="badge ${ec}">${escapeHtml(r.exp||'—')}</span>
