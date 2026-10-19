@@ -6,249 +6,387 @@
 <title>AI & Website Project Finder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+// Apply theme before paint to avoid a flash.
+try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; }catch(e){}
+</script>
 <style>
 :root{
-  --bg:#f3f2fa; --bg2:#ffffff; --card:#ffffff; --line:#e3e0f2;
-  --text:#191a24; --text-dim:#5b5d70; --text-faint:#8a8ca0;
-  --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#0891a8;
-  --orange:#c65a0f; --orange-deep:#a34a0c;
-  --neutral:#3d6a94; --neutral-deep:#2c4d6c;
-  --grad: linear-gradient(90deg, #7c3aed, #0891a8);
-  --grad-ai: linear-gradient(90deg, #8b5cf6, #6d28d9);
-  --grad-web: linear-gradient(90deg, #f2761e, #c65a0f);
-  --grad-neutral: linear-gradient(90deg, #3d6a94, #2c4d6c);
-  --entry:#6b7280; --inter:#0891a8; --expert:#7c3aed;
-  --danger:#c9425f; --redflag:#d63a3a; --pink:#d6307f;
-  --radius:10px;
-  --glow: 0 0 24px rgba(139,92,246,0.18);
+  --bg:#f5f6fb; --surface:#ffffff; --sunk:#f1f2f8; --line:#e5e7f0;
+  --fg:#141a33; --dim:#5a6178; --faint:#8a90a6;
+  --primary:#5b4ff5; --primary-soft:#ecebfe;
+  --ai:#7c5cff; --ai-soft:#efeaff; --web:#2f7cf6; --web-soft:#e8f1ff;
+  --green:#16a36a; --green-soft:#e3f6ed; --amber:#e8930c; --amber-soft:#fdf2df;
+  --red:#e5484d; --red-soft:#fdeaea; --cyan:#0e9fb8;
+  --side:#0e1a3a; --side-2:#16244a; --side-fg:#c3cbe3; --side-faint:#7f8bb0;
+  --shadow:0 1px 2px rgba(20,26,51,.04), 0 2px 8px rgba(20,26,51,.04);
+  --radius:12px;
+  color-scheme:light;
 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0d18; --surface:#121729; --sunk:#181f36; --line:#252d48;
+  --fg:#eef0f8; --dim:#a3aac2; --faint:#6b7391;
+  --primary:#7b70ff; --primary-soft:#24224a;
+  --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
+  --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
+  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de;
+  --side:#070b17; --side-2:#111a33;
+  --shadow:none; color-scheme:dark; } }
 :root[data-theme="dark"]{
-  --bg:#000000; --bg2:#0a0a0a; --card:#0f0f10; --line:#232326;
-  --text:#f2f1f8; --text-dim:#9a9ab3; --text-faint:#5f5f7a;
-  --violet:#8b5cf6; --violet-deep:#6d28d9; --cyan:#22d3ee;
-  --orange:#f2761e; --orange-deep:#c65a0f;
-  --neutral:#5b8dbe; --neutral-deep:#3d5f7d;
-  --grad: linear-gradient(90deg, #7c3aed, #22d3ee);
-  --grad-ai: linear-gradient(90deg, #8b5cf6, #6d28d9);
-  --grad-web: linear-gradient(90deg, #f2761e, #ffb648);
-  --grad-neutral: linear-gradient(90deg, #5b8dbe, #3d5f7d);
-  --entry:#6b7280; --inter:#22d3ee; --expert:#a78bfa;
-  --danger:#e0577e; --redflag:#ff5252; --pink:#ff7ac0;
-  --glow: 0 0 24px rgba(139,92,246,0.28);
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--bg); color:var(--text);
-  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
-  line-height:1.45;
-  min-height:100vh;
-  background-attachment:fixed;
-  transition:background-color .2s ease, color .2s ease;
-}
-.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px;}
-header.top{
-  display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between;
-  gap:12px; margin-bottom:6px; padding-bottom:18px; border-bottom:1px solid var(--line);
-}
-.brand{display:flex; align-items:baseline; gap:10px;}
-.brand h1{
-  font-size:21px; font-weight:700; margin:0; letter-spacing:-0.01em;
-  color:var(--neutral);
-}
-.brand .sub{color:var(--text-dim); font-size:13px;}
-.meta-line{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint);}
-.sync-time{color:var(--cyan); font-weight:700; font-size:13px;}
-.stats{display:flex; gap:18px; margin:18px 0 16px; flex-wrap:wrap;}
-.stat{font-family:'IBM Plex Mono',monospace;}
-.stat .n{font-size:22px; font-weight:600; display:block; line-height:1;}
-.stat .l{font-size:11px; color:var(--text-dim); text-transform:lowercase;}
-.stat.ai .n{color:var(--violet);}
-.stat.web .n{color:var(--orange);}
-.stat.rej .n{color:var(--danger);}
+  --bg:#0a0d18; --surface:#121729; --sunk:#181f36; --line:#252d48;
+  --fg:#eef0f8; --dim:#a3aac2; --faint:#6b7391;
+  --primary:#7b70ff; --primary-soft:#24224a;
+  --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
+  --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
+  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de;
+  --side:#070b17; --side-2:#111a33;
+  --shadow:none; color-scheme:dark; }
 
-.controls{
-  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-  margin:18px 0 16px; padding:12px; background:var(--card); border:1px solid var(--line);
-  border-radius:var(--radius);
-}
-.tabs{display:flex; gap:4px; background:var(--bg2); padding:3px; border-radius:8px; border:1px solid var(--line);}
-.tab{
-  padding:6px 12px; font-size:13px; font-weight:500; border-radius:6px; cursor:pointer;
-  color:var(--text-dim); user-select:none; white-space:nowrap;
-}
-.tab.active{background:var(--neutral); color:#fff;}
-.tab.active[data-cat="AI"]{background:var(--grad-ai); box-shadow:0 0 20px rgba(139,92,246,.3);}
-.tab.active[data-cat="Website"]{background:var(--grad-web); box-shadow:0 0 20px rgba(242,118,30,.3);}
-.search{
-  flex:1; min-width:160px; background:var(--bg2); border:1px solid var(--line); color:var(--text);
-  padding:7px 11px; border-radius:7px; font-size:13px; font-family:inherit;
-}
-.search:focus{outline:2px solid var(--neutral); outline-offset:1px;}
-select{
-  background:var(--bg2); border:1px solid var(--line); color:var(--text);
-  padding:7px 10px; border-radius:7px; font-size:13px; font-family:inherit; cursor:pointer;
-}
-select:focus{outline:2px solid var(--neutral); outline-offset:1px;}
-.count-line{font-size:12px; color:var(--text-faint); margin:0 0 10px 2px; font-family:'IBM Plex Mono',monospace;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--fg); font:14px/1.45 Inter,system-ui,-apple-system,'Segoe UI',sans-serif;}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--primary); outline-offset:2px}
+[hidden]{display:none!important}
+svg{display:block}
+.num{font-variant-numeric:tabular-nums}
 
-.rows{display:flex; flex-direction:column; gap:8px;}
-.row{
-  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-  padding:14px 16px; cursor:pointer; position:relative;
-  transition:border-color .15s ease;
-}
-.row:hover{border-color:var(--neutral);}
-.row.open{border-color:var(--neutral); box-shadow:0 0 24px rgba(91,141,190,.25);}
-.row.cat-AI{border-left:3px solid var(--violet); border-color:var(--line) var(--line) var(--line) var(--violet);}
-.row.cat-AI:hover{border-color:var(--violet);}
-.row.cat-AI.open{border-color:var(--violet); box-shadow:0 0 24px rgba(139,92,246,.28);}
-.row.cat-Website{border-left:3px solid var(--orange); border-color:var(--line) var(--line) var(--line) var(--orange);}
-.row.cat-Website:hover{border-color:var(--orange);}
-.row.cat-Website.open{border-color:var(--orange); box-shadow:0 0 24px rgba(242,118,30,.28);}
-.row-grid{display:flex; gap:16px; justify-content:space-between;}
-.row-left{flex:1; min-width:0;}
-.row-title{font-size:14.5px; font-weight:600; line-height:1.3;}
-.row-title .cat-dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:8px; position:relative; top:-1px; box-shadow:0 0 6px currentColor;}
-.cat-dot.AI{background:var(--violet); color:var(--violet);}
-.cat-dot.Website{background:var(--orange); color:var(--orange);}
-.row-sub{
-  display:flex; flex-direction:column; gap:4px; margin-top:9px; align-items:flex-start;
-  font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint);
-}
-.badge{
-  padding:2px 9px; border-radius:5px; font-size:10.5px; font-weight:700;
-  color:#fff; white-space:nowrap; border:none;
-}
-.badge.entry{background:var(--entry);}
-.badge.inter{background:var(--inter);}
-.badge.expert{background:var(--expert);}
-.row-right{text-align:right; flex-shrink:0;}
-.posted-time{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); white-space:nowrap;}
-.row-sub-right{
-  display:flex; flex-direction:column; gap:3px; margin-top:8px; align-items:flex-end;
-  font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-dim); white-space:nowrap;
-}
-.row-body{max-height:0; overflow:hidden; transition:max-height .22s ease;}
-.row.open .row-body{max-height:600px;}
-.expand-grid{
-  display:flex; gap:20px; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
-  align-items:flex-start; justify-content:space-between;
-}
-.row-desc{
-  font-size:13px; color:var(--text-dim); flex:1 1 auto; min-width:0; white-space:pre-wrap;
-}
-.action-col{display:flex; flex-direction:column; gap:8px; flex-shrink:0; align-items:stretch; min-width:130px;}
-.apply-btn{
-  background:var(--grad-neutral); color:#fff; text-decoration:none; font-size:12.5px; font-weight:600;
-  padding:8px 16px; border-radius:7px; display:inline-block; text-align:center; box-shadow:0 0 20px rgba(91,141,190,.3);
-}
-.apply-btn.cat-AI{background:var(--grad-ai); box-shadow:0 0 20px rgba(139,92,246,.35);}
-.apply-btn.cat-Website{background:var(--grad-web); box-shadow:0 0 20px rgba(242,118,30,.35);}
-.reject-btn, .undo-btn{
-  background:transparent; color:var(--danger); border:1px solid var(--danger);
-  font-size:12.5px; font-weight:600; padding:7px 16px; border-radius:7px; cursor:pointer; font-family:inherit;
-}
-.undo-btn{color:var(--cyan); border-color:var(--cyan);}
-.reject-btn:hover{background:rgba(224,87,126,0.12);}
-.undo-btn:hover{background:rgba(34,211,238,0.12);}
-.us-flag{background:#d6307f; color:#fff; font-weight:700; margin-left:8px; padding:2px 9px; border-radius:5px; white-space:nowrap; font-size:10.5px; letter-spacing:.02em; vertical-align:middle;}
-.job-id{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint);}
-.scraped-flag{color:var(--redflag); font-weight:600;}
-.hourly-flag{color:var(--redflag); font-weight:600;}
+.app{display:grid; grid-template-columns:232px minmax(0,1fr); min-height:100vh}
 
-.empty{text-align:center; padding:60px 20px; color:var(--text-dim);}
-.empty .big{font-size:15px; margin-bottom:6px; color:var(--text);}
+/* ---------- sidebar ---------- */
+.side{background:var(--side); color:var(--side-fg); padding:20px 14px; display:flex; flex-direction:column; gap:18px; position:sticky; top:0; height:100vh; overflow-y:auto}
+.brand{display:flex; gap:10px; align-items:center; padding:0 6px 16px; border-bottom:1px solid var(--side-2)}
+.brand b{display:block; color:#fff; font-size:17px; letter-spacing:-.01em}
+.brand small{font-size:11px; color:var(--side-faint)}
+.nav{display:flex; flex-direction:column; gap:2px}
+.nav button{display:flex; align-items:center; gap:12px; width:100%; background:none; border:0; color:var(--side-fg); padding:9px 12px; border-radius:9px; text-align:left; font-size:13.5px}
+.nav button:hover{background:var(--side-2); color:#fff}
+.nav button.on{background:linear-gradient(90deg,#5b4ff5,#7c5cff); color:#fff}
+.nav button svg{width:18px; height:18px; flex-shrink:0}
+.nav .cnt{margin-left:auto; font-size:11.5px; font-weight:600; padding:1px 8px; border-radius:20px; color:#fff; background:var(--side-2)}
+.cnt.c-ai{background:#7c5cff} .cnt.c-web{background:#2f7cf6} .cnt.c-sl{background:#16a36a} .cnt.c-ap{background:#2f7cf6}
+.cnt.c-in{background:#e8930c} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
+.nav-sep{height:1px; background:var(--side-2); margin:4px 6px}
+.promo{margin-top:auto; background:linear-gradient(135deg,#3b2fc9,#5b4ff5); border-radius:12px; padding:16px; color:#fff}
+.promo b{font-size:15px; display:block; line-height:1.25}
+.promo p{margin:8px 0 0; font-size:12px; color:#d9d6ff}
 
-footer{margin-top:32px; font-size:11.5px; color:var(--text-faint); text-align:center; font-family:'IBM Plex Mono',monospace;}
-.theme-toggle{
-  display:inline-flex; align-items:center; gap:6px; margin-bottom:6px;
-  background:var(--bg2); border:1px solid var(--line); color:var(--text-dim);
-  padding:5px 12px; border-radius:20px; font-size:11.5px; font-family:'IBM Plex Mono',monospace;
-  cursor:pointer; user-select:none;
+/* ---------- main ---------- */
+main{min-width:0; display:flex; flex-direction:column}
+.inner{padding:18px 24px 24px; display:flex; flex-direction:column; gap:16px; flex:1}
+.top{display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+.top h1{margin:0; font-size:22px; letter-spacing:-.02em}
+.top .sub{color:var(--dim); font-size:13px}
+.top .meta{display:flex; align-items:center; gap:10px; margin-left:auto; flex-wrap:wrap}
+.synced{font-size:12.5px; color:var(--dim); display:flex; align-items:center; gap:6px}
+.synced::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green)}
+.ver{font-size:11.5px; font-weight:600; color:var(--primary); background:var(--primary-soft); padding:2px 9px; border-radius:20px}
+.select, .input{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:12.5px; min-width:0}
+.user{display:flex; align-items:center; gap:8px; font-weight:500}
+.avatar{width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#7c5cff,#2f7cf6); color:#fff; display:grid; place-items:center; font-size:12px; font-weight:700}
+
+/* KPIs */
+.kpis{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:2px; min-width:0; text-align:left}
+button.kpi:hover{border-color:var(--primary)}
+.kpi-h{display:flex; justify-content:space-between; align-items:flex-start; gap:8px}
+.kpi .n{font-size:26px; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.kpi .l{color:var(--dim); font-size:12.5px}
+.kpi .ic{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex-shrink:0}
+.kpi .ic svg{width:18px; height:18px}
+.kpi .delta{font-size:11px; font-weight:600; color:var(--green); background:var(--green-soft); padding:2px 7px; border-radius:6px; white-space:nowrap}
+.kpi svg.spark{width:100%; height:30px; margin-top:6px}
+
+/* layout */
+.content{display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:16px; align-items:start}
+.list-col{display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{scrollbar-width:thin; display:flex; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:4px; overflow-x:auto}
+.tabs button{background:none; border:0; padding:7px 12px; border-radius:7px; white-space:nowrap; color:var(--dim); font-weight:500; font-size:13px}
+.tabs button:hover{color:var(--fg); background:var(--sunk)}
+.tabs button.on{background:var(--primary); color:#fff}
+.filters{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.search{flex:1 1 220px; position:relative}
+.search input{width:100%; padding:9px 34px 9px 12px; font-size:13px}
+.search svg{position:absolute; right:10px; top:50%; translate:0 -50%; width:16px; height:16px; color:var(--faint); pointer-events:none}
+.money{display:flex; border:1px solid var(--line); border-radius:8px; background:var(--surface); overflow:hidden}
+.money input{width:70px; border:0; border-radius:0; padding:7px 8px}
+.money input + input{border-left:1px solid var(--line)}
+.check{display:flex; align-items:center; gap:6px; font-size:12.5px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer; user-select:none}
+.check input{accent-color:var(--primary); margin:0}
+.count-line{font-size:12px; color:var(--faint)}
+
+/* lead cards */
+.rows{display:flex; flex-direction:column; gap:10px}
+.rows.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
+.lead{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; display:grid; grid-template-columns:minmax(0,1fr) 84px 170px; gap:18px; position:relative}
+.lead.best{background:linear-gradient(180deg, var(--green-soft), var(--surface) 70%); border-color:color-mix(in srgb, var(--green) 35%, var(--line))}
+.lead.focus{outline:2px solid var(--primary); outline-offset:1px}
+.lead-main{min-width:0; display:flex; flex-direction:column; gap:8px}
+.ribbon{align-self:flex-start; font-size:10px; font-weight:700; letter-spacing:.06em; color:#fff; background:var(--green); padding:2px 7px; border-radius:4px}
+.lead h3{margin:0; font-size:15px; line-height:1.3; letter-spacing:-.01em; cursor:pointer}
+.lead h3:hover{color:var(--primary)}
+.desc{margin:0; color:var(--dim); font-size:12.5px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer}
+.lead.open .desc{display:block; -webkit-line-clamp:unset; max-height:50vh; overflow-y:auto; white-space:pre-wrap}
+.chips{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.chip{font-size:11.5px; font-weight:600; padding:2px 9px; border-radius:20px; white-space:nowrap; border:1px solid transparent}
+.chip.ai{color:var(--ai); background:var(--ai-soft)} .chip.web{color:var(--web); background:var(--web-soft)}
+.chip.exp-Expert{color:var(--ai); background:var(--ai-soft)} .chip.exp-Intermediate{color:var(--web); background:var(--web-soft)} .chip.exp-Entry{color:var(--dim); background:var(--sunk)}
+.chip.us{color:var(--red); background:var(--red-soft)} .chip.ok{color:var(--green); background:var(--green-soft)}
+.chip.st{color:var(--amber); background:var(--amber-soft)}
+.chip.skill{color:var(--dim); background:transparent; border-color:var(--line); font-weight:500}
+.client{font-size:12px; color:var(--dim); display:flex; gap:4px 12px; flex-wrap:wrap}
+.client .good{color:var(--green)} .client .bad{color:var(--red)}
+.actions{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:2px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--surface); color:var(--dim); font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:8px; text-decoration:none; white-space:nowrap}
+.btn:hover{border-color:var(--primary); color:var(--primary)}
+.btn svg{width:14px; height:14px}
+.btn.go{background:var(--primary); border-color:var(--primary); color:#fff}
+.btn.go:hover{filter:brightness(1.08); color:#fff}
+.btn.sl.on{background:var(--amber-soft); border-color:var(--amber); color:var(--amber)}
+.btn.rj{color:var(--red); border-color:color-mix(in srgb, var(--red) 40%, var(--line))}
+.btn.rj:hover{background:var(--red-soft); color:var(--red); border-color:var(--red)}
+.btn.has-note{color:var(--primary); border-color:var(--primary)}
+.status-sel{font-size:12px; padding:5px 8px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--dim)}
+.note{width:100%; min-height:64px; border:1px solid var(--line); border-radius:8px; background:var(--sunk); padding:8px 10px; font-size:12.5px; resize:vertical}
+.scraped{font-size:11.5px; color:var(--faint)}
+.ring{display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:16px}
+.ring-wrap{position:relative; width:72px; height:72px; cursor:help}
+.ring-wrap svg{width:72px; height:72px; transform:rotate(-90deg)}
+.ring-txt{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.ring-txt b{font-size:21px; line-height:1}
+.ring-txt small{font-size:8.5px; font-weight:700; letter-spacing:.06em; color:var(--faint)}
+.lead-meta{border-left:1px solid var(--line); padding-left:16px; display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--dim); min-width:0}
+.lead-meta .type{font-weight:600; color:var(--fg); font-size:13.5px}
+.lead-meta .amt{font-weight:600; color:var(--fg); font-size:14px}
+.lead-meta .row{display:flex; gap:6px; align-items:center}
+.lead-meta .row svg{width:14px; height:14px; flex-shrink:0; color:var(--faint)}
+.lead-meta .bid{margin-top:4px; padding-top:6px; border-top:1px dashed var(--line)}
+.lead-meta .bid b{color:var(--fg)}
+.new-b{position:absolute; top:12px; right:12px; font-size:10px; font-weight:700; letter-spacing:.06em; color:#fff; background:var(--green); padding:2px 7px; border-radius:20px}
+
+/* compact density */
+.rows.compact .lead{grid-template-columns:minmax(0,1fr) auto; padding:10px 14px; gap:12px; align-items:center}
+.rows.compact .lead .desc, .rows.compact .lead .client, .rows.compact .lead .actions, .rows.compact .lead .scraped, .rows.compact .lead .ribbon, .rows.compact .lead .skills, .rows.compact .lead .ring{display:none}
+.rows.compact .lead.open .desc, .rows.compact .lead.open .client, .rows.compact .lead.open .actions{display:flex}
+.rows.compact .lead.open .desc{display:block}
+.rows.compact .lead-meta{border:0; padding:0; flex-direction:row; gap:12px; align-items:center; white-space:nowrap}
+.rows.compact .lead-meta .bid, .rows.compact .lead-meta .row.dur{display:none}
+.rows.compact .mini-score{display:inline-block}
+.mini-score{display:none; font-weight:700; font-size:12px; padding:1px 8px; border-radius:20px}
+.rows.grid .lead{grid-template-columns:minmax(0,1fr) 84px}
+.rows.grid .lead-meta{grid-column:1/-1; border-left:0; border-top:1px solid var(--line); padding:10px 0 0; flex-direction:row; flex-wrap:wrap; gap:6px 14px}
+
+.more{align-self:center}
+.empty{text-align:center; padding:48px 20px; color:var(--dim); background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius)}
+.empty b{display:block; color:var(--fg); font-size:15px; margin-bottom:4px}
+
+/* rail */
+.rail{display:flex; flex-direction:column; gap:12px; min-width:0}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px; display:flex; flex-direction:column; gap:10px}
+.panel h4{margin:0; font-size:13.5px; font-weight:600}
+.panel h4 small{font-weight:400; color:var(--faint); font-size:11.5px}
+.panel svg text{fill:var(--faint); font-size:10px; font-family:Inter,system-ui,sans-serif}
+.legend{display:flex; gap:12px; font-size:11.5px; color:var(--dim)}
+.legend i{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px}
+.donut{display:flex; gap:14px; align-items:center}
+.donut svg{width:110px; height:110px; flex-shrink:0}
+.donut ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12px; flex:1; min-width:0}
+.donut li{display:grid; grid-template-columns:10px 1fr auto auto; gap:6px; align-items:center}
+.donut li i{width:8px; height:8px; border-radius:50%}
+.donut li span:last-child{color:var(--faint); width:30px; text-align:right}
+.kw{display:flex; flex-direction:column; gap:6px}
+.kw button{display:flex; justify-content:space-between; align-items:center; background:none; border:0; padding:0; text-align:left}
+.kw button span:first-child{font-size:12px; font-weight:600; padding:2px 10px; border-radius:20px; color:var(--ai); background:var(--ai-soft)}
+.kw button:nth-child(even) span:first-child{color:var(--web); background:var(--web-soft)}
+.kw button span:last-child{font-size:12px; color:var(--dim); background:var(--sunk); padding:1px 8px; border-radius:6px}
+.insight{background:var(--web-soft); border-color:transparent}
+.insight h4{color:var(--web)}
+.insight p{margin:0; font-size:13px; color:var(--fg)}
+
+/* bottom bar */
+.bar{position:sticky; bottom:0; background:var(--surface); border-top:1px solid var(--line); padding:10px 24px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; font-size:12.5px; color:var(--dim); z-index:5}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; vertical-align:middle}
+.seg button{border:0; background:var(--surface); padding:5px 10px; font-size:12px; color:var(--dim); display:flex; align-items:center}
+.seg button + button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--primary-soft); color:var(--primary); font-weight:600}
+.seg svg{width:15px; height:15px}
+.bar .grow{flex:1}
+.btn.export{background:var(--green); border-color:var(--green); color:#fff}
+.btn.export:hover{filter:brightness(1.08); color:#fff}
+.hints{font-size:11.5px; color:var(--faint)}
+kbd{font:11px ui-monospace,Consolas,monospace; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 4px; background:var(--sunk); color:var(--dim)}
+
+dialog{border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--fg); padding:22px; width:min(520px, calc(100vw - 32px)); box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(10,13,24,.45)}
+dialog h2{margin:0 0 14px; font-size:18px}
+dialog label{display:flex; flex-direction:column; gap:5px; font-size:12.5px; font-weight:600; color:var(--dim); margin-bottom:12px}
+dialog label small{font-weight:400; color:var(--faint)}
+dialog textarea{min-height:90px; resize:vertical}
+dialog .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+dialog .foot{display:flex; justify-content:flex-end; gap:8px; margin-top:6px}
+dialog table{width:100%; border-collapse:collapse; font-size:13px}
+dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
+
+@media (max-width:1280px){
+  .content{grid-template-columns:minmax(0,1fr)}
+  .rail{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 }
-.theme-toggle:hover{border-color:var(--neutral); color:var(--text);}
-
+@media (max-width:1100px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .inner{padding:14px 16px}
+  .bar{padding:10px 16px}
+  .hints{display:none}
+}
 @media (max-width:640px){
-  .row-grid{flex-direction:column; gap:6px;}
-  .row-right{text-align:left;}
-  .row-sub-right{align-items:flex-start;}
-  .expand-grid{flex-direction:column;}
-  .action-col{flex-direction:row; width:100%;}
-  .apply-btn, .reject-btn, .undo-btn{flex:1;}
-  .controls{flex-direction:column; align-items:stretch;}
-  .tabs{overflow-x:auto;}
+  .bar{position:static}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lead{grid-template-columns:minmax(0,1fr) 76px}
+  .lead-meta{grid-column:1/-1; border-left:0; border-top:1px solid var(--line); padding:10px 0 0; flex-direction:row; flex-wrap:wrap; gap:6px 14px}
+  .rows.grid{grid-template-columns:minmax(0,1fr)}
+  .rows.compact .lead{grid-template-columns:minmax(0,1fr)}
+  .rows.compact .lead-meta{flex-wrap:wrap}
 }
+@media (prefers-reduced-motion:no-preference){ .btn,.kpi,.nav button{transition:background-color .15s, border-color .15s, color .15s} }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
+<div class="app">
+  <aside class="side">
     <div class="brand">
-      <h1>AI & Website Project Finder</h1>
-      <span class="sub">Upwork · AI &amp; web design leads</span>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" fill="url(#bg)"/><defs><linearGradient id="bg" x1="4" y1="2" x2="19" y2="22"><stop stop-color="#8b7bff"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs></svg>
+      <div><b>Zero Touch AI</b><small>AI Automation &amp; Web Design</small></div>
     </div>
-    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-      <button class="theme-toggle" id="themeToggle" type="button">☀️ Light mode</button>
-      <div class="meta-line sync-time" id="syncedLine">synced —</div>
-      <div class="meta-line" id="versionLine" style="color:var(--violet); font-weight:600;">v2.9</div>
+    <nav class="nav" id="sideNav"></nav>
+    <div class="nav-sep"></div>
+    <nav class="nav">
+      <button type="button" id="navAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20v-11"/></svg>Analytics</button>
+      <button type="button" id="navExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
+      <button type="button" id="navSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
+      <button type="button" id="navKeys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard Shortcuts</button>
+    </nav>
+    <div class="promo"><b>Find better projects, faster.</b><p>Fit-scored Upwork leads, refreshed every 3 hours.</p></div>
+  </aside>
+
+  <main>
+    <div class="inner">
+      <header class="top">
+        <div><h1>AI &amp; Website Project Finder</h1><div class="sub">Upwork leads for AI automation and web design projects</div></div>
+        <div class="meta">
+          <span class="synced" id="synced">syncing…</span>
+          <span class="ver">v3.0</span>
+          <select class="select" id="theme" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+          <span class="user"><span class="avatar" id="avatar">J</span><span id="userName">Jeremy</span></span>
+        </div>
+      </header>
+
+      <section class="kpis" id="kpis"></section>
+
+      <div class="content">
+        <div class="list-col">
+          <nav class="tabs" id="tabs"></nav>
+          <div class="filters">
+            <label class="search"><input class="input" id="q" type="search" placeholder="Search title, description or skill…" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
+            <select class="select" id="fExp" aria-label="Experience"><option value="">Any experience</option><option>Entry Level</option><option>Intermediate</option><option>Expert</option></select>
+            <select class="select" id="fType" aria-label="Contract type"><option value="">Hourly + Fixed</option><option value="hourly">Hourly</option><option value="fixed">Fixed price</option></select>
+            <span class="money"><input class="input num" id="fMin" type="number" min="0" placeholder="Min $" aria-label="Minimum budget or rate"><input class="input num" id="fMax" type="number" min="0" placeholder="Max $" aria-label="Maximum budget or rate"></span>
+            <select class="select" id="fDur" aria-label="Duration"><option value="">Any duration</option><option value="less than 1">Under 1 month</option><option value="1 to 3">1–3 months</option><option value="3 to 6">3–6 months</option><option value="more than 6">6+ months</option></select>
+            <select class="select" id="fCountry" aria-label="Client country"><option value="">Any client country</option></select>
+            <label class="check"><input type="checkbox" id="fUS" checked> Hide U.S.-only</label>
+            <select class="select" id="sort" aria-label="Sort"><option value="posted">Newest posted</option><option value="fit">Best fit</option><option value="scraped">Newest scraped</option><option value="budget">Budget: high to low</option><option value="applicants">Fewest proposals</option><option value="title">Title A–Z</option></select>
+          </div>
+          <div class="count-line" id="countLine"></div>
+          <div class="rows" id="rows"></div>
+          <button class="btn more" id="more" type="button" hidden>Show more</button>
+          <div class="empty" id="empty" hidden><b>Nothing matches.</b><span id="emptySub"></span><div style="margin-top:12px"><button class="btn" id="clearF" type="button">Clear filters</button></div></div>
+        </div>
+        <aside class="rail" id="rail"></aside>
+      </div>
     </div>
-  </header>
 
-  <div class="stats">
-    <div class="stat"><span class="n" id="statTotal">0</span><span class="l">open leads</span></div>
-    <div class="stat ai"><span class="n" id="statAI">0</span><span class="l">ai projects</span></div>
-    <div class="stat web"><span class="n" id="statWeb">0</span><span class="l">web design projects</span></div>
-    <div class="stat rej"><span class="n" id="statRej">0</span><span class="l">rejected</span></div>
-  </div>
-
-  <div class="controls">
-    <div class="tabs" id="tabs">
-      <div class="tab active" data-cat="all">All</div>
-      <div class="tab" data-cat="AI">AI</div>
-      <div class="tab" data-cat="Website">Website</div>
-      <div class="tab" data-cat="rejected">Rejected</div>
-    </div>
-    <input class="search" id="search" type="text" placeholder="Search title or description…">
-    <select id="expFilter">
-      <option value="all">Any experience</option>
-      <option value="Entry Level">Entry level</option>
-      <option value="Intermediate">Intermediate</option>
-      <option value="Expert">Expert</option>
-    </select>
-    <select id="sortBy">
-      <option value="newest">Newest scraped</option>
-      <option value="posted">Most recently posted</option>
-      <option value="budget">Budget: high to low</option>
-      <option value="title">Title A–Z</option>
-    </select>
-  </div>
-
-  <div class="count-line" id="countLine"></div>
-  <div class="rows" id="rows"></div>
-  <div class="empty" id="emptyState" style="display:none;">
-    <div class="big">Nothing here.</div>
-    <div id="emptySub">Try clearing the search or switching category.</div>
-  </div>
-
-  <footer>Snapshot from the project search sheet · re-published each time it's refreshed · reject state is saved in this browser only</footer>
+    <footer class="bar">
+      <span>View <span class="seg" id="viewSeg"><button type="button" data-v="list" aria-label="List view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button><button type="button" data-v="grid" aria-label="Grid view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button></span></span>
+      <span>Density <span class="seg" id="densSeg"><button type="button" data-d="compact">Compact</button><button type="button" data-d="comfortable">Comfortable</button></span></span>
+      <label>Auto-hide leads older than <select class="select" id="ageSel"><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option><option value="60">60 days</option><option value="0">Never</option></select></label>
+      <span class="grow"></span>
+      <button class="btn export" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
+      <span class="hints"><kbd>?</kbd> help · <kbd>j</kbd>/<kbd>k</kbd> navigate · <kbd>o</kbd> open · <kbd>s</kbd> shortlist · <kbd>x</kbd> reject</span>
+    </footer>
+  </main>
 </div>
 
+<dialog id="settingsDlg">
+  <form method="dialog" id="settingsForm">
+    <h2>Settings</h2>
+    <label>Your name<input class="input" id="sName"></label>
+    <label>Niche keywords <small>One per line or comma-separated. Matches raise the fit score and fill "Top keywords".</small><textarea class="input" id="sKw"></textarea></label>
+    <div class="row2">
+      <label>Minimum hourly rate ($/hr)<input class="input num" id="sRate" type="number" min="0"></label>
+      <label>Minimum fixed budget ($)<input class="input num" id="sFixed" type="number" min="0"></label>
+    </div>
+    <div class="foot"><button class="btn" value="cancel" type="submit">Cancel</button><button class="btn go" value="save" type="submit">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="keysDlg">
+  <h2>Keyboard shortcuts</h2>
+  <table>
+    <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td>Next / previous lead</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Expand or collapse</td></tr>
+    <tr><td><kbd>o</kbd></td><td>Open on Upwork</td></tr>
+    <tr><td><kbd>s</kbd></td><td>Shortlist</td></tr>
+    <tr><td><kbd>a</kbd></td><td>Mark applied</td></tr>
+    <tr><td><kbd>x</kbd></td><td>Reject</td></tr>
+    <tr><td><kbd>u</kbd></td><td>Clear status</td></tr>
+    <tr><td><kbd>/</kbd></td><td>Search</td></tr>
+    <tr><td><kbd>?</kbd></td><td>This list</td></tr>
+  </table>
+  <form method="dialog" class="foot" style="margin-top:14px"><button class="btn go" type="submit">Close</button></form>
+</dialog>
+
 <script>
-const THEME_KEY = 'ld_theme_v1';
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  const btn = document.getElementById('themeToggle');
-  if(btn) btn.textContent = t === 'dark' ? '\ud83c\udf19 Dark mode' : '\u2600\ufe0f Light mode';
+/* ---------- storage (per browser) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const DEFAULT_KW = ['AI automation','AI agent','chatbot','n8n','Make.com','Zapier','ChatGPT','OpenAI','RAG','voice agent','WordPress','Shopify','Webflow','landing page','web design'];
+let settings = Object.assign({name:'Jeremy', keywords:DEFAULT_KW, minRate:50, minFixed:500}, store.get('pf_settings', {}));
+let status = store.get('pf_status', {});   // id -> {s, t}
+let notes = store.get('pf_notes', {});     // id -> text
+let ui = Object.assign({view:'all', sort:'posted', layout:'list', density:'comfortable', age:30, hideUS:true}, store.get('pf_ui', {}));
+// "New" = scraped since your previous visit. Reloads in the same tab keep the same baseline.
+let prevVisit;
+try{ prevVisit = JSON.parse(sessionStorage.getItem('pf_prev')).v; }catch(e){
+  prevVisit = store.get('pf_last_visit', null);
+  try{ sessionStorage.setItem('pf_prev', JSON.stringify({v: prevVisit})); }catch(e2){}
 }
-let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
-applyTheme(currentTheme);
-document.getElementById('themeToggle').addEventListener('click', ()=>{
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, currentTheme);
-  applyTheme(currentTheme);
-});
+store.set('pf_last_visit', Date.now());
+
+// one-time: carry v2 rejections ("AI:<jobid>") over
+const oldRej = store.get('ld_rejected_v1', null);
+if(oldRej){ oldRej.forEach(k => { const id = k.split(':').slice(1).join(':'); if(id && !status[id]) status[id] = {s:'rejected', t:Date.now()}; }); store.set('pf_status', status); try{ localStorage.removeItem('ld_rejected_v1'); }catch(e){} }
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DAY = 864e5, HOUR = 36e5;
+const money = n => n == null ? '' : '$' + (n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'') + 'K' : Math.round(n).toLocaleString());
+const rate = n => '$' + (Number.isInteger(n) ? n : n.toFixed(2));
+function ago(ts){
+  const h = (Date.now() - ts) / HOUR;
+  if(h < 1) return Math.max(1, Math.round(h*60)) + ' min ago';
+  if(h < 24) return Math.round(h) + (Math.round(h) === 1 ? ' hour ago' : ' hours ago');
+  const d = Math.round(h/24);
+  return d === 1 ? 'yesterday' : d < 14 ? d + ' days ago' : Math.round(d/7) + ' weeks ago';
+}
+const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) + ' ' : '';
+const dayKey = ts => { const d = new Date(ts); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
+function lastDays(n){ const out = []; const d = new Date(); d.setHours(0,0,0,0); for(let i = n-1; i >= 0; i--) out.push(new Date(d - i*DAY)); return out; }
+const CAT_LABEL = {AI:'AI', Website:'Website'};
 
 const US_PATTERNS = [
   /\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]merican)s?[\s\-]*(?:[Oo]nly|[Bb]ased|[Rr]esidents?|[Cc]itizens?)\b/,
@@ -258,174 +396,443 @@ const US_PATTERNS = [
   /\b[Aa]uthorized\s+to\s+work\s+in\s+the\s+(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b/,
   /\b[Hh]iring\s+(?:only\s+)?[Aa]mericans?\b/
 ];
-function usRequired(r){
-  const text = (r.title || '') + ' . ' + (r.desc || '');
-  for(const re of US_PATTERNS){
-    const m = re.exec(text);
-    if(m){
-      const s = Math.max(0, m.index - 30);
-      return text.slice(s, m.index + m[0].length + 30).replace(/\s+/g,' ').trim();
-    }
-  }
+// Upwork hides its real "U.S. only" flag from scrapers, so this reads the post text.
+function usHit(l){
+  const text = l.title + ' . ' + l.desc;
+  for(const re of US_PATTERNS){ const m = re.exec(text); if(m) return text.slice(Math.max(0, m.index - 30), m.index + m[0].length + 30).replace(/\s+/g,' ').trim(); }
   return null;
 }
 
-let DATA = [];
-// synced time now comes from data.json, set after fetch
+// Rough size-based guess: Upwork shows the real Connects cost only to logged-in freelancers.
+function connects(l){
+  const v = l.type === 'hourly' ? (l.rateMax || 0) * 40 : (l.budget || 0);
+  if(!v) return null;
+  return v < 100 ? 4 : v < 500 ? 8 : v < 1000 ? 12 : 16;
+}
+function suggestedBid(l){
+  if(l.type === 'hourly'){
+    const lo = l.rateMin || l.rateMax, hi = l.rateMax || l.rateMin;
+    if(!hi) return null;
+    return rate(Math.round(lo + (hi - lo) * (l.exp === 'Expert' ? .75 : .5))) + '/hr';
+  }
+  return l.budget ? money(l.budget) + ' fixed' : null;
+}
+// Comparable size for sorting: one 40-hour week for hourly jobs.
+const sizeOf = l => l.type === 'hourly' ? (l.rateMax || 0) * 40 : (l.budget || 0);
 
-const REJECT_KEY = 'ld_rejected_v1';
-function loadRejected(){
-  try{ return new Set(JSON.parse(localStorage.getItem(REJECT_KEY) || '[]')); }
-  catch(e){ return new Set(); }
+function fit(l){
+  const why = []; let s = 50;
+  const text = (l.title + ' ' + l.desc + ' ' + (l.skills || []).join(' ')).toLowerCase();
+  const kw = settings.keywords.filter(k => k && text.includes(k.toLowerCase()));
+  if(kw.length){ const p = Math.min(24, kw.length * 8); s += p; why.push(`+${p} niche match: ${kw.slice(0,3).join(', ')}`); }
+  if(l.type === 'hourly' && l.rateMax){
+    if(l.rateMax >= settings.minRate * 1.5){ s += 15; why.push('+15 rate well above your minimum'); }
+    else if(l.rateMax >= settings.minRate){ s += 10; why.push('+10 rate meets your minimum'); }
+    else { s -= 15; why.push(`-15 rate under $${settings.minRate}/hr`); }
+  } else if(l.type === 'fixed' && l.budget){
+    if(l.budget >= settings.minFixed * 3){ s += 15; why.push('+15 budget well above your minimum'); }
+    else if(l.budget >= settings.minFixed){ s += 10; why.push('+10 budget meets your minimum'); }
+    else { s -= 15; why.push(`-15 budget under $${settings.minFixed}`); }
+  }
+  if(l.verified === true){ s += 5; why.push('+5 payment verified'); }
+  if(l.spent >= 10000){ s += 8; why.push('+8 client spent $10K+'); }
+  else if(l.spent >= 1000){ s += 4; why.push('+4 client spent $1K+'); }
+  else if(l.verified === false && !l.spent){ s -= 10; why.push('-10 new, unverified client'); }
+  if(l.rating >= 4.5){ s += 4; why.push('+4 client rating 4.5+'); }
+  if(l.applicants != null){
+    if(l.applicants < 5){ s += 8; why.push('+8 under 5 proposals'); }
+    else if(l.applicants < 10){ s += 4; why.push('+4 under 10 proposals'); }
+    else if(l.applicants >= 50){ s -= 10; why.push('-10 50+ proposals'); }
+    else if(l.applicants >= 20){ s -= 4; why.push('-4 20+ proposals'); }
+  }
+  const h = (Date.now() - l._posted) / HOUR;
+  if(h < 6){ s += 6; why.push('+6 posted in the last 6 hours'); }
+  else if(h < 24){ s += 3; why.push('+3 posted today'); }
+  else if(h > 24*7){ s -= 8; why.push('-8 older than a week'); }
+  if(l.exp === 'Expert'){ s += 3; why.push('+3 expert level'); }
+  else if(l.exp === 'Entry Level'){ s -= 5; why.push('-5 entry level'); }
+  if(l._us){ s -= 30; why.push('-30 looks U.S.-only'); }
+  return {score: Math.max(0, Math.min(100, Math.round(s))), why};
 }
-function saveRejected(set){
-  try{ localStorage.setItem(REJECT_KEY, JSON.stringify([...set])); }catch(e){}
-}
-let rejected = loadRejected();
-function keyOf(r){ return r.cat + ':' + r.jobid; }
+const scoreColor = s => s >= 75 ? 'var(--green)' : s >= 50 ? 'var(--amber)' : 'var(--faint)';
 
-function budgetValue(b){
-  if(!b) return -1;
-  const nums = (b.match(/[\d,.]+/g)||[]).map(s=>parseFloat(s.replace(/,/g,''))).filter(n=>!isNaN(n));
-  if(!nums.length) return -1;
-  return Math.max(...nums);
-}
-function expClass(e){
-  if(/expert/i.test(e)) return 'expert';
-  if(/intermediate/i.test(e)) return 'inter';
-  if(/entry/i.test(e)) return 'entry';
-  return 'inter';
-}
-function escapeHtml(s){
-  return (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-}
+/* ---------- state ---------- */
+let DATA = [], shown = [], limit = 40, focusIdx = -1;
+const f = {q:'', exp:'', type:'', min:'', max:'', dur:'', country:''};
+const STATUSES = [
+  ['shortlisted','Shortlist','c-sl'], ['applied','Applied','c-ap'], ['interviewing','Interviewing','c-in'],
+  ['won','Won','c-won'], ['lost','Lost',''], ['rejected','Rejected','c-rej']
+];
+const VIEWS = [['all','All'], ['AI','AI'], ['Website','Website'], ...STATUSES.map(s => [s[0], s[1]])];
 
-let state = {cat:'all', q:'', exp:'all', sort:'newest'};
+function enrich(){
+  DATA.forEach(l => {
+    l._posted = Date.parse(l.posted) || Date.now();
+    l._scraped = Date.parse(l.scraped) || l._posted;
+    l._usText = usHit(l); l._us = !!l._usText;
+    l._fit = fit(l);
+    l._new = prevVisit ? l._scraped > prevVisit : Date.now() - l._scraped < DAY;
+  });
+}
+const st = l => status[l.id]?.s || '';
+const isOpen = l => !['rejected','lost'].includes(st(l));
+// What the default views show: open leads inside the auto-hide window (pipeline leads never age out).
+const visible = l => isOpen(l) && (!!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY);
 
-function applyState(){
-  const wantRejected = state.cat === 'rejected';
-  let rows = DATA.filter(r => {
-    const isRej = rejected.has(keyOf(r));
-    if(wantRejected) { if(!isRej) return false; }
-    else {
-      if(isRej) return false;
-      if(state.cat !== 'all' && r.cat !== state.cat) return false;
+function filtered(view = ui.view){
+  const q = f.q.trim().toLowerCase(), min = +f.min || 0, max = +f.max || 0;
+  const ageCut = ui.age ? Date.now() - ui.age * DAY : 0;
+  return DATA.filter(l => {
+    const s = st(l);
+    if(view === 'all' || view === 'AI' || view === 'Website'){
+      if(s === 'rejected' || s === 'lost') return false;
+      if(view !== 'all' && l.cat !== view) return false;
+      if(!s && ageCut && l._posted < ageCut) return false;
+    } else if(s !== view) return false;
+    if(f.exp && l.exp !== f.exp) return false;
+    if(f.type && l.type !== f.type) return false;
+    if(min || max){
+      const lo = l.type === 'hourly' ? (l.rateMin || l.rateMax) : l.budget, hi = l.type === 'hourly' ? (l.rateMax || l.rateMin) : l.budget;
+      if(lo == null) return false;
+      if(min && hi < min) return false;
+      if(max && lo > max) return false;
     }
-    if(state.exp !== 'all' && r.exp !== state.exp) return false;
-    if(state.q){
-      const q = state.q.toLowerCase();
-      if(!(r.title.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q))) return false;
-    }
+    if(f.dur && !(l.duration || '').toLowerCase().includes(f.dur)) return false;
+    if(f.country && l.country !== f.country) return false;
+    if(ui.hideUS && l._us && !['shortlisted','applied','interviewing','won'].includes(s)) return false;
+    if(q && !(l.title + ' ' + l.desc + ' ' + (l.skills||[]).join(' ')).toLowerCase().includes(q)) return false;
     return true;
   });
-  function scrapedValue(s){
-    const d = new Date(s);
-    return isNaN(d.getTime()) ? 0 : d.getTime();
-  }
-  if(state.sort === 'budget'){
-    rows = rows.slice().sort((a,b)=>budgetValue(b.budget)-budgetValue(a.budget));
-  } else if(state.sort === 'title'){
-    rows = rows.slice().sort((a,b)=>a.title.localeCompare(b.title));
-  } else {
-    // 'newest' (default) and 'posted' both fall back to actual scrape-date order,
-    // so AI and Website leads interleave correctly by real recency instead of
-    // sitting in two separate unsorted blocks.
-    rows = rows.slice().sort((a,b)=>scrapedValue(b.scraped)-scrapedValue(a.scraped));
-  }
-  document.getElementById('emptySub').textContent = wantRejected
-    ? 'Nothing rejected yet.'
-    : 'Try clearing the search or switching category.';
-  render(rows, wantRejected);
-  updateStats();
 }
 
-function render(rows, wantRejected){
-  const container = document.getElementById('rows');
-  const empty = document.getElementById('emptyState');
-  document.getElementById('countLine').textContent = rows.length + ' shown';
-  if(!rows.length){
-    container.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-  container.innerHTML = rows.map((r, i) => {
-    const ec = expClass(r.exp);
-    const k = keyOf(r);
-    const actionBtn = wantRejected
-      ? `<button class="undo-btn" data-key="${escapeHtml(k)}">Undo</button>`
-      : `<button class="reject-btn" data-key="${escapeHtml(k)}">Reject</button>`;
-    const rowCatClass = wantRejected ? '' : 'cat-' + r.cat;
-    const usHit = usRequired(r);
-    return `<div class="row ${rowCatClass}" data-idx="${i}">
-      <div class="row-grid">
-        <div class="row-left">
-          <div class="row-title"><span class="cat-dot ${r.cat}"></span>${escapeHtml(r.title)}${usHit ? `<span class="us-flag" title="${escapeHtml('Matched: “' + usHit + '”')}">U.S. required</span>` : ''}</div>
-          <div class="row-sub">
-            <span style="display:flex; gap:8px; align-items:center;">
-              <span class="badge ${ec}">${escapeHtml(r.exp||'—')}</span>
-              <span class="scraped-flag">scraped ${escapeHtml(r.scraped||'—')}</span>
-            </span>
-            <span class="job-id">Job #${escapeHtml(r.jobid||'—')}</span>
-            <span class="job-id">ID ${escapeHtml(r.bid||'—')}</span>
-          </div>
-        </div>
-        <div class="row-right">
-          <div class="posted-time">${escapeHtml(r.posted||'')}</div>
-          <div class="row-sub-right">
-            <span class="${/hourly/i.test(r.ctype||'') ? 'hourly-flag' : ''}">${escapeHtml(r.ctype||'—')}</span>
-            <span>${escapeHtml(r.budget||'—')}</span>
-            <span class="hourly-flag">${escapeHtml(r.duration||'—')}</span>
-          </div>
-        </div>
-      </div>
-      <div class="row-body">
-        <div class="expand-grid">
-          <div class="row-desc">${escapeHtml(r.desc)}</div>
-          <div class="action-col">
-            <a class="apply-btn ${rowCatClass}" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open on Upwork</a>
-            ${actionBtn}
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  container.querySelectorAll('.row').forEach(el=>{
-    el.addEventListener('click', ()=> el.classList.toggle('open'));
-  });
-  container.querySelectorAll('.reject-btn, .undo-btn').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      const k = btn.dataset.key;
-      if(btn.classList.contains('reject-btn')) rejected.add(k);
-      else rejected.delete(k);
-      saveRejected(rejected);
-      applyState();
-    });
-  });
+function sortRows(rows){
+  const by = {
+    posted: (a,b) => b._posted - a._posted,
+    scraped: (a,b) => b._scraped - a._scraped || b._posted - a._posted,
+    fit: (a,b) => b._fit.score - a._fit.score,
+    budget: (a,b) => sizeOf(b) - sizeOf(a),
+    applicants: (a,b) => (a.applicants ?? 999) - (b.applicants ?? 999),
+    title: (a,b) => a.title.localeCompare(b.title)
+  }[ui.sort];
+  return rows.slice().sort(by);
 }
 
-document.getElementById('tabs').addEventListener('click', e=>{
-  const t = e.target.closest('.tab');
-  if(!t) return;
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  state.cat = t.dataset.cat;
-  applyState();
+/* ---------- icons ---------- */
+const I = {
+  home:'<path d="M3 11 12 3l9 8M5 9.5V21h5v-6h4v6h5V9.5"/>',
+  chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10h4v4h-4z"/>',
+  code:'<path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+  star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/>',
+  send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4.5-5.7"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+  minus:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  list:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+  sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  users2:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.6 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5V8M12 16v1.5"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>'
+};
+const icon = (n, cls='') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+
+/* ---------- rendering ---------- */
+function renderNav(){
+  const cnt = v => filtered(v).length;
+  const side = [['all','Dashboard','home',''], ['AI','AI Leads','chip','c-ai'], ['Website','Website Leads','code','c-web'],
+    ['shortlisted','Shortlist','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'],
+    ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
+  $('sideNav').innerHTML = side.map(([v,label,ic,c]) =>
+    `<button type="button" data-view="${v}" class="${ui.view === v ? 'on' : ''}">${icon(ic)}${label}${v === 'all' ? '' : `<span class="cnt num ${c}">${cnt(v)}</span>`}</button>`).join('');
+  $('tabs').innerHTML = VIEWS.map(([v,label]) => `<button type="button" data-view="${v}" class="${ui.view === v ? 'on' : ''}">${label} <span class="num">(${cnt(v)})</span></button>`).join('');
+}
+
+function spark(values, color){
+  const max = Math.max(1, ...values), w = 100, h = 30;
+  const pts = values.map((v,i) => [i * w / (values.length - 1), h - 3 - (v / max) * (h - 8)]);
+  const line = pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
+  const last = pts[pts.length - 1];
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+    <polygon points="0,${h} ${line} ${w},${h}" fill="${color}" opacity=".1"/>
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="${color}" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function renderKpis(){
+  const days = lastDays(14), keys = days.map(d => dayKey(d));
+  const perDay = pred => { const m = {}; DATA.forEach(l => { if(pred(l)){ const k = dayKey(l._scraped); m[k] = (m[k]||0) + 1; } }); return keys.map(k => m[k] || 0); };
+  const open = DATA.filter(visible);
+  const today = dayKey(Date.now());
+  const todayCount = pred => DATA.filter(l => pred(l) && dayKey(l._scraped) === today).length;
+  const rejDays = keys.map(k => Object.values(status).filter(x => x.s === 'rejected' && dayKey(x.t) === k).length);
+  const cards = [
+    {n:open.length, l:'Open leads', c:'var(--green)', ic:'list', bg:'var(--green-soft)', v:'all', sp:perDay(() => true), d:todayCount(() => true)},
+    {n:open.filter(l => l.cat === 'AI').length, l:'AI projects', c:'var(--ai)', ic:'chip', bg:'var(--ai-soft)', v:'AI', sp:perDay(l => l.cat === 'AI'), d:todayCount(l => l.cat === 'AI')},
+    {n:open.filter(l => l.cat === 'Website').length, l:'Website design', c:'var(--web)', ic:'code', bg:'var(--web-soft)', v:'Website', sp:perDay(l => l.cat === 'Website'), d:todayCount(l => l.cat === 'Website')},
+    {n:open.filter(l => l._new).length, l:'New since last visit', c:'var(--green)', ic:'sparkle', bg:'var(--green-soft)', v:'new', sp:perDay(l => l._new)},
+    {n:DATA.filter(l => st(l) === 'rejected').length, l:'Rejected', c:'var(--red)', ic:'x', bg:'var(--red-soft)', v:'rejected', sp:rejDays}
+  ];
+  $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-kpi="${k.v}">
+    <div class="kpi-h"><div><div class="n num">${k.n}</div><div class="l">${k.l}</div></div>
+    ${k.d ? `<span class="delta num" title="Scraped today">+${k.d} today</span>` : `<span class="ic" style="background:${k.bg};color:${k.c}">${icon(k.ic)}</span>`}</div>
+    ${spark(k.sp, k.c)}</button>`).join('');
+}
+
+function leadHtml(l, i){
+  const s = st(l), sc = l._fit.score, cx = connects(l), bid = suggestedBid(l);
+  const amount = l.type === 'hourly'
+    ? (l.rateMax ? (l.rateMin && l.rateMin !== l.rateMax ? `${rate(l.rateMin)} – ${rate(l.rateMax)}` : rate(l.rateMax)) + '/hr' : 'Rate not listed')
+    : (l.budget ? money(l.budget) : 'Budget not listed');
+  const client = [];
+  if(l.country) client.push(`<span>${flag(l.cc)}${esc(l.country)}</span>`);
+  if(l.spent != null) client.push(`<span>${l.spent ? money(l.spent) + ' spent' : 'No spend yet'}</span>`);
+  if(l.verified != null) client.push(l.verified ? '<span class="good">✓ Payment verified</span>' : '<span class="bad">Payment unverified</span>');
+  if(l.rating) client.push(`<span>★ ${l.rating.toFixed(1)}${l.reviews ? ` (${l.reviews})` : ''}</span>`);
+  if(l.applicants != null) client.push(`<span class="${l.applicants < 10 ? 'good' : l.applicants >= 50 ? 'bad' : ''}">${l.applicants} proposals</span>`);
+  const C = 2 * Math.PI * 30;
+  const url = /^https:\/\//.test(l.url) ? l.url : '#';
+  const statusLabel = STATUSES.find(x => x[0] === s)?.[1];
+  return `<article class="lead ${sc >= 80 && !s ? 'best' : ''} ${i === focusIdx ? 'focus' : ''}" data-id="${esc(l.id)}" data-i="${i}">
+    ${l._new ? '<span class="new-b">NEW</span>' : ''}
+    <div class="lead-main">
+      ${sc >= 80 && !s ? '<span class="ribbon">BEST FIT</span>' : ''}
+      <h3 data-act="toggle">${esc(l.title)} <span class="mini-score num" style="color:${scoreColor(sc)};background:color-mix(in srgb, ${scoreColor(sc)} 14%, transparent)">${sc}</span></h3>
+      <p class="desc" data-act="toggle">${esc(l.desc)}</p>
+      <div class="chips">
+        <span class="chip ${l.cat === 'AI' ? 'ai' : 'web'}">● ${CAT_LABEL[l.cat] || esc(l.cat)}</span>
+        ${l.exp ? `<span class="chip exp-${l.exp.split(' ')[0]}">${esc(l.exp)}</span>` : ''}
+        ${l._us ? `<span class="chip us" title="${esc('Matched: “' + l._usText + '”')}">U.S. required</span>` : '<span class="chip ok" title="No U.S.-only wording found in the post">No U.S. required</span>'}
+        ${statusLabel ? `<span class="chip st">${statusLabel}</span>` : ''}
+      </div>
+      ${client.length ? `<div class="client">${client.join('')}</div>` : ''}
+      ${l.skills && l.skills.length ? `<div class="chips skills">${l.skills.slice(0,6).map(k => `<span class="chip skill">${esc(k)}</span>`).join('')}</div>` : ''}
+      <div class="actions">
+        <a class="btn go" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
+        <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Shortlisted' : 'Shortlist'}</button>
+        <button type="button" class="btn ${notes[l.id] ? 'has-note' : ''}" data-act="note">${icon('pen')}Note</button>
+        ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button>`}
+        <select class="status-sel" data-act="status" aria-label="Pipeline status">
+          <option value="">Move to…</option>${STATUSES.map(([v,lab]) => `<option value="${v}" ${s === v ? 'selected' : ''}>${lab}</option>`).join('')}<option value="clear">Clear status</option>
+        </select>
+      </div>
+      <textarea class="note" data-note placeholder="Pitch idea, questions to ask, follow-up date…" ${l._noteOpen ? '' : 'hidden'}>${esc(notes[l.id] || '')}</textarea>
+      <div class="scraped">Scraped ${new Date(l._scraped).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})} · Job #${esc(l.id)}</div>
+    </div>
+    <div class="ring"><div class="ring-wrap" title="${esc('Fit score ' + sc + '\n' + l._fit.why.join('\n'))}">
+      <svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="36" cy="36" r="30" fill="none" stroke="${scoreColor(sc)}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * sc / 100).toFixed(1)} ${C.toFixed(1)}"/></svg>
+      <div class="ring-txt"><b class="num">${sc}</b><small>FIT</small></div></div></div>
+    <div class="lead-meta">
+      <span class="type">${l.type === 'hourly' ? 'Hourly' : l.type === 'fixed' ? 'Fixed price' : 'Type not listed'}</span>
+      <span class="amt num">${amount}</span>
+      ${l.duration ? `<span class="row dur">${icon('clock')}${esc(l.duration)}</span>` : ''}
+      <span class="row">${icon('cal')}Posted ${ago(l._posted)}</span>
+      <span class="row bid" title="Rough estimate from job size. Upwork shows the exact number on the job page.">${icon('coin')}<span>${cx ? `~${cx} Connects <span class="num">(≈$${(cx * .15).toFixed(2)})</span>` : 'Connects: check on Upwork'}</span></span>
+      ${bid ? `<span class="row">${icon('send')}<span>Bid <b class="num">${bid}</b></span></span>` : ''}
+    </div>
+  </article>`;
+}
+
+function renderList(){
+  const rows = sortRows(ui.view === 'new' ? filtered('all').filter(l => l._new) : filtered());
+  shown = rows.slice(0, limit);
+  const box = $('rows');
+  box.className = 'rows ' + (ui.layout === 'grid' ? 'grid ' : '') + ui.density;
+  box.innerHTML = shown.map(leadHtml).join('');
+  $('countLine').textContent = `${shown.length} of ${rows.length} shown`;
+  $('more').hidden = rows.length <= limit;
+  $('empty').hidden = rows.length > 0;
+  $('emptySub').textContent = ['all','AI','Website','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
+}
+
+function renderRail(){
+  const open = DATA.filter(visible);
+  // 14-day stacked bars
+  const days = lastDays(14), keys = days.map(dayKey);
+  const ai = keys.map(k => DATA.filter(l => l.cat === 'AI' && dayKey(l._scraped) === k).length);
+  const web = keys.map(k => DATA.filter(l => l.cat === 'Website' && dayKey(l._scraped) === k).length);
+  const tot = ai.map((a,i) => a + web[i]), max = Math.max(5, ...tot);
+  const top = Math.ceil(max / 5) * 5, W = 240, H = 120, x0 = 22, y0 = 8, ch = 90, bw = (W - x0) / 14;
+  const y = v => y0 + ch - v / top * ch;
+  let bars = '';
+  keys.forEach((k,i) => {
+    const x = x0 + i * bw + 2;
+    if(ai[i]) bars += `<rect x="${x.toFixed(1)}" y="${y(ai[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(ai[i]/top*ch).toFixed(1)}" fill="var(--ai)" rx="1.5"><title>${days[i].toLocaleDateString(undefined,{month:'short',day:'numeric'})}: ${ai[i]} AI</title></rect>`;
+    if(web[i]) bars += `<rect x="${x.toFixed(1)}" y="${y(tot[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(web[i]/top*ch).toFixed(1)}" fill="var(--web)" rx="1.5"><title>${days[i].toLocaleDateString(undefined,{month:'short',day:'numeric'})}: ${web[i]} Website</title></rect>`;
+  });
+  const grid = [0, top/2, top].map(v => `<line x1="${x0}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${x0-5}" y="${y(v)+3}" text-anchor="end">${v}</text>`).join('');
+  const fmt = d => d.toLocaleDateString(undefined,{month:'short', day:'numeric'});
+  const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Leads scraped per day for the last 14 days">${grid}${bars}<text x="${x0}" y="${H-4}">${fmt(days[0])}</text><text x="${W}" y="${H-4}" text-anchor="end">${fmt(days[13])}</text></svg>`;
+
+  // experience donut
+  const ex = [['Expert','var(--ai)'], ['Intermediate','var(--web)'], ['Entry Level','var(--green)']].map(([k,c]) => ({k, c, n: open.filter(l => l.exp === k).length}));
+  const exTot = ex.reduce((a,b) => a + b.n, 0) || 1, R = 40, C = 2 * Math.PI * R;
+  let off = 0;
+  const arcs = ex.map(e => { const len = e.n / exTot * C; const s = `<circle cx="55" cy="55" r="${R}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${len.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 55 55)"/>`; off += len; return s; }).join('');
+
+  // hourly rate distribution
+  const hourly = open.filter(l => l.type === 'hourly' && l.rateMax);
+  const buckets = [['$0–50', 0, 50], ['$50–75', 50, 75], ['$75–100', 75, 100], ['$100+', 100, 1e9]].map(([k,lo,hi]) => ({k, lo, n: hourly.filter(l => l.rateMax >= lo && l.rateMax < hi).length}));
+  const bMax = Math.max(1, ...buckets.map(b => b.n));
+  const dist = `<svg viewBox="0 0 240 110" role="img" aria-label="Hourly leads by maximum rate">${buckets.map((b,i) => {
+    const h = b.n / bMax * 70, x = 10 + i * 58;
+    return `<rect x="${x}" y="${78 - h}" width="42" height="${h}" rx="3" fill="var(--green)" opacity="${.45 + .55 * b.n / bMax}"/><text x="${x+21}" y="92" text-anchor="middle">${b.k}</text><text x="${x+21}" y="106" text-anchor="middle" style="fill:var(--fg);font-weight:600">${Math.round(b.n / (hourly.length || 1) * 100)}%</text>`;
+  }).join('')}</svg>`;
+
+  // keyword counts
+  const kw = settings.keywords.map(k => ({k, n: open.filter(l => (l.title + ' ' + l.desc + ' ' + (l.skills||[]).join(' ')).toLowerCase().includes(k.toLowerCase())).length}))
+    .filter(x => x.n).sort((a,b) => b.n - a.n).slice(0, 6);
+
+  // insight
+  const wk = l => Date.now() - l._scraped < 7 * DAY, pwk = l => Date.now() - l._scraped >= 7 * DAY && Date.now() - l._scraped < 14 * DAY;
+  const aiNow = DATA.filter(l => l.cat === 'AI' && wk(l)).length, aiPrev = DATA.filter(l => l.cat === 'AI' && pwk(l)).length;
+  const best = open.filter(l => l._fit.score >= 75).length;
+  const rates = hourly.map(l => l.rateMax).sort((a,b) => a - b), med = rates.length ? rates[Math.floor(rates.length / 2)] : 0;
+  const parts = [];
+  if(aiPrev) parts.push(`AI leads are ${aiNow >= aiPrev ? 'up' : 'down'} ${Math.abs(Math.round((aiNow - aiPrev) / aiPrev * 100))}% compared to last week.`);
+  parts.push(`${best} open lead${best === 1 ? '' : 's'} score 75+ for your niche and rates.`);
+  if(med) parts.push(`Hourly jobs top out at a median of ${rate(med)}/hr.`);
+
+  $('rail').innerHTML = `
+    <div class="panel" id="analytics"><h4>Leads scraped <small>· last 14 days</small></h4>${chart}
+      <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web)"></i>Website</span></div></div>
+    <div class="panel"><h4>Experience mix <small>· open leads</small></h4><div class="donut">
+      <svg viewBox="0 0 110 110" role="img" aria-label="Experience level mix"><circle cx="55" cy="55" r="${R}" fill="none" stroke="var(--line)" stroke-width="14"/>${arcs}<text x="55" y="56" text-anchor="middle" style="fill:var(--fg);font-size:18px;font-weight:700">${open.length}</text><text x="55" y="70" text-anchor="middle">total</text></svg>
+      <ul>${ex.map(e => `<li><i style="background:${e.c}"></i><span>${e.k}</span><span class="num">${e.n}</span><span class="num">${Math.round(e.n / exTot * 100)}%</span></li>`).join('')}</ul></div></div>
+    <div class="panel"><h4>Hourly rate <small>· max offered, ${hourly.length} jobs</small></h4>${dist}</div>
+    <div class="panel"><h4>Top keywords <small>· your niche</small></h4><div class="kw">${kw.map(x => `<button type="button" data-kw="${esc(x.k)}"><span>${esc(x.k)}</span><span class="num">${x.n}</span></button>`).join('') || '<span class="count-line">No keyword matches yet. Add some in Settings.</span>'}</div></div>
+    <div class="panel insight"><h4>Key insight</h4><p>${parts.join(' ')}</p></div>`;
+}
+
+function renderAll(){
+  renderNav(); renderKpis(); renderList(); renderRail();
+  $('avatar').textContent = (settings.name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
+  $('userName').textContent = settings.name;
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === ui.layout));
+  document.querySelectorAll('#densSeg button').forEach(b => b.classList.toggle('on', b.dataset.d === ui.density));
+}
+const saveUi = () => store.set('pf_ui', ui);
+
+/* ---------- actions ---------- */
+function setStatus(id, s){
+  if(!s || s === 'clear') delete status[id]; else status[id] = {s, t: Date.now()};
+  store.set('pf_status', status);
+  renderAll();
+}
+function setView(v){ ui.view = v; limit = 40; focusIdx = -1; saveUi(); renderAll(); window.scrollTo({top:0}); }
+
+document.addEventListener('click', e => {
+  const v = e.target.closest('[data-view]'); if(v){ setView(v.dataset.view); return; }
+  const k = e.target.closest('[data-kpi]'); if(k){ setView(k.dataset.kpi); return; }
+  const kw = e.target.closest('[data-kw]'); if(kw){ f.q = $('q').value = kw.dataset.kw; limit = 40; renderList(); return; }
+  const card = e.target.closest('.lead'); if(!card) return;
+  const act = e.target.closest('[data-act]')?.dataset.act, id = card.dataset.id, l = DATA.find(x => x.id === id);
+  focusIdx = +card.dataset.i;
+  if(act === 'toggle') card.classList.toggle('open');
+  else if(act === 'shortlist') setStatus(id, st(l) === 'shortlisted' ? '' : 'shortlisted');
+  else if(act === 'reject') setStatus(id, 'rejected');
+  else if(act === 'clear') setStatus(id, '');
+  else if(act === 'note'){ l._noteOpen = !l._noteOpen; const t = card.querySelector('[data-note]'); t.hidden = !l._noteOpen; if(l._noteOpen) t.focus(); }
 });
-document.getElementById('search').addEventListener('input', e=>{ state.q = e.target.value; applyState(); });
-document.getElementById('expFilter').addEventListener('change', e=>{ state.exp = e.target.value; applyState(); });
-document.getElementById('sortBy').addEventListener('change', e=>{ state.sort = e.target.value; applyState(); });
+document.addEventListener('change', e => {
+  if(e.target.matches('[data-act="status"]')) setStatus(e.target.closest('.lead').dataset.id, e.target.value);
+});
+document.addEventListener('input', e => {
+  if(!e.target.matches('[data-note]')) return;
+  const id = e.target.closest('.lead').dataset.id, v = e.target.value.trim();
+  if(v) notes[id] = e.target.value; else delete notes[id];
+  store.set('pf_notes', notes);
+  e.target.closest('.lead').querySelector('[data-act="note"]').classList.toggle('has-note', !!v);
+});
 
-function updateStats(){
-  const active = DATA.filter(r=>!rejected.has(keyOf(r)));
-  document.getElementById('statTotal').textContent = active.length;
-  document.getElementById('statAI').textContent = active.filter(r=>r.cat==='AI').length;
-  document.getElementById('statWeb').textContent = active.filter(r=>r.cat==='Website').length;
-  document.getElementById('statRej').textContent = rejected.size;
+const bind = (id, key, ev='input') => $(id).addEventListener(ev, e => { f[key] = e.target.value; limit = 40; renderList(); renderNav(); });
+bind('q','q'); bind('fExp','exp','change'); bind('fType','type','change'); bind('fMin','min'); bind('fMax','max'); bind('fDur','dur','change'); bind('fCountry','country','change');
+$('fUS').addEventListener('change', e => { ui.hideUS = e.target.checked; saveUi(); renderList(); renderNav(); });
+$('sort').addEventListener('change', e => { ui.sort = e.target.value; saveUi(); renderList(); });
+$('ageSel').addEventListener('change', e => { ui.age = +e.target.value; saveUi(); renderAll(); });
+$('viewSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b){ ui.layout = b.dataset.v; saveUi(); renderAll(); } });
+$('densSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b){ ui.density = b.dataset.d; saveUi(); renderAll(); } });
+$('more').addEventListener('click', () => { limit += 40; renderList(); });
+$('clearF').addEventListener('click', () => {
+  Object.keys(f).forEach(k => f[k] = '');
+  ['q','fExp','fType','fMin','fMax','fDur','fCountry'].forEach(id => $(id).value = '');
+  ui.age = 0; $('ageSel').value = '0'; saveUi(); renderAll();
+});
+$('navAnalytics').addEventListener('click', () => $('analytics').scrollIntoView({behavior:'smooth', block:'start'}));
+$('navKeys').addEventListener('click', () => $('keysDlg').showModal());
+
+function applyTheme(t){ if(t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
+$('theme').value = store.get('pf_theme_sel', 'system');
+$('theme').addEventListener('change', e => { const t = e.target.value; store.set('pf_theme_sel', t); try{ localStorage.setItem('pf_theme', t); }catch(err){} applyTheme(t); });
+
+/* settings */
+$('navSettings').addEventListener('click', () => {
+  $('sName').value = settings.name; $('sKw').value = settings.keywords.join('\n');
+  $('sRate').value = settings.minRate; $('sFixed').value = settings.minFixed;
+  $('settingsDlg').showModal();
+});
+$('settingsDlg').addEventListener('close', () => {
+  if($('settingsDlg').returnValue !== 'save') return;
+  settings = {
+    name: $('sName').value.trim() || 'Me',
+    keywords: $('sKw').value.split(/[\n,]/).map(s => s.trim()).filter(Boolean),
+    minRate: +$('sRate').value || 0, minFixed: +$('sFixed').value || 0
+  };
+  store.set('pf_settings', settings);
+  DATA.forEach(l => l._fit = fit(l));
+  renderAll();
+});
+
+/* CSV export */
+function exportCsv(){
+  const rows = sortRows(filtered());
+  const cols = ['title','cat','status','fit','type','rateMin','rateMax','budget','exp','duration','applicants','country','spent','verified','rating','us_only','posted','url','note'];
+  const val = l => ({...l, status: st(l), fit: l._fit.score, us_only: l._us ? 'yes' : '', note: notes[l.id] || ''});
+  const cell = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+  const csv = [cols.join(','), ...rows.map(l => { const r = val(l); return cols.map(c => cell(r[c])).join(','); })].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `upwork-leads-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+$('exportBtn').addEventListener('click', exportCsv);
+$('navExport').addEventListener('click', exportCsv);
 
-fetch('./data.json').then(r => r.json()).then(d => { DATA = d.leads || d; document.getElementById('syncedLine').textContent = 'synced ' + (d.synced || '\u2014'); applyState(); }).catch(err => { document.getElementById('rows').innerHTML = '<div class="empty"><div class="big">Could not load data.json</div><div>'+err+'</div></div>'; });
+/* keyboard */
+document.addEventListener('keydown', e => {
+  if(e.target.matches('input,textarea,select') || e.metaKey || e.ctrlKey || e.altKey || document.querySelector('dialog[open]')) return;
+  const cards = [...document.querySelectorAll('#rows .lead')];
+  const cur = cards[focusIdx], l = cur && DATA.find(x => x.id === cur.dataset.id);
+  const move = d => { if(!cards.length) return; focusIdx = Math.max(0, Math.min(cards.length - 1, focusIdx + d)); cards.forEach((c,i) => c.classList.toggle('focus', i === focusIdx)); cards[focusIdx].scrollIntoView({block:'nearest'}); };
+  const k = e.key;
+  if(k === 'j'){ move(1); }
+  else if(k === 'k'){ move(-1); }
+  else if(k === '/'){ e.preventDefault(); $('q').focus(); }
+  else if(k === '?'){ $('keysDlg').showModal(); }
+  else if(!l) return;
+  else if(k === 'Enter'){ cur.classList.toggle('open'); }
+  else if(k === 'o'){ cur.querySelector('.btn.go').click(); }
+  else if(k === 's'){ setStatus(l.id, st(l) === 'shortlisted' ? '' : 'shortlisted'); }
+  else if(k === 'a'){ setStatus(l.id, 'applied'); }
+  else if(k === 'x'){ setStatus(l.id, 'rejected'); }
+  else if(k === 'u'){ setStatus(l.id, ''); }
+});
+
+/* boot */
+$('sort').value = ui.sort; $('ageSel').value = String(ui.age); $('fUS').checked = ui.hideUS;
+fetch('./data.json', {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => {
+  DATA = (d.leads || []).filter(l => l.id);
+  $('synced').textContent = 'synced ' + (d.synced || '—');
+  enrich();
+  const counts = {}; DATA.forEach(l => { if(l.country) counts[l.country] = (counts[l.country] || 0) + 1; });
+  const countries = Object.keys(counts).sort((a,b) => (b === 'Canada') - (a === 'Canada') || counts[b] - counts[a]);
+  $('fCountry').insertAdjacentHTML('beforeend', countries.map(c => `<option value="${esc(c)}">${esc(c)} (${counts[c]})</option>`).join(''));
+  renderAll();
+}).catch(err => {
+  $('rows').innerHTML = `<div class="empty"><b>Couldn't load data.json</b>${esc(err.message)}<div style="margin-top:12px"><button class="btn" type="button" onclick="location.reload()">Retry</button></div></div>`;
+});
 </script>
 </body>
 </html>

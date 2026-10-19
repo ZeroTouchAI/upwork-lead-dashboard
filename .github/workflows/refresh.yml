@@ -2,15 +2,15 @@ name: Refresh Upwork lead data
 
 on:
   schedule:
-    # GitHub's scheduler can run these anywhere from on-time to a few hours late,
-    # so no time-of-day gating here anymore -- whenever this fires, it just refreshes.
-    - cron: '0 12 * * *'
-    - cron: '0 13 * * *'
-    - cron: '0 15 * * *'
+    # Every 3 hours. GitHub can start these late; the scraper looks back 24h and
+    # dedupes, so a late or skipped run just catches up on the next one.
+    - cron: '15 */3 * * *'
   workflow_dispatch: {}
 
 permissions:
   contents: write
+
+concurrency: refresh
 
 jobs:
   refresh:
@@ -18,18 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install deps
-        run: pip install google-auth google-auth-httplib2 google-api-python-client
-
-      - name: Rebuild data.json from Google Sheet
+      - name: Scrape Upwork via Apify and rebuild data.json
         env:
-          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
-          SHEET_ID: ${{ secrets.LEADS_SHEET_ID }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: python scripts/refresh_data.py
 
       - name: Commit and push if changed
