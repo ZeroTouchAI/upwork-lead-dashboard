@@ -72,7 +72,7 @@ svg{display:block}
 .nav button.on small{color:#d9d6ff}
 .nav .cnt{margin-left:auto; font-size:11.5px; font-weight:600; padding:1px 8px; border-radius:20px; color:#fff; background:var(--side-2)}
 .cnt.c-best{background:#16a36a} .cnt.c-ai{background:#2563eb} .cnt.c-web{background:#eab308; color:#3a2a00} .cnt.c-hid{background:#0d9488}
-.cnt.c-sl{background:#e8930c} .cnt.c-ap{background:#5b4ff5} .cnt.c-in{background:#7c5cff} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
+.cnt.c-sl{background:#e8930c} .cnt.c-ap{background:#5b4ff5} .cnt.c-rej{background:#e5484d}
 .nav-sep{height:1px; background:var(--side-2); margin:2px 6px}
 
 /* ---------- main ---------- */
@@ -115,7 +115,7 @@ button.kpi:hover{border-color:var(--primary)}
 .mini .sub2{font-size:11.5px; color:var(--dim); display:flex; gap:8px; flex-wrap:wrap}
 
 /* layout */
-.content{display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:16px; align-items:start}
+.content{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start}
 .list-col{display:flex; flex-direction:column; gap:12px; min-width:0}
 .tabs{display:flex; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:4px; overflow-x:auto; scrollbar-width:thin}
 .tabs button{background:none; border:0; padding:7px 12px; border-radius:7px; white-space:nowrap; color:var(--dim); font-weight:500; font-size:13px; display:flex; align-items:center; gap:6px}
@@ -229,20 +229,14 @@ button.kpi:hover{border-color:var(--primary)}
 .empty{text-align:center; padding:48px 20px; color:var(--dim); background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius)}
 .empty b{display:block; color:var(--fg); font-size:15px; margin-bottom:4px}
 
-/* performance */
-.perf{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
 .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-width:0}
 .panel h4{margin:0; font-size:13.5px; font-weight:600}
 .panel h4 small{font-weight:400; color:var(--faint); font-size:11.5px}
 .panel svg text{fill:var(--faint); font-size:10px; font-family:Inter,system-ui,sans-serif}
-.tbl{overflow-x:auto}
-table.t{border-collapse:collapse; width:100%; font-size:13px}
-table.t th, table.t td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
-table.t th{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); font-weight:600}
-table.t td.n{text-align:right; font-variant-numeric:tabular-nums}
 
-/* rail */
-.rail{display:flex; flex-direction:column; gap:12px; min-width:0}
+/* analytics */
+.rail{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; align-items:start; min-width:0}
+.rail .insight{grid-column:1/-1}
 .legend{display:flex; gap:12px; font-size:11.5px; color:var(--dim); flex-wrap:wrap}
 .legend i{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px}
 .donut{display:flex; gap:14px; align-items:center}
@@ -289,12 +283,9 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
 .toast{position:fixed; left:50%; bottom:70px; translate:-50% 0; background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:8px; font-size:13px; z-index:50}
 
 @media (max-width:1280px){
-  .content{grid-template-columns:minmax(0,1fr)}
-  .rail{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start}
-  .rail .insight{grid-column:1/-1}
 }
 @media (max-width:760px){ .rail{grid-template-columns:minmax(0,1fr)} }
-@media (max-width:1100px){ .best-row{grid-template-columns:minmax(0,1fr)} .perf{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:1100px){ .best-row{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
   .side{display:none}
@@ -331,7 +322,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
     <nav class="nav">
       <button type="button" id="navExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
       <button type="button" id="navSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings &amp; portfolio</button>
-      <button type="button" id="navKeys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard shortcuts</button>
+      <button type="button" data-view="analytics" id="navAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20v-11"/></svg>Analytics</button>
     </nav>
   </aside>
 
@@ -369,7 +360,6 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
           <div class="rows" id="rows"></div>
           <button class="btn more" id="more" type="button" hidden>Show more</button>
           <div class="empty" id="empty" hidden><b>Nothing here yet.</b><span id="emptySub"></span><div style="margin-top:12px"><button class="btn" id="clearF" type="button">Clear filters</button></div></div>
-          <div id="perfView" hidden></div>
         </div>
         <aside class="rail" id="rail"></aside>
       </div>
@@ -459,6 +449,7 @@ const DEFAULTS = {
 let settings = Object.assign({}, DEFAULTS, store.get('pf_settings', {}));
 if(typeof settings.keywords === 'string') settings.keywords = settings.keywords.split(',');
 let status = store.get('pf_status', {});   // id -> {s, t}
+for(const id in status){ const s = status[id].s; if(s === 'interviewing' || s === 'won') status[id].s = 'applied'; else if(s === 'lost') status[id].s = 'rejected'; }
 let notes  = store.get('pf_notes', {});    // id -> text
 let calc   = store.get('pf_calc', {});     // id -> {bid, rate, hours, costs, value}
 let props  = store.get('pf_props', {});    // id -> {text, t}
@@ -781,8 +772,8 @@ function saveProposal(){
 /* ================= data + state ================= */
 let DATA = [], limit = 40, focusIdx = -1, openIds = new Set();
 const f = {q:'', svc:'', exp:'', type:'', min:'', max:'', country:''};
-const STATUSES = [['shortlisted','Favorites','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'], ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
-const PIPE = ['shortlisted','applied','interviewing'];
+const STATUSES = [['shortlisted','Favorites','star','c-sl'], ['applied','Applied','send','c-ap'], ['rejected','Rejected','x','c-rej']];
+const PIPE = ['shortlisted','applied'];
 const VIEWS = {
   best:{title:"Today's best", sub:'Fresh leads (last 3 days) worth bidding on or reviewing, both businesses'},
   all:{title:'All leads', sub:'Every open lead'},
@@ -792,13 +783,12 @@ const VIEWS = {
   proposals:{title:'Proposal Studio', sub:'Every lead you have drafted a proposal for'},
   highfit:{title:'High-fit opportunities', sub:'Open leads scoring 80+'},
   new:{title:'New since last visit', sub:'Scraped since you last opened the dashboard'},
-  performance:{title:'Performance', sub:'What your bidding is producing, by business'},
-  shortlisted:{title:'Favorites', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, interviewing:{title:'Interviewing', sub:'In conversation'},
-  won:{title:'Won', sub:'Record the contract value on each card'}, lost:{title:'Lost', sub:''}, rejected:{title:'Rejected', sub:''}
+  analytics:{title:'Analytics', sub:'Open leads at a glance'},
+  shortlisted:{title:'Favorites', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, rejected:{title:'Rejected', sub:''}
 };
 
 const st = l => status[l.id]?.s || '';
-const isOpen = l => !['rejected','lost'].includes(st(l));
+const isOpen = l => st(l) !== 'rejected';
 const fresh = l => !!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY;
 
 function enrichOne(l){
@@ -825,7 +815,7 @@ function base(view = ui.view){
     const s = st(l);
     switch(view){
       case 'proposals': return !!props[l.id];
-      case 'shortlisted': case 'applied': case 'interviewing': case 'won': case 'lost': case 'rejected': return s === view;
+      case 'shortlisted': case 'applied': case 'rejected': return s === view;
     }
     if(!isOpen(l) || !fresh(l)) return false;
     if(ui.hideUS && l._us && !PIPE.includes(s)) return false;
@@ -915,13 +905,14 @@ const NAV = [
   {v:'hidden', label:'Hidden opportunities', ic:'eye', c:'c-hid'},
   {h:'Win'},
   {v:'proposals', label:'Proposal Studio', ic:'doc'},
-  ...STATUSES.map(([v,label,ic,c]) => ({v, label, ic, c})),
-  {v:'performance', label:'Performance', ic:'chart'}
+  ...STATUSES.map(([v,label,ic,c]) => ({v, label, ic, c}))
 ];
 function renderNav(){
   $('sideNav').innerHTML = NAV.map(n => n.h ? `<div class="nav-h">${n.h}</div>` :
-    `<button type="button" data-view="${n.v}" class="${ui.view === n.v ? 'on' : ''}">${icon(n.ic)}<span>${n.label}${n.sub ? `<small>${n.sub}</small>` : ''}</span>${n.v === 'performance' ? '' : `<span class="cnt num ${n.c || ''}">${base(n.v).length}</span>`}</button>`).join('');
-  $('viewSel').innerHTML = NAV.filter(n => n.v).map(n => `<option value="${n.v}" ${ui.view === n.v ? 'selected' : ''}>${n.label}${n.sub ? ' · ' + n.sub : ''}</option>`).join('');
+    `<button type="button" data-view="${n.v}" class="${ui.view === n.v ? 'on' : ''}">${icon(n.ic)}<span>${n.label}${n.sub ? `<small>${n.sub}</small>` : ''}</span><span class="cnt num ${n.c || ''}">${base(n.v).length}</span></button>`).join('');
+  $('viewSel').innerHTML = NAV.filter(n => n.v).map(n => `<option value="${n.v}" ${ui.view === n.v ? 'selected' : ''}>${n.label}${n.sub ? ' · ' + n.sub : ''}</option>`).join('')
+    + `<option value="analytics" ${ui.view === 'analytics' ? 'selected' : ''}>Analytics</option>`;
+  $('navAnalytics').classList.toggle('on', ui.view === 'analytics');
 }
 
 function spark(values, color){
@@ -942,7 +933,7 @@ function renderKpis(){
     {n:base('highfit').length, l:'High-fit opportunities', s:'Score 80+, open', c:'var(--green)', bg:'var(--green-soft)', ic:'target', v:'highfit', sp:perDay(l => l._s.total >= 80)},
     {n:base('new').length, l:'New since last visit', s:'Not yet reviewed', c:'var(--primary)', bg:'var(--primary-soft)', ic:'sparkle', v:'new', sp:perDay(() => true)},
     {n:base('shortlisted').length, l:'Ready to bid', s:'In favorites', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
-    {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} favorites, applied and interviewing`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
+    {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} favorites and applied`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
   ];
   $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-view="${k.v}">
     <div class="kpi-h"><div><div class="n num">${k.n}</div><div class="l">${k.l}</div><div class="s">${k.s}</div></div><span class="ic" style="background:${k.bg};color:${k.c}">${icon(k.ic)}</span></div>
@@ -950,7 +941,7 @@ function renderKpis(){
 }
 function renderBest(){
   const top = interleave(sortRows(base('best'))).slice(0, 3);
-  $('best').hidden = !top.length || ui.view === 'performance';
+  $('best').hidden = !top.length || ui.view === 'analytics';
   $('best').innerHTML = `<div class="best-h"><h2>Today's best opportunities</h2><span>Ranked by fit, value and client quality</span></div>
     <div class="best-row">${top.map(l => `<button type="button" class="mini" data-jump="${esc(l.id)}">
       <b>${esc(l.title)}</b><span class="sc num" style="color:${scoreColor(l._s.total)}">${l._s.total}</span>
@@ -1039,8 +1030,7 @@ function leadHtml(l, i){
           <span>Your edge</span><span>${esc(info(l).edge)}</span></div>
         ${p.warn.map(w => `<div class="warn">${esc(w)}</div>`).join('')}
         <p class="muted" style="font-size:11.5px">Advice only. You set the final price on Upwork.</p></div>
-      <div class="box" style="grid-column:1/-1"><h4>Notes${s === 'won' ? ' and contract value' : ''}</h4>
-        ${s === 'won' ? `<label class="calc" style="grid-template-columns:200px"><span style="font-size:11px;color:var(--faint);font-weight:600">Contract value ($)</span><input class="input num" type="number" min="0" data-calc="value" value="${o.value ?? ''}"></label>` : ''}
+      <div class="box" style="grid-column:1/-1"><h4>Notes</h4>
         <textarea class="note" data-note placeholder="Pitch idea, questions to ask, follow-up date…">${esc(notes[l.id] || '')}</textarea>
         ${l._dups.length ? `<div class="links"><span class="muted">Similar posts folded into this card:</span>${l._dups.map(d => `<a href="${esc(/^https:\/\//.test(d.url) ? d.url : '#')}" target="_blank" rel="noopener">${esc(d.title)} · ${ago(d._posted)}</a>`).join('')}</div>` : ''}
       </div>
@@ -1049,12 +1039,12 @@ function leadHtml(l, i){
 }
 
 function renderList(){
-  const perf = ui.view === 'performance';
-  ['recTabs','filters','countLine','rows'].forEach(id => $(id).hidden = perf);
-  $('perfView').hidden = !perf;
+  const an = ui.view === 'analytics';
+  ['recTabs','filters','countLine','rows'].forEach(id => $(id).hidden = an);
+  $('rail').hidden = !an;
   $('viewTitle').textContent = VIEWS[ui.view]?.title || '';
   $('viewSub').textContent = VIEWS[ui.view]?.sub || '';
-  if(perf){ $('more').hidden = $('empty').hidden = true; renderPerf(); return; }
+  if(an){ $('more').hidden = $('empty').hidden = true; return; }
   const pool = base();
   const recCount = r => pool.filter(l => l._s.rec === r).length;
   $('recTabs').innerHTML = [['','All', 'var(--primary)'], ['bid','Bid now','var(--green)'], ['review','Review','var(--amber)'], ['low','Low priority','var(--faint)'], ['avoid','Avoid','var(--red)']]
@@ -1068,37 +1058,6 @@ function renderList(){
   $('more').hidden = rows.length <= limit;
   $('empty').hidden = rows.length > 0;
   $('emptySub').textContent = ui.view === 'proposals' ? 'Open a lead and press Generate proposal to start a draft.' : ['best','all','AI','Website','hidden','highfit','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
-}
-
-function renderPerf(){
-  const rows = ['AI','Website'].map(cat => {
-    const L = DATA.filter(l => l.cat === cat);
-    const c = s => L.filter(l => st(l) === s).length;
-    const sent = c('applied') + c('interviewing') + c('won') + c('lost');
-    const won = L.filter(l => st(l) === 'won');
-    const value = won.reduce((s, l) => s + (+calc[l.id]?.value || l._p.bid), 0);
-    const reviewed = L.filter(l => st(l)).length;
-    return {cat, reviewed, sl:c('shortlisted'), sent, iv:c('interviewing'), won:won.length, lost:c('lost'), rej:c('rejected'), value,
-      rate: c('won') + c('lost') ? Math.round(won.length / (won.length + c('lost')) * 100) + '%' : '—'};
-  });
-  const tot = k => rows.reduce((s, r) => s + r[k], 0);
-  const bySvc = {};
-  DATA.filter(l => st(l) && st(l) !== 'rejected').forEach(l => { const b = bySvc[l.service] ||= {sent:0, won:0}; if(st(l) !== 'shortlisted') b.sent++; if(st(l) === 'won') b.won++; });
-  const svcRows = Object.entries(bySvc).sort((a,b) => b[1].won - a[1].won || b[1].sent - a[1].sent);
-  $('perfView').innerHTML = `
-    <div class="perf">
-      <div class="kpi"><div class="n num">${tot('sent')}</div><div class="l">Proposals sent</div><div class="s">Applied, interviewing, won or lost</div></div>
-      <div class="kpi"><div class="n num">${tot('iv') + tot('won')}</div><div class="l">Interviews</div><div class="s">Interviewing or won</div></div>
-      <div class="kpi"><div class="n num">${tot('won')}</div><div class="l">Won</div><div class="s">${tot('won') + tot('lost') ? Math.round(tot('won') / (tot('won') + tot('lost')) * 100) + '% of decided bids' : 'No decided bids yet'}</div></div>
-      <div class="kpi"><div class="n num">${money(tot('value'))}</div><div class="l">Contract value</div><div class="s">From the value you record on won leads</div></div>
-    </div>
-    <div class="panel"><h4>By business</h4><div class="tbl"><table class="t">
-      <tr><th>Business</th><th>Reviewed</th><th>Favorites</th><th>Sent</th><th>Interviewing</th><th>Won</th><th>Lost</th><th>Win rate</th><th>Value</th></tr>
-      ${rows.map(r => `<tr><td>${BIZ_FULL[r.cat]}</td><td class="n">${r.reviewed}</td><td class="n">${r.sl}</td><td class="n">${r.sent}</td><td class="n">${r.iv}</td><td class="n">${r.won}</td><td class="n">${r.lost}</td><td class="n">${r.rate}</td><td class="n">${money(r.value)}</td></tr>`).join('')}
-    </table></div></div>
-    <div class="panel"><h4>By service</h4>${svcRows.length ? `<div class="tbl"><table class="t"><tr><th>Service</th><th>Sent</th><th>Won</th></tr>
-      ${svcRows.map(([k,v]) => `<tr><td>${esc(k)}</td><td class="n">${v.sent}</td><td class="n">${v.won}</td></tr>`).join('')}</table></div>` : '<p class="muted" style="margin:0">Move leads through the pipeline (Favorites → Applied → Interviewing → Won/Lost) and results show up here.</p>'}</div>
-    <p class="muted" style="font-size:12px">Saved in this browser only. Export CSV to keep a copy.</p>`;
 }
 
 function renderRail(){
@@ -1141,7 +1100,7 @@ function renderRail(){
       <svg viewBox="0 0 104 104" role="img" aria-label="Open leads by recommendation"><circle cx="52" cy="52" r="${R}" fill="none" stroke="var(--line)" stroke-width="13"/>${arcs}<text x="52" y="54" text-anchor="middle" style="fill:var(--fg);font-size:18px;font-weight:700">${open.length}</text><text x="52" y="68" text-anchor="middle">open</text></svg>
       <ul>${recs.map(e => `<li><i style="background:${e.c}"></i><span>${REC[e.k].label}</span><span class="num">${e.n}</span></li>`).join('')}</ul></div></div>
     <div class="panel"><h4>Top services <small>· click to filter</small></h4><div class="kw">${svcTop.map(([k,v]) => `<button type="button" data-svc="${esc(k)}"><span class="chip ${v.cat === 'AI' ? 'ai' : 'web'}">${esc(k)}</span><span class="num">${v.n}</span></button>`).join('')}</div></div>
-    <div class="panel" id="analytics"><h4>Leads scraped <small>· last 14 days</small></h4>${chart}
+    <div class="panel"><h4>Leads scraped <small>· last 14 days</small></h4>${chart}
       <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web-bar)"></i>Website</span></div></div>`;
 }
 
@@ -1166,7 +1125,7 @@ function setView(v){ ui.view = v; ui.rec = ''; limit = 40; focusIdx = -1; saveUi
 document.addEventListener('click', e => {
   const v = e.target.closest('[data-view]'); if(v){ setView(v.dataset.view); return; }
   const r = e.target.closest('[data-rec]'); if(r){ ui.rec = r.dataset.rec; limit = 40; saveUi(); renderList(); return; }
-  const sv = e.target.closest('[data-svc]'); if(sv){ f.svc = $('fSvc').value = sv.dataset.svc; limit = 40; renderList(); $('listCol').scrollIntoView({behavior:'smooth'}); return; }
+  const sv = e.target.closest('[data-svc]'); if(sv){ if(ui.view === 'analytics'){ ui.view = 'all'; ui.rec = ''; saveUi(); } f.svc = $('fSvc').value = sv.dataset.svc; limit = 40; renderAll(); $('listCol').scrollIntoView({behavior:'smooth'}); return; }
   const j = e.target.closest('[data-jump]');
   if(j){ const id = j.dataset.jump; if(ui.view !== 'best'){ ui.view = 'best'; ui.rec = ''; } openIds.add(id); renderAll();
     document.querySelector(`.lead[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
@@ -1212,7 +1171,6 @@ $('clearF').addEventListener('click', () => {
   ['q','fSvc','fExp','fType','fMin','fMax','fCountry'].forEach(id => $(id).value = '');
   ui.rec = ''; ui.age = 0; $('ageSel').value = '0'; saveUi(); renderAll();
 });
-$('navKeys').addEventListener('click', () => $('keysDlg').showModal());
 
 /* proposal dialog */
 $('propText').addEventListener('input', saveProposal);
@@ -1250,7 +1208,7 @@ $('settingsDlg').addEventListener('close', () => {
 
 /* CSV export */
 function exportCsv(){
-  const rows = ui.view === 'performance' ? sortRows(DATA.filter(l => st(l))) : sortRows(filtered());
+  const rows = ui.view === 'analytics' ? sortRows(base('all')) : sortRows(filtered());
   const cols = ['title','business','service','recommendation','score','status','type','rateMin','rateMax','budget','suggested_bid','est_hours','effective_rate','exp','applicants','country','spent','verified','rating','us_only','hidden','posted','url','note','proposal'];
   const val = l => ({...l, business: BIZ_FULL[l.cat], recommendation: REC[l._s.rec].label, score: l._s.total, status: st(l),
     suggested_bid: rangeText(l, l._p), est_hours: l._p.hours, effective_rate: Math.round(l._p.eff), us_only: l._us ? 'yes' : '',
