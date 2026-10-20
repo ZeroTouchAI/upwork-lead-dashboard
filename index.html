@@ -17,7 +17,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --bg:#f5f6fb; --surface:#ffffff; --sunk:#f1f2f8; --line:#e5e7f0;
   --fg:#141a33; --dim:#5a6178; --faint:#8a90a6;
   --primary:#5b4ff5; --primary-soft:#ecebfe;
-  --ai:#7c5cff; --ai-soft:#efeaff; --web:#2f7cf6; --web-soft:#e8f1ff;
+  --ai:#2563eb; --ai-soft:#e6efff; --web:#b7791f; --web-soft:#fdf3d0; --web-bar:#eab308;
   --green:#16a36a; --green-soft:#e3f6ed; --amber:#e8930c; --amber-soft:#fdf2df;
   --red:#e5484d; --red-soft:#fdeaea; --cyan:#0e9fb8; --teal:#0d9488; --teal-soft:#dff5f2;
   --side:#0e1a3a; --side-2:#16244a; --side-fg:#c3cbe3; --side-faint:#7f8bb0;
@@ -29,7 +29,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --bg:#0a0d18; --surface:#121729; --sunk:#181f36; --line:#252d48;
   --fg:#eef0f8; --dim:#a3aac2; --faint:#6b7391;
   --primary:#7b70ff; --primary-soft:#24224a;
-  --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
+  --ai:#5b9bff; --ai-soft:#16264a; --web:#facc15; --web-soft:#3a3010; --web-bar:#facc15;
   --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
   --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de; --teal:#2dd4bf; --teal-soft:#0f2e2b;
   --side:#070b17; --side-2:#111a33;
@@ -38,7 +38,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --bg:#0a0d18; --surface:#121729; --sunk:#181f36; --line:#252d48;
   --fg:#eef0f8; --dim:#a3aac2; --faint:#6b7391;
   --primary:#7b70ff; --primary-soft:#24224a;
-  --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
+  --ai:#5b9bff; --ai-soft:#16264a; --web:#facc15; --web-soft:#3a3010; --web-bar:#facc15;
   --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
   --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de; --teal:#2dd4bf; --teal-soft:#0f2e2b;
   --side:#070b17; --side-2:#111a33;
@@ -71,8 +71,8 @@ svg{display:block}
 .nav button small{display:block; font-size:10.5px; color:var(--side-faint); margin-top:-1px}
 .nav button.on small{color:#d9d6ff}
 .nav .cnt{margin-left:auto; font-size:11.5px; font-weight:600; padding:1px 8px; border-radius:20px; color:#fff; background:var(--side-2)}
-.cnt.c-best{background:#16a36a} .cnt.c-ai{background:#7c5cff} .cnt.c-web{background:#2f7cf6} .cnt.c-hid{background:#0d9488}
-.cnt.c-sl{background:#e8930c} .cnt.c-ap{background:#2f7cf6} .cnt.c-in{background:#7c5cff} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
+.cnt.c-best{background:#16a36a} .cnt.c-ai{background:#2563eb} .cnt.c-web{background:#eab308; color:#3a2a00} .cnt.c-hid{background:#0d9488}
+.cnt.c-sl{background:#e8930c} .cnt.c-ap{background:#5b4ff5} .cnt.c-in{background:#7c5cff} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
 .nav-sep{height:1px; background:var(--side-2); margin:2px 6px}
 
 /* ---------- main ---------- */
@@ -140,9 +140,8 @@ button.kpi:hover{border-color:var(--primary)}
 .rows{display:flex; flex-direction:column; gap:10px}
 .rows.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
 .lead{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; display:grid; grid-template-columns:minmax(0,1fr) 84px 190px; gap:14px 18px; position:relative}
-.lead.r-bid{border-left:3px solid var(--green)}
-.lead.r-review{border-left:3px solid var(--amber)}
-.lead.r-avoid{border-left:3px solid var(--red)}
+.lead.cat-AI{border-left:4px solid var(--ai)}
+.lead.cat-Website{border-left:4px solid var(--web-bar)}
 .lead.focus{outline:2px solid var(--primary); outline-offset:1px}
 .lead-main{min-width:0; display:flex; flex-direction:column; gap:8px}
 .lead h3{margin:0; font-size:15px; line-height:1.3; letter-spacing:-.01em; cursor:pointer}
@@ -255,8 +254,8 @@ table.t td.n{text-align:right; font-variant-numeric:tabular-nums}
 .kw button{display:flex; justify-content:space-between; align-items:center; gap:8px; background:none; border:0; padding:0; text-align:left}
 .kw button span:first-child{font-size:12px; font-weight:600; padding:2px 10px; border-radius:20px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .kw button span:last-child{font-size:12px; color:var(--dim); background:var(--sunk); padding:1px 8px; border-radius:6px}
-.insight{background:var(--web-soft); border-color:transparent}
-.insight h4{color:var(--web)}
+.insight{background:var(--primary-soft); border-color:transparent}
+.insight h4{color:var(--primary)}
 .insight p{margin:0; font-size:13px; color:var(--fg)}
 
 /* bottom bar */
@@ -341,7 +340,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
         <div class="meta">
           <select class="select" id="viewSel" aria-label="Section"></select>
           <span class="synced" id="synced">syncing…</span>
-          <span class="ver">v3.1</span>
+          <span class="ver">v3.2</span>
           <select class="select" id="theme" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
           <span class="user"><span class="avatar" id="avatar">J</span><span id="userName">Jeremy</span></span>
         </div>
@@ -859,6 +858,14 @@ function filtered(){
     return true;
   });
 }
+// Mixed views alternate AI and Website so neither floods the list; the better lead goes first.
+function interleave(rows){
+  const a = rows.filter(l => l.cat === 'AI'), w = rows.filter(l => l.cat !== 'AI'), out = [];
+  const [x, y] = rows[0]?.cat === 'AI' ? [a, w] : [w, a];
+  for(let i = 0; i < Math.max(x.length, y.length); i++){ if(x[i]) out.push(x[i]); if(y[i]) out.push(y[i]); }
+  return out;
+}
+const MIXED = v => !['AI','Website'].includes(v);
 function sortRows(rows){
   const by = {
     score: (a,b) => b._s.total - a._s.total || b._posted - a._posted,
@@ -940,7 +947,7 @@ function renderKpis(){
     ${k.sp ? spark(k.sp, k.c) : ''}</button>`).join('');
 }
 function renderBest(){
-  const top = sortRows(base('best')).slice(0, 3);
+  const top = interleave(sortRows(base('best'))).slice(0, 3);
   $('best').hidden = !top.length || ui.view === 'performance';
   $('best').innerHTML = `<div class="best-h"><h2>Today's best opportunities</h2><span>Ranked by fit, value and client quality</span></div>
     <div class="best-row">${top.map(l => `<button type="button" class="mini" data-jump="${esc(l.id)}">
@@ -969,7 +976,7 @@ function leadHtml(l, i){
   const statusLabel = STATUSES.find(x => x[0] === s)?.[1];
   const stale = Date.now() - l._seen > 2 * DAY && Date.now() - l._posted > 5 * DAY;
   const o = calc[l.id] || {};
-  return `<article class="lead r-${sc.rec} ${openIds.has(l.id) ? 'open' : ''} ${i === focusIdx ? 'focus' : ''}" data-id="${esc(l.id)}" data-i="${i}">
+  return `<article class="lead cat-${l.cat} ${openIds.has(l.id) ? 'open' : ''} ${i === focusIdx ? 'focus' : ''}" data-id="${esc(l.id)}" data-i="${i}">
     <div class="lead-main">
       <div class="chips"><span class="rec ${sc.rec}" title="${esc(REC[sc.rec].why)}">${REC[sc.rec].label}</span>${l._new ? '<span class="new-b">NEW</span>' : ''}${statusLabel ? `<span class="chip st">${statusLabel}</span>` : ''}${props[l.id] ? '<span class="chip st">Draft saved</span>' : ''}</div>
       <h3 data-act="toggle">${esc(l.title)} <span class="mini-score num" style="color:${scoreColor(sc.total)};background:color-mix(in srgb, ${scoreColor(sc.total)} 14%, transparent)">${sc.total}</span></h3>
@@ -1050,7 +1057,7 @@ function renderList(){
   const recCount = r => pool.filter(l => l._s.rec === r).length;
   $('recTabs').innerHTML = [['','All', 'var(--primary)'], ['bid','Bid now','var(--green)'], ['review','Review','var(--amber)'], ['low','Low priority','var(--faint)'], ['avoid','Avoid','var(--red)']]
     .map(([r,label,c]) => `<button type="button" data-rec="${r}" class="${ui.rec === r ? 'on' : ''}" title="${r ? esc(REC[r].why) : ''}">${r ? `<i style="background:${c}"></i>` : ''}${label} <span class="num">(${r ? recCount(r) : pool.length})</span></button>`).join('');
-  const rows = sortRows(filtered());
+  const sorted = sortRows(filtered()), rows = MIXED(ui.view) ? interleave(sorted) : sorted;
   const shown = rows.slice(0, limit);
   const box = $('rows');
   box.className = 'rows ' + (ui.layout === 'grid' ? 'grid ' : '') + ui.density;
@@ -1104,7 +1111,7 @@ function renderRail(){
   keys.forEach((k,i) => {
     const x = x0 + i * bw + 2;
     if(ai[i]) barsSvg += `<rect x="${x.toFixed(1)}" y="${y(ai[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(ai[i]/top*ch).toFixed(1)}" fill="var(--ai)" rx="1.5"><title>${fmt(days[i])}: ${ai[i]} AI</title></rect>`;
-    if(web[i]) barsSvg += `<rect x="${x.toFixed(1)}" y="${y(tot[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(web[i]/top*ch).toFixed(1)}" fill="var(--web)" rx="1.5"><title>${fmt(days[i])}: ${web[i]} Website</title></rect>`;
+    if(web[i]) barsSvg += `<rect x="${x.toFixed(1)}" y="${y(tot[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(web[i]/top*ch).toFixed(1)}" fill="var(--web-bar)" rx="1.5"><title>${fmt(days[i])}: ${web[i]} Website</title></rect>`;
   });
   const grid = [0, top/2, top].map(v => `<line x1="${x0}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${x0-5}" y="${y(v)+3}" text-anchor="end">${v}</text>`).join('');
   const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Leads scraped per day for the last 14 days">${grid}${barsSvg}<text x="${x0}" y="${H-4}">${fmt(days[0])}</text><text x="${W}" y="${H-4}" text-anchor="end">${fmt(days[13])}</text></svg>`;
@@ -1133,7 +1140,7 @@ function renderRail(){
       <ul>${recs.map(e => `<li><i style="background:${e.c}"></i><span>${REC[e.k].label}</span><span class="num">${e.n}</span></li>`).join('')}</ul></div></div>
     <div class="panel"><h4>Top services <small>· click to filter</small></h4><div class="kw">${svcTop.map(([k,v]) => `<button type="button" data-svc="${esc(k)}"><span class="chip ${v.cat === 'AI' ? 'ai' : 'web'}">${esc(k)}</span><span class="num">${v.n}</span></button>`).join('')}</div></div>
     <div class="panel" id="analytics"><h4>Leads scraped <small>· last 14 days</small></h4>${chart}
-      <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web)"></i>Website</span></div></div>`;
+      <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web-bar)"></i>Website</span></div></div>`;
 }
 
 function renderAll(){
