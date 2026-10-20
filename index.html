@@ -935,7 +935,7 @@ function renderKpis(){
   const cards = [
     {n:base('highfit').length, l:'High-fit opportunities', s:'Score 80+, open', c:'var(--green)', bg:'var(--green-soft)', ic:'target', v:'highfit', sp:perDay(l => l._s.total >= 80)},
     {n:base('new').length, l:'New since last visit', s:'Not yet reviewed', c:'var(--primary)', bg:'var(--primary-soft)', ic:'sparkle', v:'new', sp:perDay(() => true)},
-    {n:base('shortlisted').length, l:'Ready to bid', s:'In favorites', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
+    {n:base('shortlisted').length, l:'Favorites to bid on', s:'Not applied yet', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
     {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} favorites and applied`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
   ];
   $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-view="${k.v}">
