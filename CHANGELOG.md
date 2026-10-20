@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-20
+- Alert email: "Open dashboard" button in the header too (plus the logo links to the dashboard).
 - "Run scraper now" asks Yes / No before opening GitHub, so it can't be clicked by accident.
 - Alert emails redesigned: Project Finder header with lightning bolt, a card per lead (business, service, score, budget, suggested bid, effective rate, client) and a View on Upwork button. Sender shows as "Project Finder".
 - Sidebar tools pinned to the bottom: Export CSV, Analytics, Run scraper now (opens the GitHub workflow), Settings & profile.

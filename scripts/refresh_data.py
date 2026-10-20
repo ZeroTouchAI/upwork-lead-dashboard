@@ -352,10 +352,11 @@ def alert_html(picks, now, test=False):
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f6fb"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%">
   <tr><td style="background:#0e1a3a;border-radius:14px 14px 0 0;padding:22px 26px;{font}">
-    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;background:#5b4ff5;background-image:linear-gradient(135deg,#8b7bff,#3b82f6);border-radius:10px;font-size:22px;line-height:42px">&#9889;</td>
-      <td style="padding-left:14px;{font}"><div style="font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-.01em">Project Finder</div>
+      <td style="padding-left:14px;{font}"><a href="{DASHBOARD}" style="text-decoration:none"><div style="font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-.01em">Project Finder</div></a>
         <div style="font-size:12px;color:#9aa5c8">Zero Touch AI · Rapid Rank Agency</div></td>
+      <td align="right" style="padding-left:16px;{font}"><a href="{DASHBOARD}" style="display:inline-block;background:#ffffff;color:#0e1a3a;font-size:12px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;white-space:nowrap">Open dashboard &rarr;</a></td>
     </tr></table>
   </td></tr>
   <tr><td style="background:#ffffff;padding:22px 26px 6px;{font}">
