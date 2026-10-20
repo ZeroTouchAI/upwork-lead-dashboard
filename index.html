@@ -381,7 +381,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
       <label>Auto-hide leads older than <select class="select" id="ageSel"><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option><option value="0">Never</option></select></label>
       <span class="grow"></span>
       <button class="btn export" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
-      <span class="hints"><kbd>?</kbd> help · <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>p</kbd> proposal · <kbd>s</kbd> shortlist · <kbd>x</kbd> reject</span>
+      <span class="hints"><kbd>?</kbd> help · <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>p</kbd> proposal · <kbd>f</kbd> favorite · <kbd>x</kbd> reject</span>
     </footer>
   </main>
 </div>
@@ -434,7 +434,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
     <tr><td><kbd>Enter</kbd></td><td>Open or close the analysis</td></tr>
     <tr><td><kbd>p</kbd></td><td>Generate proposal</td></tr>
     <tr><td><kbd>o</kbd></td><td>Open on Upwork</td></tr>
-    <tr><td><kbd>s</kbd></td><td>Shortlist</td></tr>
+    <tr><td><kbd>f</kbd></td><td>Add to favorites</td></tr>
     <tr><td><kbd>a</kbd></td><td>Mark applied</td></tr>
     <tr><td><kbd>x</kbd></td><td>Reject</td></tr>
     <tr><td><kbd>u</kbd></td><td>Clear status</td></tr>
@@ -781,7 +781,7 @@ function saveProposal(){
 /* ================= data + state ================= */
 let DATA = [], limit = 40, focusIdx = -1, openIds = new Set();
 const f = {q:'', svc:'', exp:'', type:'', min:'', max:'', country:''};
-const STATUSES = [['shortlisted','Shortlisted','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'], ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
+const STATUSES = [['shortlisted','Favorites','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'], ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
 const PIPE = ['shortlisted','applied','interviewing'];
 const VIEWS = {
   best:{title:"Today's best", sub:'Fresh leads (last 3 days) worth bidding on or reviewing, both businesses'},
@@ -793,7 +793,7 @@ const VIEWS = {
   highfit:{title:'High-fit opportunities', sub:'Open leads scoring 80+'},
   new:{title:'New since last visit', sub:'Scraped since you last opened the dashboard'},
   performance:{title:'Performance', sub:'What your bidding is producing, by business'},
-  shortlisted:{title:'Shortlisted', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, interviewing:{title:'Interviewing', sub:'In conversation'},
+  shortlisted:{title:'Favorites', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, interviewing:{title:'Interviewing', sub:'In conversation'},
   won:{title:'Won', sub:'Record the contract value on each card'}, lost:{title:'Lost', sub:''}, rejected:{title:'Rejected', sub:''}
 };
 
@@ -941,8 +941,8 @@ function renderKpis(){
   const cards = [
     {n:base('highfit').length, l:'High-fit opportunities', s:'Score 80+, open', c:'var(--green)', bg:'var(--green-soft)', ic:'target', v:'highfit', sp:perDay(l => l._s.total >= 80)},
     {n:base('new').length, l:'New since last visit', s:'Not yet reviewed', c:'var(--primary)', bg:'var(--primary-soft)', ic:'sparkle', v:'new', sp:perDay(() => true)},
-    {n:base('shortlisted').length, l:'Ready to bid', s:'Shortlisted', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
-    {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} shortlisted, applied and interviewing`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
+    {n:base('shortlisted').length, l:'Ready to bid', s:'In favorites', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
+    {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} favorites, applied and interviewing`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
   ];
   $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-view="${k.v}">
     <div class="kpi-h"><div><div class="n num">${k.n}</div><div class="l">${k.l}</div><div class="s">${k.s}</div></div><span class="ic" style="background:${k.bg};color:${k.c}">${icon(k.ic)}</span></div>
@@ -997,7 +997,7 @@ function leadHtml(l, i){
       <div class="actions">
         <a class="btn go" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
         <button type="button" class="btn prop" data-act="proposal">${icon('doc')}${props[l.id] ? 'Edit proposal' : 'Generate proposal'}</button>
-        <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Shortlisted' : 'Shortlist'}</button>
+        <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Favorited' : 'Favorite'}</button>
         ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button>`}
         <select class="status-sel" data-act="status" aria-label="Pipeline status">
           <option value="">Move to…</option>${STATUSES.map(([v,lab]) => `<option value="${v}" ${s === v ? 'selected' : ''}>${lab}</option>`).join('')}<option value="clear">Clear status</option>
@@ -1093,11 +1093,11 @@ function renderPerf(){
       <div class="kpi"><div class="n num">${money(tot('value'))}</div><div class="l">Contract value</div><div class="s">From the value you record on won leads</div></div>
     </div>
     <div class="panel"><h4>By business</h4><div class="tbl"><table class="t">
-      <tr><th>Business</th><th>Reviewed</th><th>Shortlisted</th><th>Sent</th><th>Interviewing</th><th>Won</th><th>Lost</th><th>Win rate</th><th>Value</th></tr>
+      <tr><th>Business</th><th>Reviewed</th><th>Favorites</th><th>Sent</th><th>Interviewing</th><th>Won</th><th>Lost</th><th>Win rate</th><th>Value</th></tr>
       ${rows.map(r => `<tr><td>${BIZ_FULL[r.cat]}</td><td class="n">${r.reviewed}</td><td class="n">${r.sl}</td><td class="n">${r.sent}</td><td class="n">${r.iv}</td><td class="n">${r.won}</td><td class="n">${r.lost}</td><td class="n">${r.rate}</td><td class="n">${money(r.value)}</td></tr>`).join('')}
     </table></div></div>
     <div class="panel"><h4>By service</h4>${svcRows.length ? `<div class="tbl"><table class="t"><tr><th>Service</th><th>Sent</th><th>Won</th></tr>
-      ${svcRows.map(([k,v]) => `<tr><td>${esc(k)}</td><td class="n">${v.sent}</td><td class="n">${v.won}</td></tr>`).join('')}</table></div>` : '<p class="muted" style="margin:0">Move leads through the pipeline (Shortlist → Applied → Interviewing → Won/Lost) and results show up here.</p>'}</div>
+      ${svcRows.map(([k,v]) => `<tr><td>${esc(k)}</td><td class="n">${v.sent}</td><td class="n">${v.won}</td></tr>`).join('')}</table></div>` : '<p class="muted" style="margin:0">Move leads through the pipeline (Favorites → Applied → Interviewing → Won/Lost) and results show up here.</p>'}</div>
     <p class="muted" style="font-size:12px">Saved in this browser only. Export CSV to keep a copy.</p>`;
 }
 
@@ -1280,7 +1280,7 @@ document.addEventListener('keydown', e => {
   else if(k === 'Enter'){ openIds.has(l.id) ? openIds.delete(l.id) : openIds.add(l.id); cur.outerHTML = leadHtml(l, focusIdx); }
   else if(k === 'p'){ e.preventDefault(); openProposal(l.id); }
   else if(k === 'o') cur.querySelector('.btn.go').click();
-  else if(k === 's') setStatus(l.id, st(l) === 'shortlisted' ? '' : 'shortlisted');
+  else if(k === 'f' || k === 's') setStatus(l.id, st(l) === 'shortlisted' ? '' : 'shortlisted');
   else if(k === 'a') setStatus(l.id, 'applied');
   else if(k === 'x') setStatus(l.id, 'rejected');
   else if(k === 'u') setStatus(l.id, '');
