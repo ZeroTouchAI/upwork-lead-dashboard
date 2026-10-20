@@ -47,7 +47,7 @@ RELEVANT = {
 NOISE = re.compile(r"\b(ebay|amazon (seller|listing|fba|store)|etsy|data entry|virtual assistant|back ?links?|"
                    r"video edit\w*|bookkeep\w*|appointment sett\w*|cold call\w*|tiktok shop|native speakers?|"
                    r"recording|sme|subject matter expert|ai (evaluation|model trainer)|training data|rlhf|annotat\w*|"
-                   r"lead lists?|sales (partner|closer|rep\w*)|sdr|account executive|klaviyo|ugc)\b", re.I)
+                   r"lead lists?|sales (partner|closer|rep\w*)|sdr|account (executive|managers?)|commission[- ]only|100% commission|klaviyo|ugc)\b", re.I)
 
 
 # Business problems that imply a service, even when the client doesn't name the tech.
