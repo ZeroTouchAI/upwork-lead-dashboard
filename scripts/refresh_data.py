@@ -11,12 +11,48 @@ ACTOR = "blackfalcondata~upwork-scraper"
 DATA = os.path.join(os.path.dirname(__file__), "..", "data.json")
 ET = ZoneInfo("America/Toronto")
 KEEP_DAYS = 90
+# Upwork search per category (Upwork matches ALL words; OR joins alternatives).
 SEARCHES = {
-    "AI": '"AI automation" OR "AI agent" OR chatbot OR n8n OR "make.com" OR zapier OR openai OR chatgpt OR llm OR rag OR "voice agent"',
-    "Website": 'website OR wordpress OR shopify OR webflow OR wix OR "landing page" OR "web design"',
+    "AI": 'AI OR "artificial intelligence" OR chatbot OR chatgpt OR openai OR claude OR gemini OR llm OR gpt OR '
+          '"machine learning" OR "voice agent" OR "AI agent" OR n8n OR "make.com" OR zapier',
+    "Website": 'website OR "web design" OR "web developer" OR wordpress OR shopify OR webflow OR wix OR squarespace OR '
+               '"landing page" OR redesign OR "web hosting" OR "website maintenance"',
 }
+# A job is kept only if its title or skills hit WORDS, or its description hits PHRASES. Upwork's
+# search also matches loose mentions ("eBay help" because the post says "website"), so we re-check.
+RELEVANT = {
+    "AI": {
+        "words": re.compile(r"\b(ai|a\.i\.|artificial intelligence|chat ?bots?|chatgpt|gpt|openai|claude|gemini|llms?|"
+                            r"machine learning|ml|deep learning|nlp|computer vision|agents?|agentic|rag|prompt|voice|"
+                            r"n8n|make\.com|zapier|automation|automate|mcp|openrouter|comfyui|stable diffusion|midjourney|image generation|speech|tts)\b", re.I),
+        "phrases": re.compile(r"\b(ai (agent|assistant|tool|app|model|automation|integration|chatbot|voice|tutor|course|training|consult\w*)|"
+                              r"artificial intelligence|chatbot|chatgpt|openai|llm|machine learning|voice (ai|agent)|"
+                              r"learn (to use )?ai|ai-powered)\b", re.I),
+    },
+    "Website": {
+        "words": re.compile(r"\b(web ?sites?|web ?design\w*|web ?develop\w*|web ?pages?|wordpress|woocommerce|shopify|"
+                            r"webflow|wix|squarespace|framer|elementor|divi|landing pages?|redesign|re-design|hosting|"
+                            r"web|domain|cpanel|magento|funnels?|go ?high ?level|ghl|site (maintenance|migration|speed|fix|update)|front ?end|html|css)\b", re.I),
+        "phrases": re.compile(r"\b((new|build|redesign|update|upgrade|fix|maintain|migrate|host) (a |my |our |the )?(web ?site|site)|"
+                              r"web ?site (redesign|maintenance|hosting|update|upgrade|migration|build)|web hosting|"
+                              r"wordpress (site|website|developer)|shopify (store|site|developer)|landing page)\b", re.I),
+    },
+}
+# Never wanted, whatever the category (checked against the title only).
+NOISE = re.compile(r"\b(ebay|amazon (seller|listing|fba|store)|etsy|data entry|virtual assistant|back ?links?|"
+                   r"video edit\w*|bookkeep\w*|appointment sett\w*|cold call\w*|tiktok shop)\b", re.I)
+
+
+def relevant(l):
+    if NOISE.search(l["title"]):
+        return False
+    r = RELEVANT.get(l["cat"])
+    head = l["title"] + " " + " ".join(l.get("skills") or [])
+    return not r or bool(r["words"].search(head) or r["phrases"].search(l["desc"]))
+
+
 COMMON = {
-    "maxResults": 50, "maxAgeMinutes": 1440, "sort": "newest",
+    "maxResults": 80, "maxAgeMinutes": 1440, "sort": "newest",
     "incrementalMode": True, "descriptionFormat": "text", "descriptionMaxLength": 3000,
 }
 
@@ -128,7 +164,7 @@ def main():
                 leads[l["id"]] = l
 
     cutoff = iso(now - timedelta(days=KEEP_DAYS))
-    final = sorted((l for l in leads.values() if l["scraped"] >= cutoff), key=lambda l: l["posted"], reverse=True)
+    final = sorted((l for l in leads.values() if l["scraped"] >= cutoff and relevant(l)), key=lambda l: l["posted"], reverse=True)
     synced = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
