@@ -15,3 +15,12 @@ leg = r.from_legacy({"title": "t", "desc": "d", "url": "u", "cat": "AI", "jobid"
 assert leg["exp"] == "Intermediate" and (leg["rateMin"], leg["rateMax"]) == (25.0, 40.0) and leg["workload"] == "Less than 30 hrs/week"
 assert leg["posted"] < leg["scraped"] and leg["posted"].startswith("2026-10-16"), leg["posted"]
 print("ok")
+c = lambda title, desc="": r.classify({"title": title, "desc": desc})
+assert c("EBay help", "update my website") is None
+assert c("AI Trainer for Live Zoom Workshops for Business Teams") == "AI"
+assert c("Full-Stack Developer Needed - Quote for Complete Website, iOS & Android App") == "Website"
+assert c("Website Developer + SEO + Google Ads") == "Website"
+assert c("WordPress AI chatbot plugin") == "AI"
+assert c("Internal Medicine SME - AI Evaluation") is None
+assert c("Help with my business", "We need to redesign our website") == "Website"
+print("classify ok")

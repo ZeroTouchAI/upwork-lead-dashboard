@@ -18,8 +18,9 @@ SEARCHES = {
     "Website": 'website OR "web design" OR "web developer" OR wordpress OR shopify OR webflow OR wix OR squarespace OR '
                '"landing page" OR redesign OR "web hosting" OR "website maintenance"',
 }
-# A job is kept only if its title or skills hit WORDS, or its description hits PHRASES. Upwork's
-# search also matches loose mentions ("eBay help" because the post says "website"), so we re-check.
+# Upwork's search matches loose mentions ("eBay help" because the post says "website"), so each job
+# is re-sorted by what it is actually about: its title hits WORDS, or failing that its description
+# hits PHRASES. AI is checked first. Jobs that match neither category are dropped.
 RELEVANT = {
     "AI": {
         "words": re.compile(r"\b(ai|a\.i\.|artificial intelligence|chat ?bots?|chatgpt|gpt|openai|claude|gemini|llms?|"
@@ -40,15 +41,20 @@ RELEVANT = {
 }
 # Never wanted, whatever the category (checked against the title only).
 NOISE = re.compile(r"\b(ebay|amazon (seller|listing|fba|store)|etsy|data entry|virtual assistant|back ?links?|"
-                   r"video edit\w*|bookkeep\w*|appointment sett\w*|cold call\w*|tiktok shop)\b", re.I)
+                   r"video edit\w*|bookkeep\w*|appointment sett\w*|cold call\w*|tiktok shop|native speakers?|"
+                   r"recording|sme|subject matter expert|ai (evaluation|model trainer)|training data|rlhf|annotat\w*|"
+                   r"lead lists?|sales (partner|closer|rep\w*)|sdr|account executive|klaviyo|ugc)\b", re.I)
 
 
-def relevant(l):
+def classify(l):
+    """'AI', 'Website', or None to drop."""
     if NOISE.search(l["title"]):
-        return False
-    r = RELEVANT.get(l["cat"])
-    head = l["title"] + " " + " ".join(l.get("skills") or [])
-    return not r or bool(r["words"].search(head) or r["phrases"].search(l["desc"]))
+        return None
+    for key, field in (("words", "title"), ("phrases", "desc")):
+        for cat, r in RELEVANT.items():
+            if r[key].search(l[field]):
+                return cat
+    return None
 
 
 COMMON = {
@@ -163,8 +169,10 @@ def main():
                     added += 1
                 leads[l["id"]] = l
 
+    for l in leads.values():
+        l["cat"] = classify(l)
     cutoff = iso(now - timedelta(days=KEEP_DAYS))
-    final = sorted((l for l in leads.values() if l["scraped"] >= cutoff and relevant(l)), key=lambda l: l["posted"], reverse=True)
+    final = sorted((l for l in leads.values() if l["scraped"] >= cutoff and l["cat"]), key=lambda l: l["posted"], reverse=True)
     synced = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
