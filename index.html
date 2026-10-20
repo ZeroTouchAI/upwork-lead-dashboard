@@ -19,7 +19,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --primary:#5b4ff5; --primary-soft:#ecebfe;
   --ai:#7c5cff; --ai-soft:#efeaff; --web:#2f7cf6; --web-soft:#e8f1ff;
   --green:#16a36a; --green-soft:#e3f6ed; --amber:#e8930c; --amber-soft:#fdf2df;
-  --red:#e5484d; --red-soft:#fdeaea; --cyan:#0e9fb8;
+  --red:#e5484d; --red-soft:#fdeaea; --cyan:#0e9fb8; --teal:#0d9488; --teal-soft:#dff5f2;
   --side:#0e1a3a; --side-2:#16244a; --side-fg:#c3cbe3; --side-faint:#7f8bb0;
   --shadow:0 1px 2px rgba(20,26,51,.04), 0 2px 8px rgba(20,26,51,.04);
   --radius:12px;
@@ -31,7 +31,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --primary:#7b70ff; --primary-soft:#24224a;
   --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
   --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
-  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de;
+  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de; --teal:#2dd4bf; --teal-soft:#0f2e2b;
   --side:#070b17; --side-2:#111a33;
   --shadow:none; color-scheme:dark; } }
 :root[data-theme="dark"]{
@@ -40,7 +40,7 @@ try{ const t = localStorage.getItem('pf_theme'); if(t === 'light' || t === 'dark
   --primary:#7b70ff; --primary-soft:#24224a;
   --ai:#9b82ff; --ai-soft:#251f45; --web:#5b9bff; --web-soft:#16264a;
   --green:#3cc58a; --green-soft:#12301f; --amber:#f2a93b; --amber-soft:#33260f;
-  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de;
+  --red:#ff6b6f; --red-soft:#3a1719; --cyan:#3cc8de; --teal:#2dd4bf; --teal-soft:#0f2e2b;
   --side:#070b17; --side-2:#111a33;
   --shadow:none; color-scheme:dark; }
 
@@ -53,26 +53,27 @@ button{cursor:pointer}
 [hidden]{display:none!important}
 svg{display:block}
 .num{font-variant-numeric:tabular-nums}
+.muted{color:var(--faint)}
 
-.app{display:grid; grid-template-columns:232px minmax(0,1fr); min-height:100vh}
+.app{display:grid; grid-template-columns:240px minmax(0,1fr); min-height:100vh}
 
 /* ---------- sidebar ---------- */
-.side{background:var(--side); color:var(--side-fg); padding:20px 14px; display:flex; flex-direction:column; gap:18px; position:sticky; top:0; height:100vh; overflow-y:auto}
-.brand{display:flex; gap:10px; align-items:center; padding:0 6px 16px; border-bottom:1px solid var(--side-2)}
-.brand b{display:block; color:#fff; font-size:17px; letter-spacing:-.01em}
+.side{background:var(--side); color:var(--side-fg); padding:20px 14px; display:flex; flex-direction:column; gap:14px; position:sticky; top:0; height:100vh; overflow-y:auto}
+.brand{display:flex; gap:10px; align-items:center; padding:0 6px 14px; border-bottom:1px solid var(--side-2)}
+.brand b{display:block; color:#fff; font-size:16px; letter-spacing:-.01em}
 .brand small{font-size:11px; color:var(--side-faint)}
 .nav{display:flex; flex-direction:column; gap:2px}
-.nav button{display:flex; align-items:center; gap:12px; width:100%; background:none; border:0; color:var(--side-fg); padding:9px 12px; border-radius:9px; text-align:left; font-size:13.5px}
+.nav-h{font-size:10.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--side-faint); padding:6px 12px 2px}
+.nav button{display:flex; align-items:center; gap:11px; width:100%; background:none; border:0; color:var(--side-fg); padding:8px 12px; border-radius:9px; text-align:left; font-size:13.5px}
 .nav button:hover{background:var(--side-2); color:#fff}
 .nav button.on{background:linear-gradient(90deg,#5b4ff5,#7c5cff); color:#fff}
-.nav button svg{width:18px; height:18px; flex-shrink:0}
+.nav button svg{width:17px; height:17px; flex-shrink:0}
+.nav button small{display:block; font-size:10.5px; color:var(--side-faint); margin-top:-1px}
+.nav button.on small{color:#d9d6ff}
 .nav .cnt{margin-left:auto; font-size:11.5px; font-weight:600; padding:1px 8px; border-radius:20px; color:#fff; background:var(--side-2)}
-.cnt.c-ai{background:#7c5cff} .cnt.c-web{background:#2f7cf6} .cnt.c-sl{background:#16a36a} .cnt.c-ap{background:#2f7cf6}
-.cnt.c-in{background:#e8930c} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
-.nav-sep{height:1px; background:var(--side-2); margin:4px 6px}
-.promo{margin-top:auto; background:linear-gradient(135deg,#3b2fc9,#5b4ff5); border-radius:12px; padding:16px; color:#fff}
-.promo b{font-size:15px; display:block; line-height:1.25}
-.promo p{margin:8px 0 0; font-size:12px; color:#d9d6ff}
+.cnt.c-best{background:#16a36a} .cnt.c-ai{background:#7c5cff} .cnt.c-web{background:#2f7cf6} .cnt.c-hid{background:#0d9488}
+.cnt.c-sl{background:#e8930c} .cnt.c-ap{background:#2f7cf6} .cnt.c-in{background:#7c5cff} .cnt.c-won{background:#16a36a} .cnt.c-rej{background:#e5484d}
+.nav-sep{height:1px; background:var(--side-2); margin:2px 6px}
 
 /* ---------- main ---------- */
 main{min-width:0; display:flex; flex-direction:column}
@@ -87,26 +88,43 @@ main{min-width:0; display:flex; flex-direction:column}
 .select, .input{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:12.5px; min-width:0}
 .user{display:flex; align-items:center; gap:8px; font-weight:500}
 .avatar{width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#7c5cff,#2f7cf6); color:#fff; display:grid; place-items:center; font-size:12px; font-weight:700}
+#viewSel{display:none}
 
 /* KPIs */
-.kpis{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px}
+.kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
 .kpi{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:2px; min-width:0; text-align:left}
 button.kpi:hover{border-color:var(--primary)}
 .kpi-h{display:flex; justify-content:space-between; align-items:flex-start; gap:8px}
 .kpi .n{font-size:26px; font-weight:700; letter-spacing:-.02em; line-height:1.1}
-.kpi .l{color:var(--dim); font-size:12.5px}
+.kpi .l{color:var(--fg); font-size:13px; font-weight:600}
+.kpi .s{color:var(--faint); font-size:11.5px}
 .kpi .ic{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex-shrink:0}
 .kpi .ic svg{width:18px; height:18px}
-.kpi .delta{font-size:11px; font-weight:600; color:var(--green); background:var(--green-soft); padding:2px 7px; border-radius:6px; white-space:nowrap}
-.kpi svg.spark{width:100%; height:30px; margin-top:6px}
+.kpi svg.spark{width:100%; height:26px; margin-top:6px}
+
+/* today's best */
+.best{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px; display:flex; flex-direction:column; gap:10px}
+.best-h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.best-h h2{margin:0; font-size:15px}
+.best-h span{font-size:12px; color:var(--faint)}
+.best-row{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+.mini{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--sunk); text-align:left; cursor:pointer}
+.mini:hover{border-color:var(--primary)}
+.mini b{font-size:13px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.mini .sc{grid-row:span 2; align-self:center; font-size:20px; font-weight:700}
+.mini .sub2{font-size:11.5px; color:var(--dim); display:flex; gap:8px; flex-wrap:wrap}
 
 /* layout */
 .content{display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:16px; align-items:start}
 .list-col{display:flex; flex-direction:column; gap:12px; min-width:0}
-.tabs{scrollbar-width:thin; display:flex; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:4px; overflow-x:auto}
-.tabs button{background:none; border:0; padding:7px 12px; border-radius:7px; white-space:nowrap; color:var(--dim); font-weight:500; font-size:13px}
+.tabs{display:flex; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:4px; overflow-x:auto; scrollbar-width:thin}
+.tabs button{background:none; border:0; padding:7px 12px; border-radius:7px; white-space:nowrap; color:var(--dim); font-weight:500; font-size:13px; display:flex; align-items:center; gap:6px}
 .tabs button:hover{color:var(--fg); background:var(--sunk)}
 .tabs button.on{background:var(--primary); color:#fff}
+.tabs button i{width:8px; height:8px; border-radius:50%}
+.view-title{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.view-title h2{margin:0; font-size:17px}
+.view-title span{color:var(--dim); font-size:12.5px}
 .filters{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
 .search{flex:1 1 220px; position:relative}
 .search input{width:100%; padding:9px 34px 9px 12px; font-size:13px}
@@ -121,86 +139,121 @@ button.kpi:hover{border-color:var(--primary)}
 /* lead cards */
 .rows{display:flex; flex-direction:column; gap:10px}
 .rows.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
-.lead{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; display:grid; grid-template-columns:minmax(0,1fr) 84px 170px; gap:18px; position:relative}
-.lead.best{background:linear-gradient(180deg, var(--green-soft), var(--surface) 70%); border-color:color-mix(in srgb, var(--green) 35%, var(--line))}
+.lead{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; display:grid; grid-template-columns:minmax(0,1fr) 84px 190px; gap:14px 18px; position:relative}
+.lead.r-bid{border-left:3px solid var(--green)}
+.lead.r-review{border-left:3px solid var(--amber)}
+.lead.r-avoid{border-left:3px solid var(--red)}
 .lead.focus{outline:2px solid var(--primary); outline-offset:1px}
 .lead-main{min-width:0; display:flex; flex-direction:column; gap:8px}
-.ribbon{align-self:flex-start; font-size:10px; font-weight:700; letter-spacing:.06em; color:#fff; background:var(--green); padding:2px 7px; border-radius:4px}
 .lead h3{margin:0; font-size:15px; line-height:1.3; letter-spacing:-.01em; cursor:pointer}
 .lead h3:hover{color:var(--primary)}
 .desc{margin:0; color:var(--dim); font-size:12.5px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer}
-.lead.open .desc{display:block; -webkit-line-clamp:unset; max-height:50vh; overflow-y:auto; white-space:pre-wrap}
+.lead.open .desc{display:block; -webkit-line-clamp:unset; max-height:40vh; overflow-y:auto; white-space:pre-wrap}
 .chips{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
 .chip{font-size:11.5px; font-weight:600; padding:2px 9px; border-radius:20px; white-space:nowrap; border:1px solid transparent}
 .chip.ai{color:var(--ai); background:var(--ai-soft)} .chip.web{color:var(--web); background:var(--web-soft)}
-.chip.exp-Expert{color:var(--ai); background:var(--ai-soft)} .chip.exp-Intermediate{color:var(--web); background:var(--web-soft)} .chip.exp-Entry{color:var(--dim); background:var(--sunk)}
+.chip.svc{color:var(--dim); background:var(--sunk)}
+.chip.hid{color:var(--teal); background:var(--teal-soft)}
 .chip.us{color:var(--red); background:var(--red-soft)} .chip.ok{color:var(--green); background:var(--green-soft)}
 .chip.st{color:var(--amber); background:var(--amber-soft)}
-.chip.skill{color:var(--dim); background:transparent; border-color:var(--line); font-weight:500}
+.chip.stale{color:var(--faint); border-color:var(--line)}
+.chip.dup{color:var(--dim); border-color:var(--line); background:transparent}
+.rec{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:5px; color:#fff; white-space:nowrap}
+.rec.bid{background:var(--green)} .rec.review{background:var(--amber)} .rec.low{background:var(--faint)} .rec.avoid{background:var(--red)}
+.new-b{font-size:10px; font-weight:700; letter-spacing:.06em; color:var(--green); border:1px solid var(--green); padding:1px 7px; border-radius:20px}
 .client{font-size:12px; color:var(--dim); display:flex; gap:4px 12px; flex-wrap:wrap}
-.client .good{color:var(--green)} .client .bad{color:var(--red)}
+.good{color:var(--green)} .bad{color:var(--red)} .unk{color:var(--faint); font-style:italic}
 .actions{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:2px}
 .btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--surface); color:var(--dim); font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:8px; text-decoration:none; white-space:nowrap}
 .btn:hover{border-color:var(--primary); color:var(--primary)}
 .btn svg{width:14px; height:14px}
 .btn.go{background:var(--primary); border-color:var(--primary); color:#fff}
 .btn.go:hover{filter:brightness(1.08); color:#fff}
+.btn.prop{color:var(--primary); border-color:var(--primary); background:var(--primary-soft)}
 .btn.sl.on{background:var(--amber-soft); border-color:var(--amber); color:var(--amber)}
 .btn.rj{color:var(--red); border-color:color-mix(in srgb, var(--red) 40%, var(--line))}
 .btn.rj:hover{background:var(--red-soft); color:var(--red); border-color:var(--red)}
-.btn.has-note{color:var(--primary); border-color:var(--primary)}
 .status-sel{font-size:12px; padding:5px 8px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--dim)}
-.note{width:100%; min-height:64px; border:1px solid var(--line); border-radius:8px; background:var(--sunk); padding:8px 10px; font-size:12.5px; resize:vertical}
 .scraped{font-size:11.5px; color:var(--faint)}
-.ring{display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:16px}
-.ring-wrap{position:relative; width:72px; height:72px; cursor:help}
+.ring{display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:4px}
+.ring-wrap{position:relative; width:72px; height:72px}
 .ring-wrap svg{width:72px; height:72px; transform:rotate(-90deg)}
 .ring-txt{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center}
 .ring-txt b{font-size:21px; line-height:1}
 .ring-txt small{font-size:8.5px; font-weight:700; letter-spacing:.06em; color:var(--faint)}
 .lead-meta{border-left:1px solid var(--line); padding-left:16px; display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--dim); min-width:0}
-.lead-meta .type{font-weight:600; color:var(--fg); font-size:13.5px}
+.lead-meta .type{font-weight:600; color:var(--fg); font-size:13px}
 .lead-meta .amt{font-weight:600; color:var(--fg); font-size:14px}
-.lead-meta .row{display:flex; gap:6px; align-items:center}
-.lead-meta .row svg{width:14px; height:14px; flex-shrink:0; color:var(--faint)}
-.lead-meta .bid{margin-top:4px; padding-top:6px; border-top:1px dashed var(--line)}
-.lead-meta .bid b{color:var(--fg)}
-.new-b{position:absolute; top:12px; right:12px; font-size:10px; font-weight:700; letter-spacing:.06em; color:#fff; background:var(--green); padding:2px 7px; border-radius:20px}
+.lead-meta .row{display:flex; gap:6px; align-items:flex-start}
+.lead-meta .row svg{width:14px; height:14px; flex-shrink:0; color:var(--faint); margin-top:2px}
+.lead-meta .eff{margin-top:4px; padding-top:6px; border-top:1px dashed var(--line)}
+.lead-meta .eff b{color:var(--fg)}
+
+/* expanded intel */
+.intel{grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding-top:12px; border-top:1px solid var(--line)}
+.lead:not(.open) .intel{display:none}
+.box{background:var(--sunk); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.box h4{margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); font-weight:600; display:flex; justify-content:space-between; gap:8px}
+.box p{margin:0; font-size:12.5px}
+.bars{display:flex; flex-direction:column; gap:7px}
+.bar-r{display:grid; grid-template-columns:130px minmax(0,1fr) 44px; gap:8px; align-items:center; font-size:12px}
+.bar-r .track{height:7px; background:var(--line); border-radius:4px; overflow:hidden}
+.bar-r .fill{height:100%; border-radius:4px}
+.bar-r b{text-align:right; font-size:12px}
+.est{font-size:9.5px; font-weight:600; color:var(--faint); border:1px solid var(--line); border-radius:4px; padding:0 4px; margin-left:4px; text-transform:uppercase; letter-spacing:.04em}
+.kv{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; font-size:12.5px}
+.kv span:nth-child(odd){color:var(--faint)}
+.verdict{font-size:12.5px; padding:8px 10px; border-radius:8px; background:var(--surface)}
+.calc{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.calc label{display:flex; flex-direction:column; gap:3px; font-size:11px; color:var(--faint); font-weight:600}
+.calc input{width:100%; padding:5px 8px; color:var(--fg)}
+.calc-out{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; font-size:11px; color:var(--faint)}
+.calc-out b{display:block; font-size:16px; color:var(--fg)}
+.warn{font-size:12px; color:var(--amber); background:var(--amber-soft); border-radius:8px; padding:6px 10px}
+.flag-l{font-size:12px; color:var(--red)}
+.note{width:100%; min-height:56px; border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:8px 10px; font-size:12.5px; resize:vertical}
+.links{display:flex; flex-direction:column; gap:3px; font-size:12px}
+.links a{color:var(--primary)}
 
 /* compact density */
-.rows.compact .lead{grid-template-columns:minmax(0,1fr) auto; padding:10px 14px; gap:12px; align-items:center}
-.rows.compact .lead .desc, .rows.compact .lead .client, .rows.compact .lead .actions, .rows.compact .lead .scraped, .rows.compact .lead .ribbon, .rows.compact .lead .skills, .rows.compact .lead .ring{display:none}
-.rows.compact .lead.open .desc, .rows.compact .lead.open .client, .rows.compact .lead.open .actions{display:flex}
-.rows.compact .lead.open .desc{display:block}
+.rows.compact .lead{grid-template-columns:minmax(0,1fr) auto; padding:10px 14px; gap:10px; align-items:center}
+.rows.compact .lead:not(.open) :is(.desc, .client, .actions, .scraped, .ring){display:none}
 .rows.compact .lead-meta{border:0; padding:0; flex-direction:row; gap:12px; align-items:center; white-space:nowrap}
-.rows.compact .lead-meta .bid, .rows.compact .lead-meta .row.dur{display:none}
+.rows.compact .lead-meta :is(.eff, .dur, .cx){display:none}
 .rows.compact .mini-score{display:inline-block}
 .mini-score{display:none; font-weight:700; font-size:12px; padding:1px 8px; border-radius:20px}
 .rows.grid .lead{grid-template-columns:minmax(0,1fr) 84px}
 .rows.grid .lead-meta{grid-column:1/-1; border-left:0; border-top:1px solid var(--line); padding:10px 0 0; flex-direction:row; flex-wrap:wrap; gap:6px 14px}
+.rows.grid .intel{grid-template-columns:minmax(0,1fr)}
 
 .more{align-self:center}
 .empty{text-align:center; padding:48px 20px; color:var(--dim); background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius)}
 .empty b{display:block; color:var(--fg); font-size:15px; margin-bottom:4px}
 
-/* rail */
-.rail{display:flex; flex-direction:column; gap:12px; min-width:0}
-.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px; display:flex; flex-direction:column; gap:10px}
+/* performance */
+.perf{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-width:0}
 .panel h4{margin:0; font-size:13.5px; font-weight:600}
 .panel h4 small{font-weight:400; color:var(--faint); font-size:11.5px}
 .panel svg text{fill:var(--faint); font-size:10px; font-family:Inter,system-ui,sans-serif}
-.legend{display:flex; gap:12px; font-size:11.5px; color:var(--dim)}
+.tbl{overflow-x:auto}
+table.t{border-collapse:collapse; width:100%; font-size:13px}
+table.t th, table.t td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+table.t th{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); font-weight:600}
+table.t td.n{text-align:right; font-variant-numeric:tabular-nums}
+
+/* rail */
+.rail{display:flex; flex-direction:column; gap:12px; min-width:0}
+.legend{display:flex; gap:12px; font-size:11.5px; color:var(--dim); flex-wrap:wrap}
 .legend i{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px}
 .donut{display:flex; gap:14px; align-items:center}
-.donut svg{width:110px; height:110px; flex-shrink:0}
+.donut svg{width:104px; height:104px; flex-shrink:0}
 .donut ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12px; flex:1; min-width:0}
-.donut li{display:grid; grid-template-columns:10px 1fr auto auto; gap:6px; align-items:center}
+.donut li{display:grid; grid-template-columns:10px 1fr auto; gap:6px; align-items:center}
 .donut li i{width:8px; height:8px; border-radius:50%}
-.donut li span:last-child{color:var(--faint); width:30px; text-align:right}
 .kw{display:flex; flex-direction:column; gap:6px}
-.kw button{display:flex; justify-content:space-between; align-items:center; background:none; border:0; padding:0; text-align:left}
-.kw button span:first-child{font-size:12px; font-weight:600; padding:2px 10px; border-radius:20px; color:var(--ai); background:var(--ai-soft)}
-.kw button:nth-child(even) span:first-child{color:var(--web); background:var(--web-soft)}
+.kw button{display:flex; justify-content:space-between; align-items:center; gap:8px; background:none; border:0; padding:0; text-align:left}
+.kw button span:first-child{font-size:12px; font-weight:600; padding:2px 10px; border-radius:20px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .kw button span:last-child{font-size:12px; color:var(--dim); background:var(--sunk); padding:1px 8px; border-radius:6px}
 .insight{background:var(--web-soft); border-color:transparent}
 .insight h4{color:var(--web)}
@@ -219,39 +272,50 @@ button.kpi:hover{border-color:var(--primary)}
 .hints{font-size:11.5px; color:var(--faint)}
 kbd{font:11px ui-monospace,Consolas,monospace; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 4px; background:var(--sunk); color:var(--dim)}
 
-dialog{border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--fg); padding:22px; width:min(520px, calc(100vw - 32px)); box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog{border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--fg); padding:22px; width:min(560px, calc(100vw - 32px)); max-height:calc(100vh - 40px); box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog.wide{width:min(820px, calc(100vw - 32px))}
 dialog::backdrop{background:rgba(10,13,24,.45)}
-dialog h2{margin:0 0 14px; font-size:18px}
+dialog h2{margin:0 0 4px; font-size:18px}
+dialog .dsub{color:var(--dim); font-size:12.5px; margin:0 0 14px}
 dialog label{display:flex; flex-direction:column; gap:5px; font-size:12.5px; font-weight:600; color:var(--dim); margin-bottom:12px}
 dialog label small{font-weight:400; color:var(--faint)}
-dialog textarea{min-height:90px; resize:vertical}
+dialog textarea{min-height:80px; resize:vertical}
 dialog .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-dialog .foot{display:flex; justify-content:flex-end; gap:8px; margin-top:6px}
+dialog .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+dialog .foot{display:flex; justify-content:flex-end; gap:8px; margin-top:6px; flex-wrap:wrap}
+dialog .foot .grow{flex:1}
 dialog table{width:100%; border-collapse:collapse; font-size:13px}
 dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
+#propText{width:100%; min-height:360px; font-size:13px; line-height:1.5}
+.toast{position:fixed; left:50%; bottom:70px; translate:-50% 0; background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:8px; font-size:13px; z-index:50}
 
 @media (max-width:1280px){
   .content{grid-template-columns:minmax(0,1fr)}
   .rail{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 }
-@media (max-width:1100px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:1100px){ .best-row{grid-template-columns:minmax(0,1fr)} .perf{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
   .side{display:none}
+  #viewSel{display:block}
   .inner{padding:14px 16px}
   .bar{padding:10px 16px}
   .hints{display:none}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:640px){
   .bar{position:static}
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lead{grid-template-columns:minmax(0,1fr) 76px}
   .lead-meta{grid-column:1/-1; border-left:0; border-top:1px solid var(--line); padding:10px 0 0; flex-direction:row; flex-wrap:wrap; gap:6px 14px}
+  .intel{grid-template-columns:minmax(0,1fr)}
   .rows.grid{grid-template-columns:minmax(0,1fr)}
   .rows.compact .lead{grid-template-columns:minmax(0,1fr)}
   .rows.compact .lead-meta{flex-wrap:wrap}
+  .bar-r{grid-template-columns:110px minmax(0,1fr) 40px}
+  .calc, .calc-out{grid-template-columns:repeat(2,minmax(0,1fr))}
+  dialog .row2, dialog .row3{grid-template-columns:1fr}
 }
-@media (prefers-reduced-motion:no-preference){ .btn,.kpi,.nav button{transition:background-color .15s, border-color .15s, color .15s} }
+@media (prefers-reduced-motion:no-preference){ .btn,.kpi,.nav button,.mini{transition:background-color .15s, border-color .15s, color .15s} }
 </style>
 </head>
 <body>
@@ -259,50 +323,52 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   <aside class="side">
     <div class="brand">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" fill="url(#bg)"/><defs><linearGradient id="bg" x1="4" y1="2" x2="19" y2="22"><stop stop-color="#8b7bff"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs></svg>
-      <div><b>Zero Touch AI</b><small>AI Automation &amp; Web Design</small></div>
+      <div><b>Project Finder</b><small>Zero Touch AI · Rapid Rank</small></div>
     </div>
     <nav class="nav" id="sideNav"></nav>
     <div class="nav-sep"></div>
     <nav class="nav">
-      <button type="button" id="navAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20v-11"/></svg>Analytics</button>
       <button type="button" id="navExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
-      <button type="button" id="navSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
-      <button type="button" id="navKeys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard Shortcuts</button>
+      <button type="button" id="navSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings &amp; portfolio</button>
+      <button type="button" id="navKeys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard shortcuts</button>
     </nav>
-    <div class="promo"><b>Find better projects, faster.</b><p>Fit-scored Upwork leads, refreshed every 3 hours.</p></div>
   </aside>
 
   <main>
     <div class="inner">
       <header class="top">
-        <div><h1>AI &amp; Website Project Finder</h1><div class="sub">Upwork leads for AI automation and web design projects</div></div>
+        <div><h1>AI &amp; Website Project Finder</h1><div class="sub">Upwork lead intelligence for Zero Touch AI and Rapid Rank Agency</div></div>
         <div class="meta">
+          <select class="select" id="viewSel" aria-label="Section"></select>
           <span class="synced" id="synced">syncing…</span>
-          <span class="ver">v3.0</span>
+          <span class="ver">v3.1</span>
           <select class="select" id="theme" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
           <span class="user"><span class="avatar" id="avatar">J</span><span id="userName">Jeremy</span></span>
         </div>
       </header>
 
       <section class="kpis" id="kpis"></section>
+      <section class="best" id="best"></section>
 
       <div class="content">
-        <div class="list-col">
-          <nav class="tabs" id="tabs"></nav>
-          <div class="filters">
+        <div class="list-col" id="listCol">
+          <div class="view-title"><h2 id="viewTitle"></h2><span id="viewSub"></span></div>
+          <nav class="tabs" id="recTabs" aria-label="Recommendation"></nav>
+          <div class="filters" id="filters">
             <label class="search"><input class="input" id="q" type="search" placeholder="Search title, description or skill…" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
+            <select class="select" id="fSvc" aria-label="Service"><option value="">Any service</option></select>
             <select class="select" id="fExp" aria-label="Experience"><option value="">Any experience</option><option>Entry Level</option><option>Intermediate</option><option>Expert</option></select>
             <select class="select" id="fType" aria-label="Contract type"><option value="">Hourly + Fixed</option><option value="hourly">Hourly</option><option value="fixed">Fixed price</option></select>
             <span class="money"><input class="input num" id="fMin" type="number" min="0" placeholder="Min $" aria-label="Minimum budget or rate"><input class="input num" id="fMax" type="number" min="0" placeholder="Max $" aria-label="Maximum budget or rate"></span>
-            <select class="select" id="fDur" aria-label="Duration"><option value="">Any duration</option><option value="less than 1">Under 1 month</option><option value="1 to 3">1–3 months</option><option value="3 to 6">3–6 months</option><option value="more than 6">6+ months</option></select>
             <select class="select" id="fCountry" aria-label="Client country"><option value="">Any client country</option></select>
             <label class="check"><input type="checkbox" id="fUS" checked> Hide U.S.-only</label>
-            <select class="select" id="sort" aria-label="Sort"><option value="posted">Newest posted</option><option value="fit">Best fit</option><option value="scraped">Newest scraped</option><option value="budget">Budget: high to low</option><option value="applicants">Fewest proposals</option><option value="title">Title A–Z</option></select>
+            <select class="select" id="sort" aria-label="Sort"><option value="score">Best score</option><option value="posted">Newest posted</option><option value="eff">Effective $/hr</option><option value="value">Project value</option><option value="applicants">Fewest proposals</option></select>
           </div>
           <div class="count-line" id="countLine"></div>
           <div class="rows" id="rows"></div>
           <button class="btn more" id="more" type="button" hidden>Show more</button>
-          <div class="empty" id="empty" hidden><b>Nothing matches.</b><span id="emptySub"></span><div style="margin-top:12px"><button class="btn" id="clearF" type="button">Clear filters</button></div></div>
+          <div class="empty" id="empty" hidden><b>Nothing here yet.</b><span id="emptySub"></span><div style="margin-top:12px"><button class="btn" id="clearF" type="button">Clear filters</button></div></div>
+          <div id="perfView" hidden></div>
         </div>
         <aside class="rail" id="rail"></aside>
       </div>
@@ -311,23 +377,51 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
     <footer class="bar">
       <span>View <span class="seg" id="viewSeg"><button type="button" data-v="list" aria-label="List view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button><button type="button" data-v="grid" aria-label="Grid view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button></span></span>
       <span>Density <span class="seg" id="densSeg"><button type="button" data-d="compact">Compact</button><button type="button" data-d="comfortable">Comfortable</button></span></span>
-      <label>Auto-hide leads older than <select class="select" id="ageSel"><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option><option value="60">60 days</option><option value="0">Never</option></select></label>
+      <label>Auto-hide leads older than <select class="select" id="ageSel"><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option><option value="0">Never</option></select></label>
       <span class="grow"></span>
       <button class="btn export" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Export CSV</button>
-      <span class="hints"><kbd>?</kbd> help · <kbd>j</kbd>/<kbd>k</kbd> navigate · <kbd>o</kbd> open · <kbd>s</kbd> shortlist · <kbd>x</kbd> reject</span>
+      <span class="hints"><kbd>?</kbd> help · <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>p</kbd> proposal · <kbd>s</kbd> shortlist · <kbd>x</kbd> reject</span>
     </footer>
   </main>
 </div>
 
-<dialog id="settingsDlg">
+<dialog id="propDlg" class="wide">
+  <h2 id="propTitle">Proposal</h2>
+  <p class="dsub" id="propSub"></p>
+  <textarea class="input" id="propText" aria-label="Proposal draft"></textarea>
+  <p class="dsub" style="margin:8px 0 0">Saved automatically in this browser. Nothing is sent to Upwork: copy it, open the job and submit it yourself.</p>
+  <div class="foot">
+    <button class="btn" type="button" id="propReset">Rebuild draft</button>
+    <button class="btn" type="button" id="propPrompt" title="Copies a prompt you can paste into ChatGPT or Claude for a polished rewrite">Copy AI prompt</button>
+    <span class="grow"></span>
+    <button class="btn" type="button" id="propCopy">Copy proposal</button>
+    <a class="btn" id="propOpen" target="_blank" rel="noopener">Open on Upwork</a>
+    <button class="btn go" type="button" id="propApplied">Mark applied</button>
+    <button class="btn" type="button" id="propClose">Close</button>
+  </div>
+</dialog>
+
+<dialog id="settingsDlg" class="wide">
   <form method="dialog" id="settingsForm">
-    <h2>Settings</h2>
-    <label>Your name<input class="input" id="sName"></label>
-    <label>Niche keywords <small>One per line or comma-separated. Matches raise the fit score and fill "Top keywords".</small><textarea class="input" id="sKw"></textarea></label>
-    <div class="row2">
-      <label>Minimum hourly rate ($/hr)<input class="input num" id="sRate" type="number" min="0"></label>
-      <label>Minimum fixed budget ($)<input class="input num" id="sFixed" type="number" min="0"></label>
+    <h2>Settings &amp; portfolio</h2>
+    <p class="dsub">Saved in this browser. Your rates drive the scores and bid advice; the portfolio feeds the proposal drafts. Only list work you can back up.</p>
+    <div class="row3">
+      <label>Your name<input class="input" id="sName"></label>
+      <label>Minimum rate ($/hr)<input class="input num" id="sRate" type="number" min="1"></label>
+      <label>Upwork fee (%)<small>Check your current fee in Upwork</small><input class="input num" id="sFee" type="number" min="0" max="30"></label>
     </div>
+    <div class="row3">
+      <label>Hours you can deliver per week<input class="input num" id="sCap" type="number" min="1"></label>
+    </div>
+    <div class="row2">
+      <label>Zero Touch AI: what you offer<textarea class="input" id="sProfAI"></textarea></label>
+      <label>Rapid Rank Agency: what you offer<textarea class="input" id="sProfWeb"></textarea></label>
+    </div>
+    <div class="row2">
+      <label>Zero Touch AI portfolio<small>One per line: project, result, link</small><textarea class="input" id="sPortAI" placeholder="Dental clinic voice receptionist: books 40+ appointments/week. https://…"></textarea></label>
+      <label>Rapid Rank portfolio<small>One per line: project, result, link</small><textarea class="input" id="sPortWeb" placeholder="Roofing company WordPress redesign: 3x more quote requests. https://…"></textarea></label>
+    </div>
+    <label>Niche keywords<small>Comma-separated. Matches raise the service-match score.</small><textarea class="input" id="sKw" style="min-height:56px"></textarea></label>
     <div class="foot"><button class="btn" value="cancel" type="submit">Cancel</button><button class="btn go" value="save" type="submit">Save</button></div>
   </form>
 </dialog>
@@ -336,30 +430,39 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   <h2>Keyboard shortcuts</h2>
   <table>
     <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td>Next / previous lead</td></tr>
-    <tr><td><kbd>Enter</kbd></td><td>Expand or collapse</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Open or close the analysis</td></tr>
+    <tr><td><kbd>p</kbd></td><td>Generate proposal</td></tr>
     <tr><td><kbd>o</kbd></td><td>Open on Upwork</td></tr>
     <tr><td><kbd>s</kbd></td><td>Shortlist</td></tr>
     <tr><td><kbd>a</kbd></td><td>Mark applied</td></tr>
     <tr><td><kbd>x</kbd></td><td>Reject</td></tr>
     <tr><td><kbd>u</kbd></td><td>Clear status</td></tr>
     <tr><td><kbd>/</kbd></td><td>Search</td></tr>
-    <tr><td><kbd>?</kbd></td><td>This list</td></tr>
   </table>
   <form method="dialog" class="foot" style="margin-top:14px"><button class="btn go" type="submit">Close</button></form>
 </dialog>
 
 <script>
-/* ---------- storage (per browser) ---------- */
+/* ================= storage (this browser) ================= */
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
-const DEFAULT_KW = ['AI automation','AI agent','chatbot','n8n','Make.com','Zapier','ChatGPT','OpenAI','RAG','voice agent','WordPress','Shopify','Webflow','landing page','web design'];
-let settings = Object.assign({name:'Jeremy', keywords:DEFAULT_KW, minRate:50, minFixed:500}, store.get('pf_settings', {}));
+const DEFAULTS = {
+  name:'Jeremy', minRate:50, fee:10, capacity:15,
+  keywords:['AI agent','chatbot','voice','n8n','Make.com','Zapier','automation','integration','dashboard','WordPress','Shopify','Webflow','redesign','hosting','maintenance','landing page'],
+  profAI:'Zero Touch AI Automation builds AI agents, chatbots, voice AI receptionists, n8n / Make.com workflow automation, CRM and API integrations, AI dashboards and apps, and AI training for teams.',
+  profWeb:'Rapid Rank Agency designs and builds WordPress, Shopify and Webflow websites, handles redesigns, landing pages, hosting, maintenance, speed and security, and builds sites that turn visitors into leads.',
+  portAI:'', portWeb:''
+};
+let settings = Object.assign({}, DEFAULTS, store.get('pf_settings', {}));
+if(typeof settings.keywords === 'string') settings.keywords = settings.keywords.split(',');
 let status = store.get('pf_status', {});   // id -> {s, t}
-let notes = store.get('pf_notes', {});     // id -> text
-let ui = Object.assign({view:'all', sort:'posted', layout:'list', density:'comfortable', age:30, hideUS:true}, store.get('pf_ui', {}));
-// "New" = scraped since your previous visit. Reloads in the same tab keep the same baseline.
+let notes  = store.get('pf_notes', {});    // id -> text
+let calc   = store.get('pf_calc', {});     // id -> {bid, rate, hours, costs, value}
+let props  = store.get('pf_props', {});    // id -> {text, t}
+let ui = Object.assign({view:'best', rec:'', sort:'score', layout:'list', density:'comfortable', age:14, hideUS:true}, store.get('pf_ui', {}));
+// "New" = scraped since your previous visit; reloads in the same tab keep the same baseline.
 let prevVisit;
 try{ prevVisit = JSON.parse(sessionStorage.getItem('pf_prev')).v; }catch(e){
   prevVisit = store.get('pf_last_visit', null);
@@ -367,16 +470,12 @@ try{ prevVisit = JSON.parse(sessionStorage.getItem('pf_prev')).v; }catch(e){
 }
 store.set('pf_last_visit', Date.now());
 
-// one-time: carry v2 rejections ("AI:<jobid>") over
-const oldRej = store.get('ld_rejected_v1', null);
-if(oldRej){ oldRej.forEach(k => { const id = k.split(':').slice(1).join(':'); if(id && !status[id]) status[id] = {s:'rejected', t:Date.now()}; }); store.set('pf_status', status); try{ localStorage.removeItem('ld_rejected_v1'); }catch(e){} }
-
-/* ---------- helpers ---------- */
+/* ================= helpers ================= */
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DAY = 864e5, HOUR = 36e5;
-const money = n => n == null ? '' : '$' + (n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'') + 'K' : Math.round(n).toLocaleString());
-const rate = n => '$' + (Number.isInteger(n) ? n : n.toFixed(2));
+const money = n => n == null || isNaN(n) ? '—' : (n < 0 ? '-' : '') + '$' + (Math.abs(n) >= 1e4 ? Math.round(Math.abs(n)/1e3) + 'K' : Math.round(Math.abs(n)).toLocaleString());
+const rate = n => '$' + Math.round(n);
 function ago(ts){
   const h = (Date.now() - ts) / HOUR;
   if(h < 1) return Math.max(1, Math.round(h*60)) + ' min ago';
@@ -387,8 +486,91 @@ function ago(ts){
 const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) + ' ' : '';
 const dayKey = ts => { const d = new Date(ts); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
 function lastDays(n){ const out = []; const d = new Date(); d.setHours(0,0,0,0); for(let i = n-1; i >= 0; i--) out.push(new Date(d - i*DAY)); return out; }
-const CAT_LABEL = {AI:'AI', Website:'Website'};
+function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); toast('Copied'); }
+  catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Copied'); }
+}
+const BIZ = {AI:'Zero Touch AI', Website:'Rapid Rank'};
+const BIZ_FULL = {AI:'Zero Touch AI Automation', Website:'Rapid Rank Agency'};
 
+/* ================= service playbooks ================= */
+// hours = typical first-version effort; tune per lead in the profitability calculator.
+const SERVICE_INFO = {
+  'Voice AI agent': {hours:20,
+    steps:['Map your call types, FAQs and booking rules', 'Build and voice-tune the agent (Vapi / Retell) with your calendar and CRM', 'Test with real call scenarios, then go live with call recordings and a weekly report'],
+    deliver:['A live AI phone agent on your number', 'Calendar + CRM connection', 'Call transcripts and a handover guide'],
+    ask:['Roughly how many calls a day do you get, and what share are bookings vs questions?', 'Which calendar and CRM do you use today?', 'When a caller needs a human, who should the call go to?'],
+    position:'Sell the outcome: no more missed calls and booked appointments around the clock.', edge:'Show how many after-hours calls it can capture and what a booked appointment is worth to them.'},
+  'AI chatbot & support': {hours:15,
+    steps:['Collect your FAQs, policies and past tickets', 'Build a chatbot trained on that content, with handoff to a human', 'Install it on your site/channels and review answers for the first two weeks'],
+    deliver:['A trained AI assistant on your website or inbox', 'Human handoff and lead capture', 'Simple guide to update its knowledge'],
+    ask:['Which questions take up most of your team\'s time today?', 'Where should it live: website chat, WhatsApp, email, or several?', 'What should happen when it can\'t answer?'],
+    position:'Sell hours saved: fewer repetitive questions and faster replies for customers.', edge:'Estimate the support hours it removes each week.'},
+  'Booking automation': {hours:12,
+    steps:['Map how booking requests arrive today', 'Automate intake, confirmations, reminders and rescheduling', 'Connect it to your calendar and CRM and test end to end'],
+    deliver:['Automated booking flow', 'Reminder and follow-up messages', 'Dashboard or sheet of every booking'],
+    ask:['Where do booking requests come from today (calls, forms, DMs)?', 'Which calendar or booking tool do you use?', 'What is your no-show rate right now?'],
+    position:'Sell more booked appointments and fewer no-shows.', edge:'Reminders alone usually cut no-shows; lead with that.'},
+  'Workflow automation & integrations': {hours:12,
+    steps:['Audit the current process and the tools involved', 'Build the workflow in n8n / Make.com with error alerts', 'Run it side by side with the manual process, then switch over'],
+    deliver:['Working automation with error alerts', 'Short Loom walkthrough', 'Documentation of every step'],
+    ask:['Which tools need to talk to each other, and do they have API access?', 'How many records or tasks go through this each week?', 'Who should be alerted if something fails?'],
+    position:'Sell time back: hours of copy-paste replaced by a reliable workflow.', edge:'Quantify the manual hours removed per week.'},
+  'AI content automation': {hours:12,
+    steps:['Define your brand voice, formats and channels', 'Build an AI pipeline that drafts content for your review', 'Connect scheduling/publishing and set up an approval step'],
+    deliver:['Content generation workflow', 'Approval and publishing automation', 'Prompt library in your brand voice'],
+    ask:['Which platforms and how many posts per week?', 'Who approves content before it goes out?', 'Do you have brand guidelines or past posts we can learn from?'],
+    position:'Sell consistency: a steady content calendar without the daily grind.', edge:'Keep a human approval step; clients trust that more than full auto-posting.'},
+  'AI training & consulting': {hours:8,
+    steps:['Short discovery call on your goals and current tools', 'Tailored session or roadmap with hands-on examples from your business', 'Follow-up notes, templates and a 30-day action plan'],
+    deliver:['Live session(s) or written AI roadmap', 'Prompt and workflow templates', 'Recorded walkthrough'],
+    ask:['Who is the audience and how comfortable are they with AI today?', 'Which tasks do you most want AI to help with?', 'Live sessions, recorded content, or both?'],
+    position:'Sell practical results: your team using AI on real tasks by the end.', edge:'Use examples from their own industry, not generic demos.'},
+  'AI app or dashboard': {hours:40,
+    steps:['Scope the must-have screens and data sources for version one', 'Build the app/dashboard with AI features and secure logins', 'Launch, gather feedback, then iterate'],
+    deliver:['Working MVP app or dashboard', 'Source code and deployment', 'Admin guide'],
+    ask:['What decisions or tasks should this app help users with?', 'Where does the data live today?', 'Who are the users and how many?'],
+    position:'Sell a focused version one quickly, then grow it with real feedback.', edge:'Offer a clear phase-one scope with a fixed price.'},
+  'AI agent & LLM build': {hours:20,
+    steps:['Clarify the job the agent must do and the data it can use', 'Build the agent with the right model, tools and guardrails', 'Test on real examples, measure accuracy, then deploy'],
+    deliver:['Working AI agent integrated where you need it', 'Evaluation results on your examples', 'Handover docs'],
+    ask:['What should the agent do end to end, and what does success look like?', 'Which systems or data must it access?', 'Do you have a preferred model or hosting requirement?'],
+    position:'Sell reliability: an agent that is tested on your real cases, not a demo.', edge:'Mention guardrails and evaluation; most bidders skip them.'},
+  'Hosting, speed & maintenance': {hours:6,
+    steps:['Audit the site: speed, security, backups and plugins', 'Fix the urgent issues and move to fast, managed hosting if needed', 'Set up monitoring, backups and a monthly maintenance plan'],
+    deliver:['Faster, secured site', 'Daily backups and uptime monitoring', 'Monthly maintenance report'],
+    ask:['Where is the site hosted now and what platform is it on?', 'Has it been hacked or gone down recently?', 'Would you like ongoing monthly care after the fix?'],
+    position:'Sell peace of mind: a fast, secure site someone is looking after.', edge:'Offer a monthly care plan; recurring revenue for you, no worries for them.'},
+  'Website redesign': {hours:25,
+    steps:['Review the current site, analytics and goals', 'Design a modern, mobile-first layout focused on enquiries', 'Build, migrate content, and launch with redirects so SEO is kept'],
+    deliver:['Redesigned, mobile-first website', 'Lead capture forms and tracking', 'SEO-safe migration and training'],
+    ask:['What is the main action you want visitors to take?', 'Which sites do you like the look of?', 'Do you want to stay on your current platform?'],
+    position:'Sell more enquiries, not just a new look.', edge:'Point out one or two specific conversion problems on their current site.'},
+  'Conversion & lead capture': {hours:10,
+    steps:['Review traffic, offer and current page performance', 'Build/redesign the page with clear offer, proof and a strong call to action', 'Add tracking, then A/B test headline and form'],
+    deliver:['High-converting landing page or funnel', 'Form/CRM connection', 'Analytics and conversion tracking'],
+    ask:['Where does your traffic come from (ads, SEO, social)?', 'What is the offer and who is it for?', 'Which CRM or email tool should leads go to?'],
+    position:'Sell leads: measurable conversions from traffic they already have.', edge:'Mention tracking from day one so they can see results.'},
+  'E-commerce store': {hours:25,
+    steps:['Plan products, collections, payments and shipping', 'Build/customize the store theme for mobile and speed', 'Set up apps, test checkout end to end and launch'],
+    deliver:['Launch-ready online store', 'Payments, shipping and tax set up', 'Training on managing products and orders'],
+    ask:['How many products and variants?', 'Which payment and shipping options do you need?', 'Do you have branding and product photos ready?'],
+    position:'Sell a store that converts on mobile from day one.', edge:'Highlight checkout testing and speed.'},
+  'Website fixes & updates': {hours:4,
+    steps:['Reproduce the issue and find the root cause', 'Fix it on a staging copy and test on mobile and desktop', 'Deploy and confirm with you'],
+    deliver:['Fixed and tested changes', 'Short summary of what was changed', 'Recommendations to prevent repeats'],
+    ask:['Can you share the page URL and a screenshot of the problem?', 'Which platform/theme is the site built on?', 'Can you provide admin or staging access?'],
+    position:'Sell speed and care: fixed properly, without breaking anything else.', edge:'Offer to look after the site monthly once the fix is done.'},
+  'New website build': {hours:25,
+    steps:['Plan pages, content and the main goal of the site', 'Design and build a fast, mobile-first site', 'Launch with hosting, SEO basics, forms and tracking'],
+    deliver:['Complete website, live on your domain', 'Hosting, SSL and backups set up', 'Training to edit content'],
+    ask:['How many pages, and do you have content and photos ready?', 'What is the main thing visitors should do on the site?', 'Do you already have a domain and hosting?'],
+    position:'Sell a site that brings in enquiries, hosted and looked after.', edge:'Bundle hosting and care so they have one partner for everything.'}
+};
+const info = l => SERVICE_INFO[l.service] || SERVICE_INFO[l.cat === 'AI' ? 'AI agent & LLM build' : 'New website build'];
+
+/* ================= detection ================= */
 const US_PATTERNS = [
   /\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]merican)s?[\s\-]*(?:[Oo]nly|[Bb]ased|[Rr]esidents?|[Cc]itizens?)\b/,
   /\b(?:[Oo]nly|[Ee]xclusively)\s+(?:for\s+)?(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]mericans?)\b/,
@@ -403,93 +585,267 @@ function usHit(l){
   for(const re of US_PATTERNS){ const m = re.exec(text); if(m) return text.slice(Math.max(0, m.index - 30), m.index + m[0].length + 30).replace(/\s+/g,' ').trim(); }
   return null;
 }
-
+const SUSPICIOUS = [
+  [/\b(telegram|whatsapp|signal|skype)\b[^.]{0,40}\b(contact|message|reach|text|add)\b|\b(contact|message|reach|text|add) me\b[^.]{0,40}\b(telegram|whatsapp|signal|skype)\b/i, 'asks to move the conversation off Upwork'],
+  [/\b(outside (of )?upwork|off[- ]platform)\b/i, 'mentions working outside Upwork'],
+  [/\b(unpaid|free (sample|test|trial|work))\b/i, 'asks for unpaid or free work'],
+  [/\b(pay|send) (a |the )?(deposit|fee)\b|\bcrypto(currency)? payment\b/i, 'unusual payment request']
+];
 // Rough size-based guess: Upwork shows the real Connects cost only to logged-in freelancers.
 function connects(l){
   const v = l.type === 'hourly' ? (l.rateMax || 0) * 40 : (l.budget || 0);
   if(!v) return null;
   return v < 100 ? 4 : v < 500 ? 8 : v < 1000 ? 12 : 16;
 }
-function suggestedBid(l){
+
+/* ================= bid strategy + economics ================= */
+function plan(l){
+  const o = calc[l.id] || {}, si = info(l), minR = settings.minRate;
+  const hours = +o.hours || si.hours, costs = +o.costs || 0;
+  const warn = [];
+  let lo, hi, rLo = null, rHi = null, known;
   if(l.type === 'hourly'){
-    const lo = l.rateMin || l.rateMax, hi = l.rateMax || l.rateMin;
-    if(!hi) return null;
-    return rate(Math.round(lo + (hi - lo) * (l.exp === 'Expert' ? .75 : .5))) + '/hr';
+    const cMin = l.rateMin || l.rateMax, cMax = l.rateMax || l.rateMin;
+    known = !!cMax;
+    if(known && cMax < minR){ rLo = rHi = minR; warn.push(`Client's max rate (${rate(cMax)}/hr) is under your ${rate(minR)}/hr minimum.`); }
+    else if(known){ rLo = Math.max(minR, Math.round((cMin + cMax) / 2)); rHi = Math.max(rLo, Math.round(cMax)); }
+    else { rLo = minR; rHi = Math.round(minR * 1.3); warn.push('No rate listed. Range uses your minimum rate.'); }
+    lo = rLo * hours; hi = rHi * hours;
+  } else {
+    known = !!l.budget;
+    const floor = minR * hours;
+    if(known){
+      lo = Math.round(l.budget * .85); hi = Math.round(l.budget);
+      if(l.budget < floor * .8) warn.push(`Budget covers about ${Math.max(1, Math.round(l.budget / minR))}h at your minimum rate; the likely scope is ~${hours}h. Scope it down or skip.`);
+    } else { lo = floor; hi = Math.round(floor * 1.3); warn.push('No budget listed. Range is your minimum rate × estimated hours.'); }
   }
-  return l.budget ? money(l.budget) + ' fixed' : null;
+  const r = l.type === 'hourly' ? (+o.rate || Math.round((rLo + rHi) / 2)) : null;
+  const bid = l.type === 'hourly' ? r * hours : (+o.bid || Math.round((lo + hi) / 2));
+  const cx = connects(l);
+  const net = bid * (1 - settings.fee / 100) - costs - (cx || 0) * .15;
+  const weeks = Math.max(1, Math.ceil(hours / settings.capacity));
+  return {hours, costs, lo, hi, rLo, rHi, rate:r, bid, net, eff: net / hours, known, weeks, warn, cx,
+    delivery: weeks === 1 ? 'about 1 week' : `${weeks}–${weeks + 1} weeks`};
 }
-// Comparable size for sorting: one 40-hour week for hourly jobs.
-const sizeOf = l => l.type === 'hourly' ? (l.rateMax || 0) * 40 : (l.budget || 0);
+const rangeText = (l, p) => l.type === 'hourly'
+  ? `${rate(p.rLo)}${p.rHi !== p.rLo ? '–' + rate(p.rHi) : ''}/hr`
+  : `${money(p.lo)}${p.hi !== p.lo ? '–' + money(p.hi) : ''}`;
 
-function fit(l){
-  const why = []; let s = 50;
+/* ================= scoring ================= */
+function score(l, p){
+  const minR = settings.minRate, parts = [], flags = [];
   const text = (l.title + ' ' + l.desc + ' ' + (l.skills || []).join(' ')).toLowerCase();
-  const kw = settings.keywords.filter(k => k && text.includes(k.toLowerCase()));
-  if(kw.length){ const p = Math.min(24, kw.length * 8); s += p; why.push(`+${p} niche match: ${kw.slice(0,3).join(', ')}`); }
-  if(l.type === 'hourly' && l.rateMax){
-    if(l.rateMax >= settings.minRate * 1.5){ s += 15; why.push('+15 rate well above your minimum'); }
-    else if(l.rateMax >= settings.minRate){ s += 10; why.push('+10 rate meets your minimum'); }
-    else { s -= 15; why.push(`-15 rate under $${settings.minRate}/hr`); }
-  } else if(l.type === 'fixed' && l.budget){
-    if(l.budget >= settings.minFixed * 3){ s += 15; why.push('+15 budget well above your minimum'); }
-    else if(l.budget >= settings.minFixed){ s += 10; why.push('+10 budget meets your minimum'); }
-    else { s -= 15; why.push(`-15 budget under $${settings.minFixed}`); }
-  }
-  if(l.verified === true){ s += 5; why.push('+5 payment verified'); }
-  if(l.spent >= 10000){ s += 8; why.push('+8 client spent $10K+'); }
-  else if(l.spent >= 1000){ s += 4; why.push('+4 client spent $1K+'); }
-  else if(l.verified === false && !l.spent){ s -= 10; why.push('-10 new, unverified client'); }
-  if(l.rating >= 4.5){ s += 4; why.push('+4 client rating 4.5+'); }
-  if(l.applicants != null){
-    if(l.applicants < 5){ s += 8; why.push('+8 under 5 proposals'); }
-    else if(l.applicants < 10){ s += 4; why.push('+4 under 10 proposals'); }
-    else if(l.applicants >= 50){ s -= 10; why.push('-10 50+ proposals'); }
-    else if(l.applicants >= 20){ s -= 4; why.push('-4 20+ proposals'); }
-  }
+  const kw = settings.keywords.map(k => k.trim()).filter(k => k && text.includes(k.toLowerCase()));
+  // 1. service match (25)
+  let sm = l.match === 'title' ? 15 : l.match === 'problem' ? 13 : 10;
+  sm += Math.min(10, kw.length * 4);
+  parts.push({label:'Service match', v:Math.min(25, sm), max:25, note: (l.match === 'problem' ? 'Problem you solve, not named in the title' : `Matches ${BIZ[l.cat]} services`) + (kw.length ? `; keywords: ${kw.slice(0,3).join(', ')}` : '')});
+  // 2. budget & profitability (25)
+  let bp, bnote;
+  if(!p.known){ bp = 12; bnote = 'Budget unknown (neutral)'; }
+  else { const x = p.eff / minR; bp = x >= 1.5 ? 25 : x >= 1.2 ? 21 : x >= 1 ? 17 : x >= .7 ? 10 : 4; bnote = `~${rate(p.eff)}/hr effective vs your ${rate(minR)}/hr minimum`; }
+  parts.push({label:'Budget & profit', v:bp, max:25, note:bnote, est:true});
+  // 3. client quality (20)
+  const cq = (l.verified == null ? 3 : l.verified ? 6 : 0)
+    + (l.spent == null ? 4 : l.spent >= 10000 ? 8 : l.spent >= 1000 ? 6 : l.spent > 0 ? 4 : 1)
+    + (!l.rating ? 3 : l.rating >= 4.7 ? 6 : l.rating >= 4.3 ? 4 : 2);
+  const unknowns = [l.verified, l.spent, l.rating || null].filter(x => x == null).length;
+  parts.push({label:'Client quality', v:cq, max:20, note: unknowns === 3 ? 'No client history available (neutral)' : unknowns ? 'Some history unknown (neutral for those)' : 'From payment, spend and rating'});
+  // 4. competition (15)
+  const a = l.applicants;
+  const co = a == null ? 8 : a < 5 ? 15 : a < 10 ? 12 : a < 20 ? 8 : a < 50 ? 4 : 1;
+  parts.push({label:'Competition', v:co, max:15, note: a == null ? 'Proposal count unknown' : `${a} proposals so far`, est:true});
+  // 5. likelihood of winning (15)
   const h = (Date.now() - l._posted) / HOUR;
-  if(h < 6){ s += 6; why.push('+6 posted in the last 6 hours'); }
-  else if(h < 24){ s += 3; why.push('+3 posted today'); }
-  else if(h > 24*7){ s -= 8; why.push('-8 older than a week'); }
-  if(l.exp === 'Expert'){ s += 3; why.push('+3 expert level'); }
-  else if(l.exp === 'Entry Level'){ s -= 5; why.push('-5 entry level'); }
-  if(l._us){ s -= 30; why.push('-30 looks U.S.-only'); }
-  return {score: Math.max(0, Math.min(100, Math.round(s))), why};
+  const fr = h < 6 ? 6 : h < 24 ? 5 : h < 72 ? 3 : h < 168 ? 1 : 0;
+  const ex = l.exp === 'Expert' || l.exp === 'Intermediate' ? 4 : l.exp ? 2 : 3;
+  const sp = kw.length >= 2 ? 5 : kw.length ? 3 : 1;
+  parts.push({label:'Win likelihood', v:fr + ex + sp, max:15, note:`Freshness ${fr}/6 · level ${ex}/4 · niche fit ${sp}/5`, est:true});
+  const total = parts.reduce((s, x) => s + x.v, 0);
+  if(l._us) flags.push('Looks U.S.-only, so you likely can\'t apply');
+  for(const [re, why] of SUSPICIOUS) if(re.test(l.desc)) flags.push('Post ' + why);
+  if(p.known && p.net <= 0) flags.push('Loses money after fees and costs');
+  else if(p.known && p.eff < minR * .5) flags.push(`Pays under half your minimum rate (~${rate(p.eff)}/hr)`);
+  const rec = flags.length ? 'avoid' : total >= 80 ? 'bid' : total >= 60 ? 'review' : 'low';
+  return {total, parts, flags, rec};
 }
-const scoreColor = s => s >= 75 ? 'var(--green)' : s >= 50 ? 'var(--amber)' : 'var(--faint)';
+const REC = {
+  bid:{label:'Bid now', why:'Excellent fit, attractive budget, strong client signals'},
+  review:{label:'Review', why:'Potentially worthwhile, but something needs checking'},
+  low:{label:'Low priority', why:'Weak budget, poor fit or heavy competition'},
+  avoid:{label:'Avoid', why:'Can\'t apply, suspicious, or poor economics'}
+};
+const scoreColor = s => s >= 80 ? 'var(--green)' : s >= 60 ? 'var(--amber)' : 'var(--faint)';
 
-/* ---------- state ---------- */
-let DATA = [], shown = [], limit = 40, focusIdx = -1;
-const f = {q:'', exp:'', type:'', min:'', max:'', dur:'', country:''};
-const STATUSES = [
-  ['shortlisted','Shortlist','c-sl'], ['applied','Applied','c-ap'], ['interviewing','Interviewing','c-in'],
-  ['won','Won','c-won'], ['lost','Lost',''], ['rejected','Rejected','c-rej']
-];
-const VIEWS = [['all','All'], ['AI','AI'], ['Website','Website'], ...STATUSES.map(s => [s[0], s[1]])];
+/* ================= client intelligence ================= */
+function clientIntel(l, p){
+  const unk = '<span class="unk">Unknown</span>';
+  const rows = [
+    ['Payment', l.verified == null ? unk : l.verified ? '<span class="good">Verified</span>' : '<span class="bad">Not verified</span>'],
+    ['Total spent', l.spent == null ? unk : l.spent ? money(l.spent) : 'Nothing yet (new client)'],
+    ['Rating', l.rating ? `★ ${l.rating.toFixed(1)}${l.reviews != null ? ` from ${l.reviews} review${l.reviews === 1 ? '' : 's'}` : ''}` : l.reviews === 0 ? 'No reviews yet' : unk],
+    ['Location', l.country ? esc(flag(l.cc) + l.country) : unk],
+    ['Proposals', l.applicants == null ? unk : l.applicants],
+    ['Hire rate, jobs posted', unk]
+  ];
+  const pos = [], neg = [];
+  if(l.verified) pos.push('payment verified'); else if(l.verified === false) neg.push('payment not verified');
+  if(l.spent >= 1000) pos.push(`${money(l.spent)} spent on Upwork`); else if(l.spent === 0) neg.push('no spending history');
+  if(l.rating >= 4.5) pos.push(`${l.rating.toFixed(1)}★ rating`); else if(l.rating && l.rating < 4) neg.push(`${l.rating.toFixed(1)}★ rating`);
+  const realism = p.warn.find(w => w.startsWith('Budget covers'));
+  if(realism) neg.push('budget looks low for the likely scope');
+  let verdict;
+  if(!pos.length && !neg.length) verdict = 'Not enough history to judge. Missing details are treated as unknown, not as red flags.';
+  else if(neg.length && !pos.length) verdict = `<span class="bad">Risky:</span> ${neg.join(', ')}.`;
+  else if(pos.length >= 2 && !neg.length) verdict = `<span class="good">Looks promising:</span> ${pos.join(', ')}.`;
+  else verdict = `Mixed: ${[...pos, ...neg].join(', ')}.`;
+  return `<div class="kv">${rows.map(([k,v]) => `<span>${k}</span><span>${v}</span>`).join('')}</div><div class="verdict">${verdict}</div>`;
+}
 
+/* ================= proposals ================= */
+function portfolio(l){
+  const lines = (l.cat === 'AI' ? settings.portAI : settings.portWeb).split('\n').map(s => s.trim()).filter(Boolean);
+  const words = (l.service + ' ' + l.title).toLowerCase().split(/\W+/).filter(w => w.length > 3);
+  return lines.map(x => ({x, s: words.filter(w => x.toLowerCase().includes(w)).length})).sort((a,b) => b.s - a.s).slice(0, 2).map(o => o.x);
+}
+function firstSentence(t){
+  const s = (t || '').replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s/)[0] || '';
+  return s.length > 180 ? s.slice(0, 177) + '…' : s;
+}
+function draftProposal(l){
+  const p = l._p, si = info(l), work = portfolio(l);
+  return [
+    'Hi there,',
+    '',
+    `You're looking for help with "${l.title}". From your post, the core goal is: "${firstSentence(l.desc)}" That's exactly the kind of ${l.service.replace(/^(?!AI)./, c => c.toLowerCase())} work we do at ${BIZ_FULL[l.cat]}.`,
+    '',
+    'How I would approach it:',
+    ...si.steps.map((s, i) => `${i + 1}. ${s}`),
+    '',
+    'What you get:',
+    ...si.deliver.map(s => `- ${s}`),
+    '',
+    work.length ? 'Relevant work:' : 'Relevant work: [add a real example from your portfolio, or delete this line]',
+    ...work.map(s => `- ${s}`),
+    '',
+    'A few questions so I can scope this precisely:',
+    ...si.ask.map((s, i) => `${i + 1}. ${s}`),
+    '',
+    `Suggested investment: ${rangeText(l, p)}${l.type === 'hourly' ? ` (about ${p.hours} hours for the first version)` : ''}. Timeline: ${p.delivery}.`,
+    '',
+    'Happy to jump on a quick call to confirm the details.',
+    '',
+    settings.name,
+    BIZ_FULL[l.cat]
+  ].join('\n');
+}
+function aiPrompt(l){
+  const p = l._p, si = info(l), work = portfolio(l);
+  return `Write an Upwork proposal for the job below on behalf of ${settings.name} at ${BIZ_FULL[l.cat]}.
+
+About us: ${l.cat === 'AI' ? settings.profAI : settings.profWeb}
+Relevant past work (use ONLY these; never invent experience, clients or numbers): ${work.length ? work.join(' | ') : 'none provided, so do not claim any specific past project'}
+
+Structure, under 220 words, plain text, no headings or emojis:
+1. A personal opening that restates the client's actual problem in their words.
+2. The recommended solution (${l.service}) and why it fits.
+3. A short approach and deliverables.
+4. The relevant past work, if any.
+5. Three smart questions.
+6. Price ${rangeText(l, p)} and timeline ${p.delivery}.
+Positioning: ${si.position} ${si.edge}
+
+JOB TITLE: ${l.title}
+BUDGET: ${l.type === 'hourly' ? (l.rateMax ? `hourly ${rate(l.rateMin || l.rateMax)}–${rate(l.rateMax)}` : 'hourly, rate not listed') : (l.budget ? `fixed ${money(l.budget)}` : 'fixed, budget not listed')}
+CLIENT: ${l.country || 'unknown country'}${l.spent != null ? `, ${money(l.spent)} spent` : ''}
+DESCRIPTION:
+${l.desc}`;
+}
+let propId = null;
+function openProposal(id){
+  const l = DATA.find(x => x.id === id); if(!l) return;
+  propId = id;
+  $('propTitle').textContent = l.title;
+  $('propSub').textContent = `${BIZ_FULL[l.cat]} · ${l.service} · suggested ${rangeText(l, l._p)}, ${l._p.delivery}`;
+  $('propText').value = props[id]?.text || draftProposal(l);
+  $('propOpen').href = /^https:\/\//.test(l.url) ? l.url : '#';
+  $('propDlg').showModal();
+}
+function saveProposal(){
+  if(!propId) return;
+  props[propId] = {text: $('propText').value, t: Date.now()};
+  store.set('pf_props', props);
+}
+
+/* ================= data + state ================= */
+let DATA = [], limit = 40, focusIdx = -1, openIds = new Set();
+const f = {q:'', svc:'', exp:'', type:'', min:'', max:'', country:''};
+const STATUSES = [['shortlisted','Shortlisted','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'], ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
+const PIPE = ['shortlisted','applied','interviewing'];
+const VIEWS = {
+  best:{title:"Today's best", sub:'Fresh leads (last 3 days) worth bidding on or reviewing, both businesses'},
+  all:{title:'All leads', sub:'Every open lead'},
+  AI:{title:'AI leads', sub:'Zero Touch AI: agents, chatbots, voice, automation, apps and training'},
+  Website:{title:'Website leads', sub:'Rapid Rank: builds, redesigns, hosting, maintenance and stores'},
+  hidden:{title:'Hidden opportunities', sub:'Clients describing a problem you solve without naming the tech'},
+  proposals:{title:'Proposal Studio', sub:'Every lead you have drafted a proposal for'},
+  highfit:{title:'High-fit opportunities', sub:'Open leads scoring 80+'},
+  new:{title:'New since last visit', sub:'Scraped since you last opened the dashboard'},
+  performance:{title:'Performance', sub:'What your bidding is producing, by business'},
+  shortlisted:{title:'Shortlisted', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, interviewing:{title:'Interviewing', sub:'In conversation'},
+  won:{title:'Won', sub:'Record the contract value on each card'}, lost:{title:'Lost', sub:''}, rejected:{title:'Rejected', sub:''}
+};
+
+const st = l => status[l.id]?.s || '';
+const isOpen = l => !['rejected','lost'].includes(st(l));
+const fresh = l => !!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY;
+
+function enrichOne(l){
+  l._p = plan(l);
+  l._s = score(l, l._p);
+}
 function enrich(){
+  const byId = new Map(DATA.map(l => [l.id, l]));
   DATA.forEach(l => {
     l._posted = Date.parse(l.posted) || Date.now();
     l._scraped = Date.parse(l.scraped) || l._posted;
+    l._seen = Date.parse(l.seen) || l._scraped;
     l._usText = usHit(l); l._us = !!l._usText;
-    l._fit = fit(l);
     l._new = prevVisit ? l._scraped > prevVisit : Date.now() - l._scraped < DAY;
+    l._dups = (l.dups || []).map(id => byId.get(id)).filter(Boolean);
+    l.service = l.service || (l.cat === 'AI' ? 'AI agent & LLM build' : 'New website build');
+    enrichOne(l);
   });
 }
-const st = l => status[l.id]?.s || '';
-const isOpen = l => !['rejected','lost'].includes(st(l));
-// What the default views show: open leads inside the auto-hide window (pipeline leads never age out).
-const visible = l => isOpen(l) && (!!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY);
 
-function filtered(view = ui.view){
-  const q = f.q.trim().toLowerCase(), min = +f.min || 0, max = +f.max || 0;
-  const ageCut = ui.age ? Date.now() - ui.age * DAY : 0;
+function base(view = ui.view){
   return DATA.filter(l => {
+    if(l.dupOf && byIdHas(l.dupOf)) return false;  // folded into the original
     const s = st(l);
-    if(view === 'all' || view === 'AI' || view === 'Website'){
-      if(s === 'rejected' || s === 'lost') return false;
-      if(view !== 'all' && l.cat !== view) return false;
-      if(!s && ageCut && l._posted < ageCut) return false;
-    } else if(s !== view) return false;
+    switch(view){
+      case 'proposals': return !!props[l.id];
+      case 'shortlisted': case 'applied': case 'interviewing': case 'won': case 'lost': case 'rejected': return s === view;
+    }
+    if(!isOpen(l) || !fresh(l)) return false;
+    if(ui.hideUS && l._us && !PIPE.includes(s)) return false;
+    switch(view){
+      case 'AI': case 'Website': return l.cat === view;
+      case 'hidden': return l.match === 'problem';
+      case 'best': return Date.now() - l._posted < 3 * DAY && (l._s.rec === 'bid' || l._s.rec === 'review');
+      case 'highfit': return l._s.total >= 80 && l._s.rec !== 'avoid';
+      case 'new': return l._new;
+    }
+    return true;
+  });
+}
+let ID_SET = new Set();
+const byIdHas = id => ID_SET.has(id);
+
+function filtered(){
+  const q = f.q.trim().toLowerCase(), min = +f.min || 0, max = +f.max || 0;
+  return base().filter(l => {
+    if(ui.rec && l._s.rec !== ui.rec) return false;
+    if(f.svc && l.service !== f.svc) return false;
     if(f.exp && l.exp !== f.exp) return false;
     if(f.type && l.type !== f.type) return false;
     if(min || max){
@@ -498,61 +854,69 @@ function filtered(view = ui.view){
       if(min && hi < min) return false;
       if(max && lo > max) return false;
     }
-    if(f.dur && !(l.duration || '').toLowerCase().includes(f.dur)) return false;
     if(f.country && l.country !== f.country) return false;
-    if(ui.hideUS && l._us && !['shortlisted','applied','interviewing','won'].includes(s)) return false;
-    if(q && !(l.title + ' ' + l.desc + ' ' + (l.skills||[]).join(' ')).toLowerCase().includes(q)) return false;
+    if(q && !(l.title + ' ' + l.desc + ' ' + (l.skills||[]).join(' ') + ' ' + l.service).toLowerCase().includes(q)) return false;
     return true;
   });
 }
-
 function sortRows(rows){
   const by = {
+    score: (a,b) => b._s.total - a._s.total || b._posted - a._posted,
     posted: (a,b) => b._posted - a._posted,
-    scraped: (a,b) => b._scraped - a._scraped || b._posted - a._posted,
-    fit: (a,b) => b._fit.score - a._fit.score,
-    budget: (a,b) => sizeOf(b) - sizeOf(a),
-    applicants: (a,b) => (a.applicants ?? 999) - (b.applicants ?? 999),
-    title: (a,b) => a.title.localeCompare(b.title)
-  }[ui.sort];
+    eff: (a,b) => (b._p.known ? b._p.eff : -1) - (a._p.known ? a._p.eff : -1),
+    value: (a,b) => (b._p.known ? b._p.bid : -1) - (a._p.known ? a._p.bid : -1),
+    applicants: (a,b) => (a.applicants ?? 999) - (b.applicants ?? 999)
+  }[ui.sort] || ((a,b) => b._s.total - a._s.total);
   return rows.slice().sort(by);
 }
 
-/* ---------- icons ---------- */
+/* ================= icons ================= */
 const I = {
-  home:'<path d="M3 11 12 3l9 8M5 9.5V21h5v-6h4v6h5V9.5"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  list:'<path d="M4 6h16M4 12h16M4 18h10"/>',
   chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10h4v4h-4z"/>',
   code:'<path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 13h6M9 17h6"/>',
   star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/>',
   send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
   users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4.5-5.7"/>',
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
   minus:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
   x:'<path d="M6 6l12 12M18 6 6 18"/>',
-  list:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+  chart:'<path d="M4 20V10M9 20V4M14 20v-7M19 20v-11"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.6 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5V8M12 16v1.5"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  users2:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/>',
-  coin:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.6 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5V8M12 16v1.5"/>',
   ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   pen:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>'
 };
 const icon = (n, cls='') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 
-/* ---------- rendering ---------- */
+/* ================= rendering ================= */
+const NAV = [
+  {h:'Find'},
+  {v:'best', label:"Today's best", ic:'sun', c:'c-best'},
+  {v:'all', label:'All leads', ic:'list'},
+  {v:'AI', label:'AI leads', sub:'Zero Touch AI', ic:'chip', c:'c-ai'},
+  {v:'Website', label:'Website leads', sub:'Rapid Rank', ic:'code', c:'c-web'},
+  {v:'hidden', label:'Hidden opportunities', ic:'eye', c:'c-hid'},
+  {h:'Win'},
+  {v:'proposals', label:'Proposal Studio', ic:'doc'},
+  ...STATUSES.map(([v,label,ic,c]) => ({v, label, ic, c})),
+  {v:'performance', label:'Performance', ic:'chart'}
+];
 function renderNav(){
-  const cnt = v => filtered(v).length;
-  const side = [['all','Dashboard','home',''], ['AI','AI Leads','chip','c-ai'], ['Website','Website Leads','code','c-web'],
-    ['shortlisted','Shortlist','star','c-sl'], ['applied','Applied','send','c-ap'], ['interviewing','Interviewing','users','c-in'],
-    ['won','Won','trophy','c-won'], ['lost','Lost','minus',''], ['rejected','Rejected','x','c-rej']];
-  $('sideNav').innerHTML = side.map(([v,label,ic,c]) =>
-    `<button type="button" data-view="${v}" class="${ui.view === v ? 'on' : ''}">${icon(ic)}${label}${v === 'all' ? '' : `<span class="cnt num ${c}">${cnt(v)}</span>`}</button>`).join('');
-  $('tabs').innerHTML = VIEWS.map(([v,label]) => `<button type="button" data-view="${v}" class="${ui.view === v ? 'on' : ''}">${label} <span class="num">(${cnt(v)})</span></button>`).join('');
+  $('sideNav').innerHTML = NAV.map(n => n.h ? `<div class="nav-h">${n.h}</div>` :
+    `<button type="button" data-view="${n.v}" class="${ui.view === n.v ? 'on' : ''}">${icon(n.ic)}<span>${n.label}${n.sub ? `<small>${n.sub}</small>` : ''}</span>${n.v === 'performance' ? '' : `<span class="cnt num ${n.c || ''}">${base(n.v).length}</span>`}</button>`).join('');
+  $('viewSel').innerHTML = NAV.filter(n => n.v).map(n => `<option value="${n.v}" ${ui.view === n.v ? 'selected' : ''}>${n.label}${n.sub ? ' · ' + n.sub : ''}</option>`).join('');
 }
 
 function spark(values, color){
-  const max = Math.max(1, ...values), w = 100, h = 30;
+  const max = Math.max(1, ...values), w = 100, h = 26;
   const pts = values.map((v,i) => [i * w / (values.length - 1), h - 3 - (v / max) * (h - 8)]);
   const line = pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
   const last = pts[pts.length - 1];
@@ -561,154 +925,220 @@ function spark(values, color){
     <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
     <circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="${color}" vector-effect="non-scaling-stroke"/></svg>`;
 }
-
 function renderKpis(){
-  const days = lastDays(14), keys = days.map(d => dayKey(d));
+  const keys = lastDays(14).map(dayKey);
   const perDay = pred => { const m = {}; DATA.forEach(l => { if(pred(l)){ const k = dayKey(l._scraped); m[k] = (m[k]||0) + 1; } }); return keys.map(k => m[k] || 0); };
-  const open = DATA.filter(visible);
-  const today = dayKey(Date.now());
-  const todayCount = pred => DATA.filter(l => pred(l) && dayKey(l._scraped) === today).length;
-  const rejDays = keys.map(k => Object.values(status).filter(x => x.s === 'rejected' && dayKey(x.t) === k).length);
+  const pipe = DATA.filter(l => PIPE.includes(st(l)));
   const cards = [
-    {n:open.length, l:'Open leads', c:'var(--green)', ic:'list', bg:'var(--green-soft)', v:'all', sp:perDay(() => true), d:todayCount(() => true)},
-    {n:open.filter(l => l.cat === 'AI').length, l:'AI projects', c:'var(--ai)', ic:'chip', bg:'var(--ai-soft)', v:'AI', sp:perDay(l => l.cat === 'AI'), d:todayCount(l => l.cat === 'AI')},
-    {n:open.filter(l => l.cat === 'Website').length, l:'Website design', c:'var(--web)', ic:'code', bg:'var(--web-soft)', v:'Website', sp:perDay(l => l.cat === 'Website'), d:todayCount(l => l.cat === 'Website')},
-    {n:open.filter(l => l._new).length, l:'New since last visit', c:'var(--green)', ic:'sparkle', bg:'var(--green-soft)', v:'new', sp:perDay(l => l._new)},
-    {n:DATA.filter(l => st(l) === 'rejected').length, l:'Rejected', c:'var(--red)', ic:'x', bg:'var(--red-soft)', v:'rejected', sp:rejDays}
+    {n:base('highfit').length, l:'High-fit opportunities', s:'Score 80+, open', c:'var(--green)', bg:'var(--green-soft)', ic:'target', v:'highfit', sp:perDay(l => l._s.total >= 80)},
+    {n:base('new').length, l:'New since last visit', s:'Not yet reviewed', c:'var(--primary)', bg:'var(--primary-soft)', ic:'sparkle', v:'new', sp:perDay(() => true)},
+    {n:base('shortlisted').length, l:'Ready to bid', s:'Shortlisted', c:'var(--amber)', bg:'var(--amber-soft)', ic:'star', v:'shortlisted'},
+    {n:money(pipe.reduce((s, l) => s + l._p.bid, 0)), l:'Potential pipeline', s:`Est. value of ${pipe.length} shortlisted, applied and interviewing`, c:'var(--web)', bg:'var(--web-soft)', ic:'coin', v:'applied'}
   ];
-  $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-kpi="${k.v}">
-    <div class="kpi-h"><div><div class="n num">${k.n}</div><div class="l">${k.l}</div></div>
-    ${k.d ? `<span class="delta num" title="Scraped today">+${k.d} today</span>` : `<span class="ic" style="background:${k.bg};color:${k.c}">${icon(k.ic)}</span>`}</div>
-    ${spark(k.sp, k.c)}</button>`).join('');
+  $('kpis').innerHTML = cards.map(k => `<button type="button" class="kpi" data-view="${k.v}">
+    <div class="kpi-h"><div><div class="n num">${k.n}</div><div class="l">${k.l}</div><div class="s">${k.s}</div></div><span class="ic" style="background:${k.bg};color:${k.c}">${icon(k.ic)}</span></div>
+    ${k.sp ? spark(k.sp, k.c) : ''}</button>`).join('');
+}
+function renderBest(){
+  const top = sortRows(base('best')).slice(0, 3);
+  $('best').hidden = !top.length || ui.view === 'performance';
+  $('best').innerHTML = `<div class="best-h"><h2>Today's best opportunities</h2><span>Ranked by fit, value and client quality</span></div>
+    <div class="best-row">${top.map(l => `<button type="button" class="mini" data-jump="${esc(l.id)}">
+      <b>${esc(l.title)}</b><span class="sc num" style="color:${scoreColor(l._s.total)}">${l._s.total}</span>
+      <span class="sub2"><span class="chip ${l.cat === 'AI' ? 'ai' : 'web'}">${BIZ[l.cat]}</span><span>${rangeText(l, l._p)}</span><span>${ago(l._posted)}</span></span></button>`).join('')}</div>`;
+}
+
+function bars(parts){
+  return `<div class="bars">${parts.map(x => `<div class="bar-r" title="${esc(x.note)}"><span>${x.label}${x.est ? '<span class="est">est.</span>' : ''}</span>
+    <span class="track"><span class="fill" style="display:block;width:${x.v / x.max * 100}%;background:${x.v / x.max >= .75 ? 'var(--green)' : x.v / x.max >= .45 ? 'var(--amber)' : 'var(--red)'}"></span></span>
+    <b class="num">${x.v}/${x.max}</b></div>`).join('')}</div>`;
 }
 
 function leadHtml(l, i){
-  const s = st(l), sc = l._fit.score, cx = connects(l), bid = suggestedBid(l);
+  const s = st(l), sc = l._s, p = l._p, C = 2 * Math.PI * 30;
   const amount = l.type === 'hourly'
-    ? (l.rateMax ? (l.rateMin && l.rateMin !== l.rateMax ? `${rate(l.rateMin)} – ${rate(l.rateMax)}` : rate(l.rateMax)) + '/hr' : 'Rate not listed')
+    ? (l.rateMax ? (l.rateMin && l.rateMin !== l.rateMax ? `${rate(l.rateMin)}–${rate(l.rateMax)}` : rate(l.rateMax)) + '/hr' : 'Rate not listed')
     : (l.budget ? money(l.budget) : 'Budget not listed');
   const client = [];
-  if(l.country) client.push(`<span>${flag(l.cc)}${esc(l.country)}</span>`);
+  if(l.country) client.push(`<span>${esc(flag(l.cc) + l.country)}</span>`);
   if(l.spent != null) client.push(`<span>${l.spent ? money(l.spent) + ' spent' : 'No spend yet'}</span>`);
   if(l.verified != null) client.push(l.verified ? '<span class="good">✓ Payment verified</span>' : '<span class="bad">Payment unverified</span>');
   if(l.rating) client.push(`<span>★ ${l.rating.toFixed(1)}${l.reviews ? ` (${l.reviews})` : ''}</span>`);
   if(l.applicants != null) client.push(`<span class="${l.applicants < 10 ? 'good' : l.applicants >= 50 ? 'bad' : ''}">${l.applicants} proposals</span>`);
-  const C = 2 * Math.PI * 30;
   const url = /^https:\/\//.test(l.url) ? l.url : '#';
   const statusLabel = STATUSES.find(x => x[0] === s)?.[1];
-  return `<article class="lead ${sc >= 80 && !s ? 'best' : ''} ${i === focusIdx ? 'focus' : ''}" data-id="${esc(l.id)}" data-i="${i}">
-    ${l._new ? '<span class="new-b">NEW</span>' : ''}
+  const stale = Date.now() - l._seen > 2 * DAY && Date.now() - l._posted > 5 * DAY;
+  const o = calc[l.id] || {};
+  return `<article class="lead r-${sc.rec} ${openIds.has(l.id) ? 'open' : ''} ${i === focusIdx ? 'focus' : ''}" data-id="${esc(l.id)}" data-i="${i}">
     <div class="lead-main">
-      ${sc >= 80 && !s ? '<span class="ribbon">BEST FIT</span>' : ''}
-      <h3 data-act="toggle">${esc(l.title)} <span class="mini-score num" style="color:${scoreColor(sc)};background:color-mix(in srgb, ${scoreColor(sc)} 14%, transparent)">${sc}</span></h3>
+      <div class="chips"><span class="rec ${sc.rec}" title="${esc(REC[sc.rec].why)}">${REC[sc.rec].label}</span>${l._new ? '<span class="new-b">NEW</span>' : ''}${statusLabel ? `<span class="chip st">${statusLabel}</span>` : ''}${props[l.id] ? '<span class="chip st">Draft saved</span>' : ''}</div>
+      <h3 data-act="toggle">${esc(l.title)} <span class="mini-score num" style="color:${scoreColor(sc.total)};background:color-mix(in srgb, ${scoreColor(sc.total)} 14%, transparent)">${sc.total}</span></h3>
       <p class="desc" data-act="toggle">${esc(l.desc)}</p>
       <div class="chips">
-        <span class="chip ${l.cat === 'AI' ? 'ai' : 'web'}">● ${CAT_LABEL[l.cat] || esc(l.cat)}</span>
-        ${l.exp ? `<span class="chip exp-${l.exp.split(' ')[0]}">${esc(l.exp)}</span>` : ''}
+        <span class="chip ${l.cat === 'AI' ? 'ai' : 'web'}">● ${BIZ[l.cat]}</span>
+        <span class="chip svc">${esc(l.service)}</span>
+        ${l.match === 'problem' ? '<span class="chip hid" title="The client describes a problem you solve without naming the tech">Hidden opportunity</span>' : ''}
+        ${l.exp ? `<span class="chip svc">${esc(l.exp)}</span>` : ''}
         ${l._us ? `<span class="chip us" title="${esc('Matched: “' + l._usText + '”')}">U.S. required</span>` : '<span class="chip ok" title="No U.S.-only wording found in the post">No U.S. required</span>'}
-        ${statusLabel ? `<span class="chip st">${statusLabel}</span>` : ''}
+        ${l._dups.length ? `<span class="chip dup" title="Reposts or near-identical posts, folded into this card">+${l._dups.length} similar</span>` : ''}
+        ${l.repost ? '<span class="chip dup">Repost</span>' : ''}
+        ${stale ? '<span class="chip stale" title="Not seen in recent searches; it may be filled or closed">May be closed</span>' : ''}
       </div>
       ${client.length ? `<div class="client">${client.join('')}</div>` : ''}
-      ${l.skills && l.skills.length ? `<div class="chips skills">${l.skills.slice(0,6).map(k => `<span class="chip skill">${esc(k)}</span>`).join('')}</div>` : ''}
       <div class="actions">
         <a class="btn go" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
+        <button type="button" class="btn prop" data-act="proposal">${icon('doc')}${props[l.id] ? 'Edit proposal' : 'Generate proposal'}</button>
         <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Shortlisted' : 'Shortlist'}</button>
-        <button type="button" class="btn ${notes[l.id] ? 'has-note' : ''}" data-act="note">${icon('pen')}Note</button>
         ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button>`}
         <select class="status-sel" data-act="status" aria-label="Pipeline status">
           <option value="">Move to…</option>${STATUSES.map(([v,lab]) => `<option value="${v}" ${s === v ? 'selected' : ''}>${lab}</option>`).join('')}<option value="clear">Clear status</option>
         </select>
+        <button type="button" class="btn" data-act="toggle">${openIds.has(l.id) ? 'Hide analysis' : 'Analyze'}</button>
       </div>
-      <textarea class="note" data-note placeholder="Pitch idea, questions to ask, follow-up date…" ${l._noteOpen ? '' : 'hidden'}>${esc(notes[l.id] || '')}</textarea>
-      <div class="scraped">Scraped ${new Date(l._scraped).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})} · Job #${esc(l.id)}</div>
+      <div class="scraped">Posted ${ago(l._posted)} · last seen in search ${ago(l._seen)} · Job #${esc(l.id)}</div>
     </div>
-    <div class="ring"><div class="ring-wrap" title="${esc('Fit score ' + sc + '\n' + l._fit.why.join('\n'))}">
-      <svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="36" cy="36" r="30" fill="none" stroke="${scoreColor(sc)}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * sc / 100).toFixed(1)} ${C.toFixed(1)}"/></svg>
-      <div class="ring-txt"><b class="num">${sc}</b><small>FIT</small></div></div></div>
+    <div class="ring"><div class="ring-wrap" title="${esc(sc.parts.map(x => `${x.label}: ${x.v}/${x.max}`).join('\n'))}">
+      <svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="36" cy="36" r="30" fill="none" stroke="${scoreColor(sc.total)}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * sc.total / 100).toFixed(1)} ${C.toFixed(1)}"/></svg>
+      <div class="ring-txt"><b class="num">${sc.total}</b><small>SCORE</small></div></div></div>
     <div class="lead-meta">
       <span class="type">${l.type === 'hourly' ? 'Hourly' : l.type === 'fixed' ? 'Fixed price' : 'Type not listed'}</span>
       <span class="amt num">${amount}</span>
-      ${l.duration ? `<span class="row dur">${icon('clock')}${esc(l.duration)}</span>` : ''}
-      <span class="row">${icon('cal')}Posted ${ago(l._posted)}</span>
-      <span class="row bid" title="Rough estimate from job size. Upwork shows the exact number on the job page.">${icon('coin')}<span>${cx ? `~${cx} Connects <span class="num">(≈$${(cx * .15).toFixed(2)})</span>` : 'Connects: check on Upwork'}</span></span>
-      ${bid ? `<span class="row">${icon('send')}<span>Bid <b class="num">${bid}</b></span></span>` : ''}
+      ${l.duration ? `<span class="row dur">${icon('clock')}<span>${esc(l.duration)}</span></span>` : ''}
+      <span class="row">${icon('send')}<span>Bid <b class="num">${rangeText(l, p)}</b></span></span>
+      <span class="row eff" title="Net after Upwork fee, Connects and direct costs, divided by estimated hours">${icon('coin')}<span><b class="num">~${rate(p.eff)}/hr</b> effective${p.known ? '' : ' <span class="est">no budget</span>'}</span></span>
+      <span class="row cx" title="Rough estimate from job size. Upwork shows the exact number on the job page.">${icon('target')}<span>${p.cx ? `~${p.cx} Connects (≈$${(p.cx * .15).toFixed(2)})` : 'Connects: check on Upwork'}</span></span>
+    </div>
+    <div class="intel">
+      <div class="box"><h4>Score breakdown <span>${sc.total}/100</span></h4>${bars(sc.parts)}
+        ${sc.flags.length ? sc.flags.map(x => `<div class="flag-l">⚠ ${esc(x)}</div>`).join('') : ''}
+        <p class="muted" style="font-size:11.5px">Items marked est. are estimates from the available data, not facts.</p></div>
+      <div class="box"><h4>Client quality</h4>${clientIntel(l, p)}</div>
+      <div class="box"><h4>Profitability <span class="est">est.</span></h4>
+        <div class="calc">
+          ${l.type === 'hourly'
+            ? `<label>Your rate ($/hr)<input class="input num" type="number" min="1" data-calc="rate" value="${p.rate}"></label>`
+            : `<label>Your bid ($)<input class="input num" type="number" min="1" data-calc="bid" value="${p.bid}"></label>`}
+          <label>Hours<input class="input num" type="number" min="1" data-calc="hours" value="${p.hours}"></label>
+          <label>Direct costs ($)<input class="input num" type="number" min="0" data-calc="costs" value="${o.costs ?? 0}"></label>
+        </div>
+        <div class="calc-out"><span>Revenue<b class="num">${money(p.bid)}</b></span><span>Net after ${settings.fee}% fee<b class="num">${money(p.net)}</b></span><span>Effective rate<b class="num" style="color:${p.eff >= settings.minRate ? 'var(--green)' : 'var(--red)'}">${rate(p.eff)}/hr</b></span></div>
+        <p class="muted" style="font-size:11.5px">Hours default to a typical ${esc(l.service)} job. Change any number; it is saved for this lead.</p></div>
+      <div class="box"><h4>Bid strategy</h4>
+        <div class="kv"><span>Suggested bid</span><span><b>${rangeText(l, p)}</b>${l.type === 'hourly' ? ` (~${money(p.lo)}–${money(p.hi)} for ${p.hours}h)` : ''}</span>
+          <span>Delivery</span><span>${p.delivery}</span>
+          <span>Positioning</span><span>${esc(info(l).position)}</span>
+          <span>Your edge</span><span>${esc(info(l).edge)}</span></div>
+        ${p.warn.map(w => `<div class="warn">${esc(w)}</div>`).join('')}
+        <p class="muted" style="font-size:11.5px">Advice only. You set the final price on Upwork.</p></div>
+      <div class="box" style="grid-column:1/-1"><h4>Notes${s === 'won' ? ' and contract value' : ''}</h4>
+        ${s === 'won' ? `<label class="calc" style="grid-template-columns:200px"><span style="font-size:11px;color:var(--faint);font-weight:600">Contract value ($)</span><input class="input num" type="number" min="0" data-calc="value" value="${o.value ?? ''}"></label>` : ''}
+        <textarea class="note" data-note placeholder="Pitch idea, questions to ask, follow-up date…">${esc(notes[l.id] || '')}</textarea>
+        ${l._dups.length ? `<div class="links"><span class="muted">Similar posts folded into this card:</span>${l._dups.map(d => `<a href="${esc(/^https:\/\//.test(d.url) ? d.url : '#')}" target="_blank" rel="noopener">${esc(d.title)} · ${ago(d._posted)}</a>`).join('')}</div>` : ''}
+      </div>
     </div>
   </article>`;
 }
 
 function renderList(){
-  const rows = sortRows(ui.view === 'new' ? filtered('all').filter(l => l._new) : filtered());
-  shown = rows.slice(0, limit);
+  const perf = ui.view === 'performance';
+  ['recTabs','filters','countLine','rows'].forEach(id => $(id).hidden = perf);
+  $('perfView').hidden = !perf;
+  $('viewTitle').textContent = VIEWS[ui.view]?.title || '';
+  $('viewSub').textContent = VIEWS[ui.view]?.sub || '';
+  if(perf){ $('more').hidden = $('empty').hidden = true; renderPerf(); return; }
+  const pool = base();
+  const recCount = r => pool.filter(l => l._s.rec === r).length;
+  $('recTabs').innerHTML = [['','All', 'var(--primary)'], ['bid','Bid now','var(--green)'], ['review','Review','var(--amber)'], ['low','Low priority','var(--faint)'], ['avoid','Avoid','var(--red)']]
+    .map(([r,label,c]) => `<button type="button" data-rec="${r}" class="${ui.rec === r ? 'on' : ''}" title="${r ? esc(REC[r].why) : ''}">${r ? `<i style="background:${c}"></i>` : ''}${label} <span class="num">(${r ? recCount(r) : pool.length})</span></button>`).join('');
+  const rows = sortRows(filtered());
+  const shown = rows.slice(0, limit);
   const box = $('rows');
   box.className = 'rows ' + (ui.layout === 'grid' ? 'grid ' : '') + ui.density;
   box.innerHTML = shown.map(leadHtml).join('');
   $('countLine').textContent = `${shown.length} of ${rows.length} shown`;
   $('more').hidden = rows.length <= limit;
   $('empty').hidden = rows.length > 0;
-  $('emptySub').textContent = ['all','AI','Website','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
+  $('emptySub').textContent = ui.view === 'proposals' ? 'Open a lead and press Generate proposal to start a draft.' : ['best','all','AI','Website','hidden','highfit','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
+}
+
+function renderPerf(){
+  const rows = ['AI','Website'].map(cat => {
+    const L = DATA.filter(l => l.cat === cat);
+    const c = s => L.filter(l => st(l) === s).length;
+    const sent = c('applied') + c('interviewing') + c('won') + c('lost');
+    const won = L.filter(l => st(l) === 'won');
+    const value = won.reduce((s, l) => s + (+calc[l.id]?.value || l._p.bid), 0);
+    const reviewed = L.filter(l => st(l)).length;
+    return {cat, reviewed, sl:c('shortlisted'), sent, iv:c('interviewing'), won:won.length, lost:c('lost'), rej:c('rejected'), value,
+      rate: c('won') + c('lost') ? Math.round(won.length / (won.length + c('lost')) * 100) + '%' : '—'};
+  });
+  const tot = k => rows.reduce((s, r) => s + r[k], 0);
+  const bySvc = {};
+  DATA.filter(l => st(l) && st(l) !== 'rejected').forEach(l => { const b = bySvc[l.service] ||= {sent:0, won:0}; if(st(l) !== 'shortlisted') b.sent++; if(st(l) === 'won') b.won++; });
+  const svcRows = Object.entries(bySvc).sort((a,b) => b[1].won - a[1].won || b[1].sent - a[1].sent);
+  $('perfView').innerHTML = `
+    <div class="perf">
+      <div class="kpi"><div class="n num">${tot('sent')}</div><div class="l">Proposals sent</div><div class="s">Applied, interviewing, won or lost</div></div>
+      <div class="kpi"><div class="n num">${tot('iv') + tot('won')}</div><div class="l">Interviews</div><div class="s">Interviewing or won</div></div>
+      <div class="kpi"><div class="n num">${tot('won')}</div><div class="l">Won</div><div class="s">${tot('won') + tot('lost') ? Math.round(tot('won') / (tot('won') + tot('lost')) * 100) + '% of decided bids' : 'No decided bids yet'}</div></div>
+      <div class="kpi"><div class="n num">${money(tot('value'))}</div><div class="l">Contract value</div><div class="s">From the value you record on won leads</div></div>
+    </div>
+    <div class="panel"><h4>By business</h4><div class="tbl"><table class="t">
+      <tr><th>Business</th><th>Reviewed</th><th>Shortlisted</th><th>Sent</th><th>Interviewing</th><th>Won</th><th>Lost</th><th>Win rate</th><th>Value</th></tr>
+      ${rows.map(r => `<tr><td>${BIZ_FULL[r.cat]}</td><td class="n">${r.reviewed}</td><td class="n">${r.sl}</td><td class="n">${r.sent}</td><td class="n">${r.iv}</td><td class="n">${r.won}</td><td class="n">${r.lost}</td><td class="n">${r.rate}</td><td class="n">${money(r.value)}</td></tr>`).join('')}
+    </table></div></div>
+    <div class="panel"><h4>By service</h4>${svcRows.length ? `<div class="tbl"><table class="t"><tr><th>Service</th><th>Sent</th><th>Won</th></tr>
+      ${svcRows.map(([k,v]) => `<tr><td>${esc(k)}</td><td class="n">${v.sent}</td><td class="n">${v.won}</td></tr>`).join('')}</table></div>` : '<p class="muted" style="margin:0">Move leads through the pipeline (Shortlist → Applied → Interviewing → Won/Lost) and results show up here.</p>'}</div>
+    <p class="muted" style="font-size:12px">Saved in this browser only. Export CSV to keep a copy.</p>`;
 }
 
 function renderRail(){
-  const open = DATA.filter(visible);
-  // 14-day stacked bars
+  const open = base('all');
   const days = lastDays(14), keys = days.map(dayKey);
   const ai = keys.map(k => DATA.filter(l => l.cat === 'AI' && dayKey(l._scraped) === k).length);
   const web = keys.map(k => DATA.filter(l => l.cat === 'Website' && dayKey(l._scraped) === k).length);
-  const tot = ai.map((a,i) => a + web[i]), max = Math.max(5, ...tot);
-  const top = Math.ceil(max / 5) * 5, W = 240, H = 120, x0 = 22, y0 = 8, ch = 90, bw = (W - x0) / 14;
-  const y = v => y0 + ch - v / top * ch;
-  let bars = '';
+  const tot = ai.map((a,i) => a + web[i]), top = Math.ceil(Math.max(5, ...tot) / 5) * 5;
+  const W = 240, H = 120, x0 = 24, y0 = 8, ch = 90, bw = (W - x0) / 14, y = v => y0 + ch - v / top * ch;
+  const fmt = d => d.toLocaleDateString(undefined,{month:'short', day:'numeric'});
+  let barsSvg = '';
   keys.forEach((k,i) => {
     const x = x0 + i * bw + 2;
-    if(ai[i]) bars += `<rect x="${x.toFixed(1)}" y="${y(ai[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(ai[i]/top*ch).toFixed(1)}" fill="var(--ai)" rx="1.5"><title>${days[i].toLocaleDateString(undefined,{month:'short',day:'numeric'})}: ${ai[i]} AI</title></rect>`;
-    if(web[i]) bars += `<rect x="${x.toFixed(1)}" y="${y(tot[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(web[i]/top*ch).toFixed(1)}" fill="var(--web)" rx="1.5"><title>${days[i].toLocaleDateString(undefined,{month:'short',day:'numeric'})}: ${web[i]} Website</title></rect>`;
+    if(ai[i]) barsSvg += `<rect x="${x.toFixed(1)}" y="${y(ai[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(ai[i]/top*ch).toFixed(1)}" fill="var(--ai)" rx="1.5"><title>${fmt(days[i])}: ${ai[i]} AI</title></rect>`;
+    if(web[i]) barsSvg += `<rect x="${x.toFixed(1)}" y="${y(tot[i]).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${(web[i]/top*ch).toFixed(1)}" fill="var(--web)" rx="1.5"><title>${fmt(days[i])}: ${web[i]} Website</title></rect>`;
   });
   const grid = [0, top/2, top].map(v => `<line x1="${x0}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${x0-5}" y="${y(v)+3}" text-anchor="end">${v}</text>`).join('');
-  const fmt = d => d.toLocaleDateString(undefined,{month:'short', day:'numeric'});
-  const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Leads scraped per day for the last 14 days">${grid}${bars}<text x="${x0}" y="${H-4}">${fmt(days[0])}</text><text x="${W}" y="${H-4}" text-anchor="end">${fmt(days[13])}</text></svg>`;
+  const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Leads scraped per day for the last 14 days">${grid}${barsSvg}<text x="${x0}" y="${H-4}">${fmt(days[0])}</text><text x="${W}" y="${H-4}" text-anchor="end">${fmt(days[13])}</text></svg>`;
 
-  // experience donut
-  const ex = [['Expert','var(--ai)'], ['Intermediate','var(--web)'], ['Entry Level','var(--green)']].map(([k,c]) => ({k, c, n: open.filter(l => l.exp === k).length}));
-  const exTot = ex.reduce((a,b) => a + b.n, 0) || 1, R = 40, C = 2 * Math.PI * R;
+  const recs = [['bid','var(--green)'], ['review','var(--amber)'], ['low','var(--faint)'], ['avoid','var(--red)']].map(([k,c]) => ({k, c, n: open.filter(l => l._s.rec === k).length}));
+  const rt = recs.reduce((a,b) => a + b.n, 0) || 1, R = 38, C = 2 * Math.PI * R;
   let off = 0;
-  const arcs = ex.map(e => { const len = e.n / exTot * C; const s = `<circle cx="55" cy="55" r="${R}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${len.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 55 55)"/>`; off += len; return s; }).join('');
+  const arcs = recs.map(e => { const len = e.n / rt * C; const s = `<circle cx="52" cy="52" r="${R}" fill="none" stroke="${e.c}" stroke-width="13" stroke-dasharray="${len.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 52 52)"/>`; off += len; return s; }).join('');
 
-  // hourly rate distribution
-  const hourly = open.filter(l => l.type === 'hourly' && l.rateMax);
-  const buckets = [['$0–50', 0, 50], ['$50–75', 50, 75], ['$75–100', 75, 100], ['$100+', 100, 1e9]].map(([k,lo,hi]) => ({k, lo, n: hourly.filter(l => l.rateMax >= lo && l.rateMax < hi).length}));
-  const bMax = Math.max(1, ...buckets.map(b => b.n));
-  const dist = `<svg viewBox="0 0 240 110" role="img" aria-label="Hourly leads by maximum rate">${buckets.map((b,i) => {
-    const h = b.n / bMax * 70, x = 10 + i * 58;
-    return `<rect x="${x}" y="${78 - h}" width="42" height="${h}" rx="3" fill="var(--green)" opacity="${.45 + .55 * b.n / bMax}"/><text x="${x+21}" y="92" text-anchor="middle">${b.k}</text><text x="${x+21}" y="106" text-anchor="middle" style="fill:var(--fg);font-weight:600">${Math.round(b.n / (hourly.length || 1) * 100)}%</text>`;
-  }).join('')}</svg>`;
+  const svc = {}; open.forEach(l => { const s = svc[l.service] ||= {n:0, cat:l.cat}; s.n++; });
+  const svcTop = Object.entries(svc).sort((a,b) => b[1].n - a[1].n).slice(0, 7);
 
-  // keyword counts
-  const kw = settings.keywords.map(k => ({k, n: open.filter(l => (l.title + ' ' + l.desc + ' ' + (l.skills||[]).join(' ')).toLowerCase().includes(k.toLowerCase())).length}))
-    .filter(x => x.n).sort((a,b) => b.n - a.n).slice(0, 6);
-
-  // insight
-  const wk = l => Date.now() - l._scraped < 7 * DAY, pwk = l => Date.now() - l._scraped >= 7 * DAY && Date.now() - l._scraped < 14 * DAY;
-  const aiNow = DATA.filter(l => l.cat === 'AI' && wk(l)).length, aiPrev = DATA.filter(l => l.cat === 'AI' && pwk(l)).length;
-  const best = open.filter(l => l._fit.score >= 75).length;
-  const rates = hourly.map(l => l.rateMax).sort((a,b) => a - b), med = rates.length ? rates[Math.floor(rates.length / 2)] : 0;
-  const parts = [];
-  if(aiPrev) parts.push(`AI leads are ${aiNow >= aiPrev ? 'up' : 'down'} ${Math.abs(Math.round((aiNow - aiPrev) / aiPrev * 100))}% compared to last week.`);
-  parts.push(`${best} open lead${best === 1 ? '' : 's'} score 75+ for your niche and rates.`);
-  if(med) parts.push(`Hourly jobs top out at a median of ${rate(med)}/hr.`);
+  const hidden = base('hidden').length, bidNow = open.filter(l => l._s.rec === 'bid');
+  const effs = open.filter(l => l._p.known).map(l => l._p.eff).sort((a,b) => a - b);
+  const bestSvc = Object.entries(open.filter(l => l._p.known).reduce((m, l) => { (m[l.service] ||= []).push(l._p.eff); return m; }, {}))
+    .filter(([,v]) => v.length >= 3).map(([k,v]) => [k, v.reduce((a,b) => a + b, 0) / v.length]).sort((a,b) => b[1] - a[1])[0];
+  const parts = [`${bidNow.length} open lead${bidNow.length === 1 ? ' is' : 's are'} rated Bid now.`];
+  if(bestSvc) parts.push(`${bestSvc[0]} pays best right now at ~${rate(bestSvc[1])}/hr effective.`);
+  if(effs.length) parts.push(`Half of priced leads clear ${rate(effs[Math.floor(effs.length / 2)])}/hr after fees.`);
+  if(hidden) parts.push(`${hidden} hidden opportunit${hidden === 1 ? 'y' : 'ies'} waiting.`);
 
   $('rail').innerHTML = `
+    <div class="panel insight"><h4>Key insight</h4><p>${parts.join(' ')}</p></div>
+    <div class="panel"><h4>Recommendations <small>· open leads</small></h4><div class="donut">
+      <svg viewBox="0 0 104 104" role="img" aria-label="Open leads by recommendation"><circle cx="52" cy="52" r="${R}" fill="none" stroke="var(--line)" stroke-width="13"/>${arcs}<text x="52" y="54" text-anchor="middle" style="fill:var(--fg);font-size:18px;font-weight:700">${open.length}</text><text x="52" y="68" text-anchor="middle">open</text></svg>
+      <ul>${recs.map(e => `<li><i style="background:${e.c}"></i><span>${REC[e.k].label}</span><span class="num">${e.n}</span></li>`).join('')}</ul></div></div>
+    <div class="panel"><h4>Top services <small>· click to filter</small></h4><div class="kw">${svcTop.map(([k,v]) => `<button type="button" data-svc="${esc(k)}"><span class="chip ${v.cat === 'AI' ? 'ai' : 'web'}">${esc(k)}</span><span class="num">${v.n}</span></button>`).join('')}</div></div>
     <div class="panel" id="analytics"><h4>Leads scraped <small>· last 14 days</small></h4>${chart}
-      <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web)"></i>Website</span></div></div>
-    <div class="panel"><h4>Experience mix <small>· open leads</small></h4><div class="donut">
-      <svg viewBox="0 0 110 110" role="img" aria-label="Experience level mix"><circle cx="55" cy="55" r="${R}" fill="none" stroke="var(--line)" stroke-width="14"/>${arcs}<text x="55" y="56" text-anchor="middle" style="fill:var(--fg);font-size:18px;font-weight:700">${open.length}</text><text x="55" y="70" text-anchor="middle">total</text></svg>
-      <ul>${ex.map(e => `<li><i style="background:${e.c}"></i><span>${e.k}</span><span class="num">${e.n}</span><span class="num">${Math.round(e.n / exTot * 100)}%</span></li>`).join('')}</ul></div></div>
-    <div class="panel"><h4>Hourly rate <small>· max offered, ${hourly.length} jobs</small></h4>${dist}</div>
-    <div class="panel"><h4>Top keywords <small>· your niche</small></h4><div class="kw">${kw.map(x => `<button type="button" data-kw="${esc(x.k)}"><span>${esc(x.k)}</span><span class="num">${x.n}</span></button>`).join('') || '<span class="count-line">No keyword matches yet. Add some in Settings.</span>'}</div></div>
-    <div class="panel insight"><h4>Key insight</h4><p>${parts.join(' ')}</p></div>`;
+      <div class="legend"><span><i style="background:var(--ai)"></i>AI</span><span><i style="background:var(--web)"></i>Website</span></div></div>`;
 }
 
 function renderAll(){
-  renderNav(); renderKpis(); renderList(); renderRail();
+  ID_SET = new Set(DATA.map(l => l.id));
+  renderNav(); renderKpis(); renderBest(); renderList(); renderRail();
   $('avatar').textContent = (settings.name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
   $('userName').textContent = settings.name;
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === ui.layout));
@@ -716,81 +1146,106 @@ function renderAll(){
 }
 const saveUi = () => store.set('pf_ui', ui);
 
-/* ---------- actions ---------- */
+/* ================= actions ================= */
 function setStatus(id, s){
   if(!s || s === 'clear') delete status[id]; else status[id] = {s, t: Date.now()};
   store.set('pf_status', status);
   renderAll();
 }
-function setView(v){ ui.view = v; limit = 40; focusIdx = -1; saveUi(); renderAll(); window.scrollTo({top:0}); }
+function setView(v){ ui.view = v; ui.rec = ''; limit = 40; focusIdx = -1; saveUi(); renderAll(); window.scrollTo({top:0}); }
 
 document.addEventListener('click', e => {
   const v = e.target.closest('[data-view]'); if(v){ setView(v.dataset.view); return; }
-  const k = e.target.closest('[data-kpi]'); if(k){ setView(k.dataset.kpi); return; }
-  const kw = e.target.closest('[data-kw]'); if(kw){ f.q = $('q').value = kw.dataset.kw; limit = 40; renderList(); return; }
+  const r = e.target.closest('[data-rec]'); if(r){ ui.rec = r.dataset.rec; limit = 40; saveUi(); renderList(); return; }
+  const sv = e.target.closest('[data-svc]'); if(sv){ f.svc = $('fSvc').value = sv.dataset.svc; limit = 40; renderList(); $('listCol').scrollIntoView({behavior:'smooth'}); return; }
+  const j = e.target.closest('[data-jump]');
+  if(j){ const id = j.dataset.jump; if(ui.view !== 'best'){ ui.view = 'best'; ui.rec = ''; } openIds.add(id); renderAll();
+    document.querySelector(`.lead[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
   const card = e.target.closest('.lead'); if(!card) return;
   const act = e.target.closest('[data-act]')?.dataset.act, id = card.dataset.id, l = DATA.find(x => x.id === id);
   focusIdx = +card.dataset.i;
-  if(act === 'toggle') card.classList.toggle('open');
+  if(act === 'toggle'){ openIds.has(id) ? openIds.delete(id) : openIds.add(id); card.outerHTML = leadHtml(l, focusIdx); }
+  else if(act === 'proposal') openProposal(id);
   else if(act === 'shortlist') setStatus(id, st(l) === 'shortlisted' ? '' : 'shortlisted');
   else if(act === 'reject') setStatus(id, 'rejected');
   else if(act === 'clear') setStatus(id, '');
-  else if(act === 'note'){ l._noteOpen = !l._noteOpen; const t = card.querySelector('[data-note]'); t.hidden = !l._noteOpen; if(l._noteOpen) t.focus(); }
 });
 document.addEventListener('change', e => {
   if(e.target.matches('[data-act="status"]')) setStatus(e.target.closest('.lead').dataset.id, e.target.value);
+  if(e.target.matches('[data-calc]')){
+    const card = e.target.closest('.lead'), id = card.dataset.id, l = DATA.find(x => x.id === id);
+    const o = calc[id] ||= {}; const k = e.target.dataset.calc, v = e.target.value;
+    if(v === '') delete o[k]; else o[k] = +v;
+    store.set('pf_calc', calc);
+    enrichOne(l);
+    if(k === 'value') renderKpis();
+    else { card.outerHTML = leadHtml(l, +card.dataset.i); renderKpis(); }
+  }
 });
 document.addEventListener('input', e => {
   if(!e.target.matches('[data-note]')) return;
-  const id = e.target.closest('.lead').dataset.id, v = e.target.value.trim();
-  if(v) notes[id] = e.target.value; else delete notes[id];
+  const id = e.target.closest('.lead').dataset.id, v = e.target.value;
+  if(v.trim()) notes[id] = v; else delete notes[id];
   store.set('pf_notes', notes);
-  e.target.closest('.lead').querySelector('[data-act="note"]').classList.toggle('has-note', !!v);
 });
 
-const bind = (id, key, ev='input') => $(id).addEventListener(ev, e => { f[key] = e.target.value; limit = 40; renderList(); renderNav(); });
-bind('q','q'); bind('fExp','exp','change'); bind('fType','type','change'); bind('fMin','min'); bind('fMax','max'); bind('fDur','dur','change'); bind('fCountry','country','change');
-$('fUS').addEventListener('change', e => { ui.hideUS = e.target.checked; saveUi(); renderList(); renderNav(); });
+const bind = (id, key, ev='input') => $(id).addEventListener(ev, e => { f[key] = e.target.value; limit = 40; renderList(); });
+bind('q','q'); bind('fSvc','svc','change'); bind('fExp','exp','change'); bind('fType','type','change'); bind('fMin','min'); bind('fMax','max'); bind('fCountry','country','change');
+$('fUS').addEventListener('change', e => { ui.hideUS = e.target.checked; saveUi(); renderAll(); });
 $('sort').addEventListener('change', e => { ui.sort = e.target.value; saveUi(); renderList(); });
 $('ageSel').addEventListener('change', e => { ui.age = +e.target.value; saveUi(); renderAll(); });
+$('viewSel').addEventListener('change', e => setView(e.target.value));
 $('viewSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b){ ui.layout = b.dataset.v; saveUi(); renderAll(); } });
 $('densSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b){ ui.density = b.dataset.d; saveUi(); renderAll(); } });
 $('more').addEventListener('click', () => { limit += 40; renderList(); });
 $('clearF').addEventListener('click', () => {
   Object.keys(f).forEach(k => f[k] = '');
-  ['q','fExp','fType','fMin','fMax','fDur','fCountry'].forEach(id => $(id).value = '');
-  ui.age = 0; $('ageSel').value = '0'; saveUi(); renderAll();
+  ['q','fSvc','fExp','fType','fMin','fMax','fCountry'].forEach(id => $(id).value = '');
+  ui.rec = ''; ui.age = 0; $('ageSel').value = '0'; saveUi(); renderAll();
 });
-$('navAnalytics').addEventListener('click', () => $('analytics').scrollIntoView({behavior:'smooth', block:'start'}));
 $('navKeys').addEventListener('click', () => $('keysDlg').showModal());
 
+/* proposal dialog */
+$('propText').addEventListener('input', saveProposal);
+$('propReset').addEventListener('click', () => { const l = DATA.find(x => x.id === propId); $('propText').value = draftProposal(l); saveProposal(); });
+$('propCopy').addEventListener('click', () => copyText($('propText').value));
+$('propPrompt').addEventListener('click', () => copyText(aiPrompt(DATA.find(x => x.id === propId))));
+$('propApplied').addEventListener('click', () => { saveProposal(); $('propDlg').close(); setStatus(propId, 'applied'); toast('Marked as applied'); });
+$('propClose').addEventListener('click', () => $('propDlg').close());
+$('propDlg').addEventListener('close', () => { saveProposal(); renderAll(); });
+
+/* theme */
 function applyTheme(t){ if(t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
 $('theme').value = store.get('pf_theme_sel', 'system');
 $('theme').addEventListener('change', e => { const t = e.target.value; store.set('pf_theme_sel', t); try{ localStorage.setItem('pf_theme', t); }catch(err){} applyTheme(t); });
 
 /* settings */
 $('navSettings').addEventListener('click', () => {
-  $('sName').value = settings.name; $('sKw').value = settings.keywords.join('\n');
-  $('sRate').value = settings.minRate; $('sFixed').value = settings.minFixed;
+  $('sName').value = settings.name; $('sRate').value = settings.minRate; $('sFee').value = settings.fee; $('sCap').value = settings.capacity;
+  $('sProfAI').value = settings.profAI; $('sProfWeb').value = settings.profWeb; $('sPortAI').value = settings.portAI; $('sPortWeb').value = settings.portWeb;
+  $('sKw').value = settings.keywords.join(', ');
   $('settingsDlg').showModal();
 });
 $('settingsDlg').addEventListener('close', () => {
   if($('settingsDlg').returnValue !== 'save') return;
   settings = {
-    name: $('sName').value.trim() || 'Me',
-    keywords: $('sKw').value.split(/[\n,]/).map(s => s.trim()).filter(Boolean),
-    minRate: +$('sRate').value || 0, minFixed: +$('sFixed').value || 0
+    name: $('sName').value.trim() || 'Me', minRate: +$('sRate').value || DEFAULTS.minRate,
+    fee: +$('sFee').value >= 0 ? +$('sFee').value : DEFAULTS.fee, capacity: +$('sCap').value || DEFAULTS.capacity,
+    profAI: $('sProfAI').value.trim(), profWeb: $('sProfWeb').value.trim(), portAI: $('sPortAI').value, portWeb: $('sPortWeb').value,
+    keywords: $('sKw').value.split(',').map(s => s.trim()).filter(Boolean)
   };
   store.set('pf_settings', settings);
-  DATA.forEach(l => l._fit = fit(l));
+  DATA.forEach(enrichOne);
   renderAll();
 });
 
 /* CSV export */
 function exportCsv(){
-  const rows = sortRows(filtered());
-  const cols = ['title','cat','status','fit','type','rateMin','rateMax','budget','exp','duration','applicants','country','spent','verified','rating','us_only','posted','url','note'];
-  const val = l => ({...l, status: st(l), fit: l._fit.score, us_only: l._us ? 'yes' : '', note: notes[l.id] || ''});
+  const rows = ui.view === 'performance' ? sortRows(DATA.filter(l => st(l))) : sortRows(filtered());
+  const cols = ['title','business','service','recommendation','score','status','type','rateMin','rateMax','budget','suggested_bid','est_hours','effective_rate','exp','applicants','country','spent','verified','rating','us_only','hidden','posted','url','note','proposal'];
+  const val = l => ({...l, business: BIZ_FULL[l.cat], recommendation: REC[l._s.rec].label, score: l._s.total, status: st(l),
+    suggested_bid: rangeText(l, l._p), est_hours: l._p.hours, effective_rate: Math.round(l._p.eff), us_only: l._us ? 'yes' : '',
+    hidden: l.match === 'problem' ? 'yes' : '', note: notes[l.id] || '', proposal: props[l.id]?.text || ''});
   const cell = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
   const csv = [cols.join(','), ...rows.map(l => { const r = val(l); return cols.map(c => cell(r[c])).join(','); })].join('\n');
   const a = document.createElement('a');
@@ -808,28 +1263,32 @@ document.addEventListener('keydown', e => {
   const cur = cards[focusIdx], l = cur && DATA.find(x => x.id === cur.dataset.id);
   const move = d => { if(!cards.length) return; focusIdx = Math.max(0, Math.min(cards.length - 1, focusIdx + d)); cards.forEach((c,i) => c.classList.toggle('focus', i === focusIdx)); cards[focusIdx].scrollIntoView({block:'nearest'}); };
   const k = e.key;
-  if(k === 'j'){ move(1); }
-  else if(k === 'k'){ move(-1); }
+  if(k === 'j') move(1);
+  else if(k === 'k') move(-1);
   else if(k === '/'){ e.preventDefault(); $('q').focus(); }
-  else if(k === '?'){ $('keysDlg').showModal(); }
+  else if(k === '?') $('keysDlg').showModal();
   else if(!l) return;
-  else if(k === 'Enter'){ cur.classList.toggle('open'); }
-  else if(k === 'o'){ cur.querySelector('.btn.go').click(); }
-  else if(k === 's'){ setStatus(l.id, st(l) === 'shortlisted' ? '' : 'shortlisted'); }
-  else if(k === 'a'){ setStatus(l.id, 'applied'); }
-  else if(k === 'x'){ setStatus(l.id, 'rejected'); }
-  else if(k === 'u'){ setStatus(l.id, ''); }
+  else if(k === 'Enter'){ openIds.has(l.id) ? openIds.delete(l.id) : openIds.add(l.id); cur.outerHTML = leadHtml(l, focusIdx); }
+  else if(k === 'p'){ e.preventDefault(); openProposal(l.id); }
+  else if(k === 'o') cur.querySelector('.btn.go').click();
+  else if(k === 's') setStatus(l.id, st(l) === 'shortlisted' ? '' : 'shortlisted');
+  else if(k === 'a') setStatus(l.id, 'applied');
+  else if(k === 'x') setStatus(l.id, 'rejected');
+  else if(k === 'u') setStatus(l.id, '');
 });
 
 /* boot */
 $('sort').value = ui.sort; $('ageSel').value = String(ui.age); $('fUS').checked = ui.hideUS;
 fetch('./data.json', {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => {
-  DATA = (d.leads || []).filter(l => l.id);
+  DATA = (d.leads || []).filter(l => l.id && (l.cat === 'AI' || l.cat === 'Website'));
   $('synced').textContent = 'synced ' + (d.synced || '—');
   enrich();
   const counts = {}; DATA.forEach(l => { if(l.country) counts[l.country] = (counts[l.country] || 0) + 1; });
   const countries = Object.keys(counts).sort((a,b) => (b === 'Canada') - (a === 'Canada') || counts[b] - counts[a]);
   $('fCountry').insertAdjacentHTML('beforeend', countries.map(c => `<option value="${esc(c)}">${esc(c)} (${counts[c]})</option>`).join(''));
+  const svcs = [...new Set(DATA.map(l => l.service))].sort();
+  $('fSvc').insertAdjacentHTML('beforeend', ['AI','Website'].map(cat => `<optgroup label="${BIZ_FULL[cat]}">${svcs.filter(s => DATA.some(l => l.cat === cat && l.service === s)).map(s => `<option>${esc(s)}</option>`).join('')}</optgroup>`).join(''));
+  if(!VIEWS[ui.view]) ui.view = 'best';
   renderAll();
 }).catch(err => {
   $('rows').innerHTML = `<div class="empty"><b>Couldn't load data.json</b>${esc(err.message)}<div style="margin-top:12px"><button class="btn" type="button" onclick="location.reload()">Retry</button></div></div>`;

@@ -17,6 +17,7 @@ assert leg["posted"] < leg["scraped"] and leg["posted"].startswith("2026-10-16")
 print("ok")
 c = lambda title, desc="": r.classify({"title": title, "desc": desc})
 assert c("EBay help", "update my website") is None
+c = lambda title, desc="": (r.classify({"title": title, "desc": desc}) or [None])[0]
 assert c("AI Trainer for Live Zoom Workshops for Business Teams") == "AI"
 assert c("Full-Stack Developer Needed - Quote for Complete Website, iOS & Android App") == "Website"
 assert c("Website Developer + SEO + Google Ads") == "Website"
@@ -24,3 +25,11 @@ assert c("WordPress AI chatbot plugin") == "AI"
 assert c("Internal Medicine SME - AI Evaluation") is None
 assert c("Help with my business", "We need to redesign our website") == "Website"
 print("classify ok")
+assert r.classify({"title": "Help for my dental clinic", "desc": "We keep getting missed calls after hours"}) == ("AI", "Voice AI agent", "problem")
+assert r.classify({"title": "Shopify store setup", "desc": ""})[1] == "E-commerce store"
+a = {"id": "1", "title": "Build WordPress site for bakery", "desc": "Need a 5 page WordPress site for my bakery with menu and contact form.", "posted": "2026-10-01"}
+b = dict(a, id="2", posted="2026-10-03")
+z = {"id": "3", "title": "Voice agent for clinic", "desc": "Something else entirely", "posted": "2026-10-02"}
+r.mark_duplicates([a, b, z])
+assert a["dups"] == ["2"] and b["dupOf"] == "1" and "dupOf" not in z and "dups" not in z
+print("services + duplicates ok")

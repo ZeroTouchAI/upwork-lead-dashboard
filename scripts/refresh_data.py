@@ -3,7 +3,7 @@
   python scripts/refresh_data.py            # scrape (needs APIFY_TOKEN) + merge
   python scripts/refresh_data.py --migrate  # no scrape, just upgrade/prune data.json
 """
-import json, os, re, sys, urllib.request
+import difflib, json, os, re, sys, urllib.request
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -17,6 +17,10 @@ SEARCHES = {
           '"machine learning" OR "voice agent" OR "AI agent" OR n8n OR "make.com" OR zapier',
     "Website": 'website OR "web design" OR "web developer" OR wordpress OR shopify OR webflow OR wix OR squarespace OR '
                '"landing page" OR redesign OR "web hosting" OR "website maintenance"',
+    # Problems clients describe without naming the tech (see PROBLEMS below).
+    "Hidden": '"same questions" OR "customer questions" OR "missed calls" OR "appointment requests" OR '
+              '"booking requests" OR "copying data" OR "manual data" OR "repetitive tasks" OR "connect our tools" OR '
+              '"more leads" OR "outdated website" OR "website is slow"',
 }
 # Upwork's search matches loose mentions ("eBay help" because the post says "website"), so each job
 # is re-sorted by what it is actually about: its title hits WORDS, or failing that its description
@@ -46,15 +50,97 @@ NOISE = re.compile(r"\b(ebay|amazon (seller|listing|fba|store)|etsy|data entry|v
                    r"lead lists?|sales (partner|closer|rep\w*)|sdr|account executive|klaviyo|ugc)\b", re.I)
 
 
+# Business problems that imply a service, even when the client doesn't name the tech.
+# A job matched only by one of these is a "hidden opportunity".
+PROBLEMS = [
+    ("AI", "AI chatbot & support", r"same (customer )?questions|answer(ing)? (customer |the same )?(questions|inquiries|emails|dms)|customer (support|service) (inbox|tickets|is overwhelming)"),
+    ("AI", "Voice AI agent", r"missed (phone )?calls|answer(ing)? (the |our )?phones?|receptionist|after-hours calls"),
+    ("AI", "Booking automation", r"appointment (requests|booking|scheduling)|booking requests|schedul(e|ing) (appointments|calls) (manually|by hand)"),
+    ("AI", "Workflow automation & integrations", r"copy(ing)? data|manual(ly)? (entering|enter|copying|updat\w+)|double entry|repetitive (tasks|work)|hours (every|each) (day|week) on|spreadsheets? by hand"),
+    ("AI", "Workflow automation & integrations", r"connect (several |multiple |our |my |all )?(business )?(tools|apps|systems|platforms)|(tools|apps|systems) (don'?t|do not) talk to each other|sync (data )?between"),
+    ("AI", "AI content automation", r"content for (all )?(my|our) (social|platforms|channels)|post(ing)? (daily|consistently) (on|to) social"),
+    ("Website", "Conversion & lead capture", r"(website|site) (isn'?t|is not|doesn'?t|does not) (generat|convert|bring|get)\w*|(no|not getting|few) leads from (my|our|the) (website|site)|more leads from (my|our) (website|site)"),
+    ("Website", "Website redesign", r"(outdated|old|dated) (website|site)|(website|site) (looks|is) (outdated|old|dated)"),
+    ("Website", "Hosting, speed & maintenance", r"(website|site) (is )?(slow|down|hacked|broken|crashing)|hosting (issues|problems)"),
+]
+PROBLEMS = [(c, s, re.compile(rf"\b({rx})", re.I)) for c, s, rx in PROBLEMS]
+
+# Service label per category, first match wins (title first, then description). The dashboard
+# keys its proposal templates and hour estimates off these labels.
+SERVICES = {
+    "AI": [
+        ("Voice AI agent", r"voice (ai|agent|bot|assistant)|receptionist|phone (agent|bot)|ai call\w*|vapi|retell|elevenlabs"),
+        ("AI chatbot & support", r"chat ?bots?|customer (support|service) (ai|automation|bot)|support (bot|automation)|faq"),
+        ("Booking automation", r"appointment|booking|scheduling"),
+        ("AI training & consulting", r"ai (training|course|workshop|consult\w*|tutor|coach\w*|strategy|advisor)|(learn|teach|training|workshop|course|coach\w*|consult\w*)\b.{0,25}\bai\b"),
+        ("AI content automation", r"ai (video|image|content|writer|avatar)|content (generation|automation)|image generation|social media automation"),
+        ("Workflow automation & integrations", r"n8n|make\.com|zapier|integrat\w*|automat\w*|workflow|api|crm|sync|go ?high ?level|ghl"),
+        ("AI app or dashboard", r"dashboard|app\b|saas|platform|mvp|portal|full[- ]?stack"),
+        ("AI agent & LLM build", r"agent|llm|gpt|rag|openai|claude|gemini|machine learning|ai"),
+    ],
+    "Website": [
+        ("Hosting, speed & maintenance", r"hosting|maintenance|maintain|migrat\w*|speed|slow|hacked|security|ssl|cpanel|domain|backup|plugins? update"),
+        ("Website redesign", r"redesign|re-design|revamp|refresh|moderni[sz]e|rebuild|outdated"),
+        ("Conversion & lead capture", r"landing pages?|funnels?|conversion|lead (capture|gen\w*)|cro\b"),
+        ("E-commerce store", r"shopify|woocommerce|e-?commerce|online store|magento|store (setup|build)"),
+        ("Website fixes & updates", r"\bfix|bug|issue|error|edit|tweak|updates?|changes|add (a |two |new )?(page|section)"),
+        ("New website build", r"website|web ?design|web ?develop\w*|wordpress|webflow|wix|squarespace|framer|elementor"),
+    ],
+}
+SERVICES = {c: [(s, re.compile(rf"\b({rx})", re.I)) for s, rx in lst] for c, lst in SERVICES.items()}
+DEFAULT_SERVICE = {"AI": "AI agent & LLM build", "Website": "New website build"}
+
+
+def service_for(cat, l):
+    for field in ("title", "desc"):
+        for label, rx in SERVICES[cat]:
+            if rx.search(l[field]):
+                return label
+    return DEFAULT_SERVICE[cat]
+
+
 def classify(l):
-    """'AI', 'Website', or None to drop."""
+    """Returns (cat, service, match) where match is title/desc/problem, or None to drop."""
     if NOISE.search(l["title"]):
         return None
     for key, field in (("words", "title"), ("phrases", "desc")):
         for cat, r in RELEVANT.items():
             if r[key].search(l[field]):
-                return cat
+                return cat, service_for(cat, l), field
+    for cat, label, rx in PROBLEMS:
+        if rx.search(l["title"] + " " + l["desc"]):
+            return cat, label, "problem"
     return None
+
+
+STOP = set("a an and the for to of in on with my our your is are be need needed looking expert developer help".split())
+
+
+def mark_duplicates(leads):
+    """Group reposts and near-identical posts: the oldest is the original, later ones point at it."""
+    def words(l):
+        return set(re.findall(r"[a-z0-9]+", l["title"].lower())) - STOP
+    originals = []
+    for l in sorted(leads, key=lambda l: l["posted"]):
+        l.pop("dupOf", None)
+        l["dups"] = []
+        w, d = words(l), re.sub(r"\W+", " ", l["desc"][:400].lower())
+        for o in originals:
+            ow = o["_w"]
+            if w and ow and len(w & ow) / len(w | ow) >= 0.7 and \
+                    difflib.SequenceMatcher(None, d, o["_d"]).quick_ratio() >= 0.85 and \
+                    difflib.SequenceMatcher(None, d, o["_d"]).ratio() >= 0.8:
+                l["dupOf"] = o["id"]
+                o["dups"].append(l["id"])
+                break
+        else:
+            l["_w"], l["_d"] = w, d
+            originals.append(l)
+    for l in leads:
+        l.pop("_w", None)
+        l.pop("_d", None)
+        if not l["dups"]:
+            del l["dups"]
 
 
 COMMON = {
@@ -109,7 +195,7 @@ def from_apify(it, cat, now):
         "rating": num(it.get("clientRating")), "reviews": it.get("clientReviewCount"),
         "skills": [s for s in skills if s],
         "posted": it.get("publishTime") or it.get("createTime") or iso(now),
-        "scraped": iso(now),
+        "scraped": iso(now), "seen": iso(now), "repost": bool(it.get("isRepost")),
     }
 
 
@@ -170,10 +256,16 @@ def main():
                     added += 1
                 leads[l["id"]] = l
 
-    for l in leads.values():
-        l["cat"] = classify(l)
     cutoff = iso(now - timedelta(days=KEEP_DAYS))
-    final = sorted((l for l in leads.values() if l["scraped"] >= cutoff and l["cat"]), key=lambda l: l["posted"], reverse=True)
+    final = []
+    for l in leads.values():
+        c = classify(l)
+        if c and l["scraped"] >= cutoff:
+            l["cat"], l["service"], l["match"] = c
+            l.setdefault("seen", l["scraped"])
+            final.append(l)
+    mark_duplicates(final)
+    final.sort(key=lambda l: l["posted"], reverse=True)
     synced = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
