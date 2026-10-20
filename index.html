@@ -290,8 +290,10 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
 
 @media (max-width:1280px){
   .content{grid-template-columns:minmax(0,1fr)}
-  .rail{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .rail{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start}
+  .rail .insight{grid-column:1/-1}
 }
+@media (max-width:760px){ .rail{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:1100px){ .best-row{grid-template-columns:minmax(0,1fr)} .perf{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
