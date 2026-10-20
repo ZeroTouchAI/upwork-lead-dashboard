@@ -1,6 +1,8 @@
 # Changelog
 
 ## 2026-10-20
+- Alert emails redesigned: Project Finder header with lightning bolt, a card per lead (business, service, score, budget, suggested bid, effective rate, client) and a View on Upwork button. Sender shows as "Project Finder".
+- Sidebar tools pinned to the bottom: Export CSV, Analytics, Run scraper now (opens the GitHub workflow), Settings & profile.
 - "Send a test alert email" option when running the workflow manually from the Actions tab.
 - Optional `ALERT_TO` secret sends alert emails to a different inbox than the Gmail account.
 - **Email alerts**: each refresh emails new leads the dashboard rates Bid now (score 80+, no red flags), with

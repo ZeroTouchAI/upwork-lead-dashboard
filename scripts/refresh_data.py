@@ -5,6 +5,7 @@
 """
 import difflib, html, json, os, re, smtplib, sys, urllib.request
 from email.message import EmailMessage
+from email.utils import formataddr
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -297,41 +298,94 @@ def money(n):
     return f"${n:,.0f}"
 
 
-def alert_html(picks):
-    rows = []
+def ago(iso_ts, now):
+    h = (now - datetime.fromisoformat(iso_ts.replace("Z", "+00:00"))).total_seconds() / 3600
+    return f"{max(1, round(h * 60))} min ago" if h < 1 else f"{round(h)} hour{'s' if round(h) != 1 else ''} ago" if h < 24 \
+        else "yesterday" if h < 48 else f"{round(h / 24)} days ago"
+
+
+def alert_html(picks, now, test=False):
+    """Branded HTML email. Tables + inline styles only, so it renders the same in Gmail, Outlook and phones."""
+    font = "font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;"
+    cards = []
     for l, s, bid, eff in picks:
-        amount = (f"{money(l['rateMin'] or l['rateMax'])}–{money(l['rateMax'])}/hr" if l["rateMax"] else "Hourly, rate not listed") \
-            if l["type"] == "hourly" else (money(l["budget"]) + " fixed" if l["budget"] else "Fixed, budget not listed")
-        client = ", ".join(x for x in (
+        ai = l["cat"] == "AI"
+        color, soft, biz = ("#2563eb", "#e6efff", "Zero Touch AI") if ai else ("#b7791f", "#fdf3d0", "Rapid Rank")
+        amount = (f"{money(l['rateMin'] or l['rateMax'])}–{money(l['rateMax'])}/hr" if l["rateMax"] else "Not listed") \
+            if l["type"] == "hourly" else (money(l["budget"]) + " fixed" if l["budget"] else "Not listed")
+        bid_txt = f"~{money(bid / HOURS.get(l['service'], 20))}/hr" if l["type"] == "hourly" else f"~{money(bid)}"
+        client = " · ".join(x for x in (
             l.get("country"), f"{money(l['spent'])} spent" if l.get("spent") else None,
-            "payment verified" if l.get("verified") else None,
+            "Payment verified" if l.get("verified") else None,
             f"{l['rating']:.1f}★" if l.get("rating") else None,
-            f"{l['applicants']} proposals" if l.get("applicants") is not None else None) if x)
-        biz = "Zero Touch AI" if l["cat"] == "AI" else "Rapid Rank"
-        color = "#2563eb" if l["cat"] == "AI" else "#ca8a04"
-        rows.append(
-            f'<tr><td style="padding:12px 0;border-bottom:1px solid #e5e7f0">'
-            f'<div style="font-size:12px;color:{color};font-weight:600">{biz} · {html.escape(l["service"])} · score {s}</div>'
-            f'<a href="{html.escape(l["url"])}" style="font-size:16px;font-weight:600;color:#141a33">{html.escape(l["title"])}</a>'
-            f'<div style="font-size:13px;color:#5a6178;margin-top:4px">{amount} · suggested bid ~{money(bid)} · ~{money(eff)}/hr effective</div>'
-            f'<div style="font-size:13px;color:#5a6178">{html.escape(client) or "Client history unknown"}</div></td></tr>')
-    return (f'<div style="font-family:Inter,Segoe UI,Arial,sans-serif;max-width:640px">'
-            f'<p style="font-size:14px;color:#141a33">New Upwork leads rated <b>Bid now</b>:</p><table width="100%">{"".join(rows)}</table>'
-            f'<p style="font-size:13px"><a href="{DASHBOARD}">Open the dashboard</a> to score, draft a proposal and track them.</p></div>')
+            f"{l['applicants']} proposals" if l.get("applicants") is not None else None,
+            f"Posted {ago(l['posted'], now)}") if x)
+        stat = lambda label, value: (
+            f'<td style="padding:10px 12px;background:#f5f6fb;border-radius:8px;{font}" width="33%">'
+            f'<div style="font-size:11px;color:#8a90a6;text-transform:uppercase;letter-spacing:.05em">{label}</div>'
+            f'<div style="font-size:15px;font-weight:700;color:#141a33;margin-top:2px">{value}</div></td>')
+        cards.append(f'''
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7f0;border-left:4px solid {color};border-radius:10px;margin:0 0 14px">
+<tr><td style="padding:18px 20px;{font}">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td valign="top" style="{font}">
+      <span style="display:inline-block;font-size:11px;font-weight:700;color:{color};background:{soft};padding:3px 10px;border-radius:20px">{biz}</span>
+      <span style="display:inline-block;font-size:11px;font-weight:600;color:#5a6178;background:#f1f2f8;padding:3px 10px;border-radius:20px;margin-left:4px">{html.escape(l["service"])}</span>
+      <div style="margin-top:10px"><a href="{html.escape(l["url"])}" style="font-size:17px;line-height:1.3;font-weight:700;color:#141a33;text-decoration:none">{html.escape(l["title"])}</a></div>
+    </td>
+    <td width="70" align="right" valign="top">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr><td align="center" style="width:58px;height:58px;border:4px solid #16a36a;border-radius:50%;{font}">
+        <div style="font-size:20px;font-weight:800;color:#141a33;line-height:1">{s}</div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:.08em;color:#8a90a6">SCORE</div></td></tr></table>
+    </td></tr></table>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="4" style="margin:12px 0 10px"><tr>
+    {stat("Client budget", amount)}{stat("Suggested bid", bid_txt)}{stat("Effective rate", f"~{money(eff)}/hr")}
+  </tr></table>
+  <div style="font-size:13px;color:#5a6178;margin-bottom:14px">{html.escape(client)}</div>
+  <a href="{html.escape(l["url"])}" style="display:inline-block;background:#5b4ff5;color:#ffffff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none">View on Upwork &rarr;</a>
+</td></tr></table>''')
+    n = len(picks)
+    when = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
+    banner = ('<div style="background:#fdf2df;color:#9a5b00;font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:14px">'
+              'Test email: these are the current best leads, not necessarily new ones.</div>') if test else ""
+    return f'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;padding:0;background:#f5f6fb">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f6fb"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%">
+  <tr><td style="background:#0e1a3a;border-radius:14px 14px 0 0;padding:22px 26px;{font}">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;background:#5b4ff5;background-image:linear-gradient(135deg,#8b7bff,#3b82f6);border-radius:10px;font-size:22px;line-height:42px">&#9889;</td>
+      <td style="padding-left:14px;{font}"><div style="font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-.01em">Project Finder</div>
+        <div style="font-size:12px;color:#9aa5c8">Zero Touch AI · Rapid Rank Agency</div></td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="background:#ffffff;padding:22px 26px 6px;{font}">
+    {banner}
+    <div style="font-size:22px;font-weight:800;color:#141a33">{n} new lead{"s" if n != 1 else ""} rated Bid now</div>
+    <div style="font-size:13px;color:#5a6178;margin-top:4px">Scored 80+ for your services, budget and client quality · {when}</div>
+  </td></tr>
+  <tr><td style="background:#ffffff;padding:16px 26px 10px">{"".join(cards)}</td></tr>
+  <tr><td align="center" style="background:#ffffff;border-radius:0 0 14px 14px;padding:6px 26px 26px;{font}">
+    <a href="{DASHBOARD}" style="display:inline-block;background:#141a33;color:#ffffff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:9px;text-decoration:none">Open Project Finder</a>
+    <div style="font-size:12px;color:#8a90a6;margin-top:10px">Draft a proposal, check the client and track your bids there.</div>
+  </td></tr>
+  <tr><td align="center" style="padding:16px 26px;{font}"><div style="font-size:11px;color:#8a90a6;line-height:1.5">
+    Sent by Project Finder after each scrape when a new lead scores 80+ with no red flags.<br>
+    Scores and bids are estimates. Nothing is ever sent to Upwork for you.</div></td></tr>
+</table></td></tr></table></body></html>'''
 
 
-def send_alert(picks, test=False):
+def send_alert(picks, now, test=False):
     user, pw = os.environ.get("GMAIL_ADDRESS"), os.environ.get("GMAIL_APP_PASSWORD")
     if not (user and pw):
         print(f"{len(picks)} alert-worthy leads; email skipped (GMAIL_ADDRESS / GMAIL_APP_PASSWORD not set)")
         return
     msg = EmailMessage()
-    top = picks[0][0]["title"]
-    msg["Subject"] = ("[Test] " if test else "") + f"{len(picks)} new Bid-now Upwork lead{'s' if len(picks) > 1 else ''}: {top[:60]}"
-    msg["From"], msg["To"] = user, os.environ.get("ALERT_TO") or user  # ALERT_TO: optional other inbox
-    msg.set_content("New Upwork leads rated Bid now:\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
-                    + f"\n\nDashboard: {DASHBOARD}")
-    msg.add_alternative(alert_html(picks), subtype="html")
+    top, n = picks[0][0]["title"], len(picks)
+    msg["Subject"] = ("[Test] " if test else "") + f"⚡ {n} new Bid-now lead{'s' if n > 1 else ''}: {top[:60]}"
+    msg["From"], msg["To"] = formataddr(("Project Finder", user)), os.environ.get("ALERT_TO") or user  # ALERT_TO: optional other inbox
+    msg.set_content("Project Finder: new Upwork leads rated Bid now\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
+                    + f"\n\nOpen Project Finder: {DASHBOARD}")
+    msg.add_alternative(alert_html(picks, now, test), subtype="html")
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
         s.login(user, pw)
         s.send_message(msg)
@@ -389,7 +443,7 @@ def main():
     if picks:
         picks.sort(key=lambda p: -p[1])
         try:
-            send_alert(picks[:(3 if test else 10)], test)
+            send_alert(picks[:(3 if test else 10)], now, test)
         except Exception as e:  # never lose the data refresh over an email problem
             print(f"Alert email failed: {e}")
 
