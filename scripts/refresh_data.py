@@ -58,7 +58,8 @@ def classify(l):
 
 
 COMMON = {
-    "maxResults": 80, "maxAgeMinutes": 1440, "sort": "newest",
+    "maxResults": 80, "maxAgeMinutes": 360,  # 6h window for a 3h schedule; dedupe absorbs the overlap
+    "sort": "newest",
     "incrementalMode": True, "descriptionFormat": "text", "descriptionMaxLength": 3000,
 }
 
