@@ -460,6 +460,13 @@ let settings = Object.assign({}, DEFAULTS, store.get('pf_settings', {}));
 if(typeof settings.keywords === 'string') settings.keywords = settings.keywords.split(',');
 let status = store.get('pf_status', {});   // id -> {s, t}
 for(const id in status){ const s = status[id].s; if(s === 'interviewing' || s === 'won') status[id].s = 'applied'; else if(s === 'lost') status[id].s = 'rejected'; }
+// "Add to favorites" links in alert emails open the dashboard with ?fav=<job id>.
+const favFromLink = new URLSearchParams(location.search).get('fav');
+if(favFromLink){
+  if(!['applied','rejected'].includes(status[favFromLink]?.s)) status[favFromLink] = {s:'shortlisted', t:Date.now()};
+  store.set('pf_status', status);
+  history.replaceState(null, '', location.pathname + location.hash);
+}
 let notes  = store.get('pf_notes', {});    // id -> text
 let calc   = store.get('pf_calc', {});     // id -> {bid, rate, hours, costs, value}
 let props  = store.get('pf_props', {});    // id -> {text, t}
@@ -488,7 +495,7 @@ function ago(ts){
 const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) + ' ' : '';
 const dayKey = ts => { const d = new Date(ts); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
 function lastDays(n){ const out = []; const d = new Date(); d.setHours(0,0,0,0); for(let i = n-1; i >= 0; i--) out.push(new Date(d - i*DAY)); return out; }
-function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
+function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), msg.length > 20 ? 4000 : 1800); }
 async function copyText(text){
   try{ await navigator.clipboard.writeText(text); toast('Copied'); }
   catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Copied'); }
@@ -1271,6 +1278,11 @@ fetch('./data.json', {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error('
   const svcs = [...new Set(DATA.map(l => l.service))].sort();
   $('fSvc').insertAdjacentHTML('beforeend', ['AI','Website'].map(cat => `<optgroup label="${BIZ_FULL[cat]}">${svcs.filter(s => DATA.some(l => l.cat === cat && l.service === s)).map(s => `<option>${esc(s)}</option>`).join('')}</optgroup>`).join(''));
   if(!VIEWS[ui.view]) ui.view = 'best';
+  if(favFromLink){
+    const l = DATA.find(x => x.id === favFromLink);
+    ui.view = status[favFromLink]?.s === 'shortlisted' ? 'shortlisted' : ui.view; ui.rec = '';
+    toast(l ? `Added to favorites: ${l.title.slice(0, 60)}` : 'Added to favorites. It will show once the next data update is live.');
+  }
   renderAll();
 }).catch(err => {
   $('rows').innerHTML = `<div class="empty"><b>Couldn't load data.json</b>${esc(err.message)}<div style="margin-top:12px"><button class="btn" type="button" onclick="location.reload()">Retry</button></div></div>`;

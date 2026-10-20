@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-20
+- "Add to favorites" button on each lead in alert emails: opens the dashboard, saves the lead to Favorites and shows it.
 - Alert email footer: "Powered by ZeroTouchAI.com" button linking to https://zerotouchai.com.
 - Alert email: "Open dashboard" button in the header too (plus the logo links to the dashboard).
 - "Run scraper now" asks Yes / No before opening GitHub, so it can't be clicked by accident.

@@ -3,7 +3,7 @@
   python scripts/refresh_data.py            # scrape (needs APIFY_TOKEN) + merge
   python scripts/refresh_data.py --migrate  # no scrape, just upgrade/prune data.json
 """
-import difflib, html, json, os, re, smtplib, sys, urllib.request
+import difflib, html, json, os, re, smtplib, sys, urllib.parse, urllib.request
 from email.message import EmailMessage
 from email.utils import formataddr
 from datetime import datetime, timedelta, timezone
@@ -343,6 +343,7 @@ def alert_html(picks, now, test=False):
   </tr></table>
   <div style="font-size:13px;color:#5a6178;margin-bottom:14px">{html.escape(client)}</div>
   <a href="{html.escape(l["url"])}" style="display:inline-block;background:#5b4ff5;color:#ffffff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none">View on Upwork &rarr;</a>
+  <a href="{DASHBOARD}?fav={urllib.parse.quote(l["id"])}" style="display:inline-block;margin-left:6px;background:#fdf2df;border:1px solid #e8930c;color:#9a5b00;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9733; Add to favorites</a>
 </td></tr></table>''')
     n = len(picks)
     when = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")

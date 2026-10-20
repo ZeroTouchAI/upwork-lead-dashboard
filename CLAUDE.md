@@ -31,3 +31,4 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
 - Mixed lists alternate AI and Website.
 - Pipeline is only Favorites → Applied (or Rejected). Applied leads leave the main lists.
 - Analytics lives on its own page.
+- Email "Add to favorites" links use `?fav=<job id>`; favorites are per browser (localStorage).
