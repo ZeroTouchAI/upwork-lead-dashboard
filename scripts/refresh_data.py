@@ -371,7 +371,8 @@ def alert_html(picks, now, test=False):
   </td></tr>
   <tr><td align="center" style="padding:16px 26px;{font}"><div style="font-size:11px;color:#8a90a6;line-height:1.5">
     Sent by Project Finder after each scrape when a new lead scores 80+ with no red flags.<br>
-    Scores and bids are estimates. Nothing is ever sent to Upwork for you.</div></td></tr>
+    Scores and bids are estimates. Nothing is ever sent to Upwork for you.</div>
+    <a href="https://zerotouchai.com" style="display:inline-block;margin-top:14px;background:#ffffff;border:1px solid #e5e7f0;color:#5b4ff5;font-size:12px;font-weight:700;padding:8px 14px;border-radius:20px;text-decoration:none">&#9889; Powered by ZeroTouchAI.com</a></td></tr>
 </table></td></tr></table></body></html>'''
 
 
@@ -385,7 +386,7 @@ def send_alert(picks, now, test=False):
     msg["Subject"] = ("[Test] " if test else "") + f"⚡ {n} new Bid-now lead{'s' if n > 1 else ''}: {top[:60]}"
     msg["From"], msg["To"] = formataddr(("Project Finder", user)), os.environ.get("ALERT_TO") or user  # ALERT_TO: optional other inbox
     msg.set_content("Project Finder: new Upwork leads rated Bid now\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
-                    + f"\n\nOpen Project Finder: {DASHBOARD}")
+                    + f"\n\nOpen Project Finder: {DASHBOARD}\n\nPowered by ZeroTouchAI.com: https://zerotouchai.com")
     msg.add_alternative(alert_html(picks, now, test), subtype="html")
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
         s.login(user, pw)
