@@ -788,7 +788,8 @@ const VIEWS = {
 };
 
 const st = l => status[l.id]?.s || '';
-const isOpen = l => st(l) !== 'rejected';
+// Applied and rejected leads leave the main lists; they live in their own sections.
+const isOpen = l => !['applied','rejected'].includes(st(l));
 const fresh = l => !!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY;
 
 function enrichOne(l){
