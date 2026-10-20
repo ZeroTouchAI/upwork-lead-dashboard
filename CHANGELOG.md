@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-20
+- "Send a test alert email" option when running the workflow manually from the Actions tab.
 - Optional `ALERT_TO` secret sends alert emails to a different inbox than the Gmail account.
 - **Email alerts**: each refresh emails new leads the dashboard rates Bid now (score 80+, no red flags), with
   links to the jobs. Needs the `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` secrets.

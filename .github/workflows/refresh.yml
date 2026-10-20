@@ -5,7 +5,12 @@ on:
     # Every 3 hours. GitHub can start these late; the scraper looks back 24h and
     # dedupes, so a late or skipped run just catches up on the next one.
     - cron: '15 */3 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      test_alert:
+        description: 'Send a test alert email with the current best leads (no scraping)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,7 +33,7 @@ jobs:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_TO: ${{ secrets.ALERT_TO }}
-        run: python scripts/refresh_data.py
+        run: python scripts/refresh_data.py ${{ inputs.test_alert && '--migrate --test-alert' || '' }}
 
       - name: Commit and push if changed
         run: |

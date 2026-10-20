@@ -320,14 +320,14 @@ def alert_html(picks):
             f'<p style="font-size:13px"><a href="{DASHBOARD}">Open the dashboard</a> to score, draft a proposal and track them.</p></div>')
 
 
-def send_alert(picks):
+def send_alert(picks, test=False):
     user, pw = os.environ.get("GMAIL_ADDRESS"), os.environ.get("GMAIL_APP_PASSWORD")
     if not (user and pw):
         print(f"{len(picks)} alert-worthy leads; email skipped (GMAIL_ADDRESS / GMAIL_APP_PASSWORD not set)")
         return
     msg = EmailMessage()
     top = picks[0][0]["title"]
-    msg["Subject"] = f"{len(picks)} new Bid-now Upwork lead{'s' if len(picks) > 1 else ''}: {top[:60]}"
+    msg["Subject"] = ("[Test] " if test else "") + f"{len(picks)} new Bid-now Upwork lead{'s' if len(picks) > 1 else ''}: {top[:60]}"
     msg["From"], msg["To"] = user, os.environ.get("ALERT_TO") or user  # ALERT_TO: optional other inbox
     msg.set_content("New Upwork leads rated Bid now:\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
                     + f"\n\nDashboard: {DASHBOARD}")
@@ -380,16 +380,16 @@ def main():
         json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
     print(f"{added} new, {len(final)} total, synced={synced}")
 
-    picks = []
+    picks, test = [], "--test-alert" in sys.argv  # test: send the current best leads, new or not
     for l in final:
-        if l["id"] in new_ids and "dupOf" not in l:
+        if (test or l["id"] in new_ids) and "dupOf" not in l:
             s, avoid, bid, eff = lead_score(l, now)
             if s >= ALERT_MIN_SCORE and not avoid:
                 picks.append((l, s, bid, eff))
     if picks:
         picks.sort(key=lambda p: -p[1])
         try:
-            send_alert(picks[:10])
+            send_alert(picks[:(3 if test else 10)], test)
         except Exception as e:  # never lose the data refresh over an email problem
             print(f"Alert email failed: {e}")
 
