@@ -17,7 +17,9 @@ Search terms and service rules live at the top of `scripts/refresh_data.py`.
 Service playbooks (hours, approach, questions) live in `SERVICE_INFO` in `index.html`.
 
 ## Setup
-Repository secret **`APIFY_TOKEN`** (Settings → Secrets and variables → Actions).
+Repository secrets (Settings → Secrets and variables → Actions):
+- **`APIFY_TOKEN`**: Apify API token.
+- **`GMAIL_ADDRESS`** and **`GMAIL_APP_PASSWORD`**: optional; turn on email alerts for new Bid-now leads.
 
 ## Limits
 - Upwork hides its "U.S. only" flag, Connects price, hire rate and jobs-posted count from scrapers.

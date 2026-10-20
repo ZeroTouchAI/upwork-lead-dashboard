@@ -25,6 +25,8 @@ jobs:
       - name: Scrape Upwork via Apify and rebuild data.json
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python scripts/refresh_data.py
 
       - name: Commit and push if changed

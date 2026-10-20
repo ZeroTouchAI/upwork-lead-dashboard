@@ -3,7 +3,8 @@
   python scripts/refresh_data.py            # scrape (needs APIFY_TOKEN) + merge
   python scripts/refresh_data.py --migrate  # no scrape, just upgrade/prune data.json
 """
-import difflib, json, os, re, sys, urllib.request
+import difflib, html, json, os, re, smtplib, sys, urllib.request
+from email.message import EmailMessage
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -230,6 +231,113 @@ def from_legacy(r):
     }
 
 
+# ---------- alerts: email new "Bid now" leads ----------
+# Mirrors plan()/score() in index.html with the dashboard's default settings, so an emailed lead
+# is one the dashboard also rates Bid now. Keep the two in sync when changing the scoring.
+MIN_RATE, FEE, ALERT_MIN_SCORE = 50, 0.10, 80
+DASHBOARD = "https://zerotouchai.github.io/upwork-lead-dashboard/"
+KEYWORDS = ["ai agent", "chatbot", "voice", "n8n", "make.com", "zapier", "automation", "integration", "dashboard",
+            "wordpress", "shopify", "webflow", "redesign", "hosting", "maintenance", "landing page"]
+HOURS = {"Voice AI agent": 20, "AI chatbot & support": 15, "Booking automation": 12, "Workflow automation & integrations": 12,
+         "AI content automation": 12, "AI training & consulting": 8, "AI app or dashboard": 40, "AI agent & LLM build": 20,
+         "Hosting, speed & maintenance": 6, "Website redesign": 25, "Conversion & lead capture": 10, "E-commerce store": 25,
+         "Website fixes & updates": 4, "New website build": 25}
+US_ONLY = [re.compile(p) for p in (
+    r"\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]merican)s?[\s\-]*(?:[Oo]nly|[Bb]ased|[Rr]esidents?|[Cc]itizens?)\b",
+    r"\b(?:[Oo]nly|[Ee]xclusively)\s+(?:for\s+)?(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates|[Aa]mericans?)\b",
+    r"\b[Mm]ust\s+(?:be\s+(?:located|based|residing|living|a\s+resident|a\s+citizen|authorized)|reside|live)[^.\n]{0,30}\b(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b",
+    r"\b(?:someone|developer|freelancer|contractor|candidate|designer|engineer|talent|person|individual)\s+(?:who\s+is\s+|that\s+is\s+)?(?:located|based|residing|living)\s+in\s+the\s+(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b",
+    r"\b[Aa]uthorized\s+to\s+work\s+in\s+the\s+(?:U\.S\.A?\.?|USA?|[Uu]nited [Ss]tates)\b",
+    r"\b[Hh]iring\s+(?:only\s+)?[Aa]mericans?\b")]
+SUSPICIOUS = re.compile(r"\b(telegram|whatsapp|signal|skype)\b[^.]{0,40}\b(contact|message|reach|text|add)\b|"
+                        r"\b(contact|message|reach|text|add) me\b[^.]{0,40}\b(telegram|whatsapp|signal|skype)\b|"
+                        r"\b(outside (of )?upwork|off[- ]platform)\b|\b(unpaid|free (sample|test|trial|work))\b|"
+                        r"\b(pay|send) (a |the )?(deposit|fee)\b|\bcrypto(currency)? payment\b", re.I)
+
+
+def lead_score(l, now):
+    hours = HOURS.get(l.get("service"), 20)
+    if l["type"] == "hourly":
+        c_min, c_max = l["rateMin"] or l["rateMax"], l["rateMax"] or l["rateMin"]
+        known = bool(c_max)
+        if known and c_max < MIN_RATE:
+            r = MIN_RATE
+        elif known:
+            lo = max(MIN_RATE, round((c_min + c_max) / 2))
+            r = round((lo + max(lo, round(c_max))) / 2)
+        else:
+            r = round((MIN_RATE + round(MIN_RATE * 1.3)) / 2)
+        bid = r * hours
+    else:
+        known = bool(l["budget"])
+        bid = round((round(l["budget"] * .85) + round(l["budget"])) / 2) if known else round(MIN_RATE * hours * 1.15)
+    size = (l["rateMax"] or 0) * 40 if l["type"] == "hourly" else (l["budget"] or 0)
+    cx = 0 if not size else 4 if size < 100 else 8 if size < 500 else 12 if size < 1000 else 16
+    net = bid * (1 - FEE) - cx * .15
+    eff = net / hours
+    text = (l["title"] + " " + l["desc"] + " " + " ".join(l.get("skills") or [])).lower()
+    kw = sum(k in text for k in KEYWORDS)
+    s = min(25, (15 if l.get("match") == "title" else 13 if l.get("match") == "problem" else 10) + min(10, kw * 4))
+    x = eff / MIN_RATE
+    s += 12 if not known else 25 if x >= 1.5 else 21 if x >= 1.2 else 17 if x >= 1 else 10 if x >= .7 else 4
+    v, sp, rt = l.get("verified"), l.get("spent"), l.get("rating")
+    s += (3 if v is None else 6 if v else 0) + (4 if sp is None else 8 if sp >= 10000 else 6 if sp >= 1000 else 4 if sp > 0 else 1) \
+        + (3 if not rt else 6 if rt >= 4.7 else 4 if rt >= 4.3 else 2)
+    a = l.get("applicants")
+    s += 8 if a is None else 15 if a < 5 else 12 if a < 10 else 8 if a < 20 else 4 if a < 50 else 1
+    h = (now - datetime.fromisoformat(l["posted"].replace("Z", "+00:00"))).total_seconds() / 3600
+    s += (6 if h < 6 else 5 if h < 24 else 3 if h < 72 else 1 if h < 168 else 0) \
+        + (4 if l["exp"] in ("Expert", "Intermediate") else 2 if l["exp"] else 3) + (5 if kw >= 2 else 3 if kw else 1)
+    text_raw = l["title"] + " . " + l["desc"]
+    avoid = any(p.search(text_raw) for p in US_ONLY) or SUSPICIOUS.search(l["desc"]) or (known and (net <= 0 or eff < MIN_RATE * .5))
+    return s, bool(avoid), bid, eff
+
+
+def money(n):
+    return f"${n:,.0f}"
+
+
+def alert_html(picks):
+    rows = []
+    for l, s, bid, eff in picks:
+        amount = (f"{money(l['rateMin'] or l['rateMax'])}–{money(l['rateMax'])}/hr" if l["rateMax"] else "Hourly, rate not listed") \
+            if l["type"] == "hourly" else (money(l["budget"]) + " fixed" if l["budget"] else "Fixed, budget not listed")
+        client = ", ".join(x for x in (
+            l.get("country"), f"{money(l['spent'])} spent" if l.get("spent") else None,
+            "payment verified" if l.get("verified") else None,
+            f"{l['rating']:.1f}★" if l.get("rating") else None,
+            f"{l['applicants']} proposals" if l.get("applicants") is not None else None) if x)
+        biz = "Zero Touch AI" if l["cat"] == "AI" else "Rapid Rank"
+        color = "#2563eb" if l["cat"] == "AI" else "#ca8a04"
+        rows.append(
+            f'<tr><td style="padding:12px 0;border-bottom:1px solid #e5e7f0">'
+            f'<div style="font-size:12px;color:{color};font-weight:600">{biz} · {html.escape(l["service"])} · score {s}</div>'
+            f'<a href="{html.escape(l["url"])}" style="font-size:16px;font-weight:600;color:#141a33">{html.escape(l["title"])}</a>'
+            f'<div style="font-size:13px;color:#5a6178;margin-top:4px">{amount} · suggested bid ~{money(bid)} · ~{money(eff)}/hr effective</div>'
+            f'<div style="font-size:13px;color:#5a6178">{html.escape(client) or "Client history unknown"}</div></td></tr>')
+    return (f'<div style="font-family:Inter,Segoe UI,Arial,sans-serif;max-width:640px">'
+            f'<p style="font-size:14px;color:#141a33">New Upwork leads rated <b>Bid now</b>:</p><table width="100%">{"".join(rows)}</table>'
+            f'<p style="font-size:13px"><a href="{DASHBOARD}">Open the dashboard</a> to score, draft a proposal and track them.</p></div>')
+
+
+def send_alert(picks):
+    user, pw = os.environ.get("GMAIL_ADDRESS"), os.environ.get("GMAIL_APP_PASSWORD")
+    if not (user and pw):
+        print(f"{len(picks)} alert-worthy leads; email skipped (GMAIL_ADDRESS / GMAIL_APP_PASSWORD not set)")
+        return
+    msg = EmailMessage()
+    top = picks[0][0]["title"]
+    msg["Subject"] = f"{len(picks)} new Bid-now Upwork lead{'s' if len(picks) > 1 else ''}: {top[:60]}"
+    msg["From"] = msg["To"] = user
+    msg.set_content("New Upwork leads rated Bid now:\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
+                    + f"\n\nDashboard: {DASHBOARD}")
+    msg.add_alternative(alert_html(picks), subtype="html")
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
+        s.login(user, pw)
+        s.send_message(msg)
+    print(f"Emailed {len(picks)} alert(s)")
+
+
 def main():
     now = datetime.now(timezone.utc)
     with open(DATA, encoding="utf-8") as f:
@@ -240,7 +348,7 @@ def main():
         if l["id"]:
             leads.setdefault(l["id"], l)
 
-    added = 0
+    added, new_ids = 0, set()
     if "--migrate" not in sys.argv:
         for cat, q in SEARCHES.items():
             items = scrape(q)
@@ -254,6 +362,7 @@ def main():
                     l.update(cat=keep["cat"], scraped=keep["scraped"])
                 else:
                     added += 1
+                    new_ids.add(l["id"])
                 leads[l["id"]] = l
 
     cutoff = iso(now - timedelta(days=KEEP_DAYS))
@@ -270,6 +379,19 @@ def main():
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
     print(f"{added} new, {len(final)} total, synced={synced}")
+
+    picks = []
+    for l in final:
+        if l["id"] in new_ids and "dupOf" not in l:
+            s, avoid, bid, eff = lead_score(l, now)
+            if s >= ALERT_MIN_SCORE and not avoid:
+                picks.append((l, s, bid, eff))
+    if picks:
+        picks.sort(key=lambda p: -p[1])
+        try:
+            send_alert(picks[:10])
+        except Exception as e:  # never lose the data refresh over an email problem
+            print(f"Alert email failed: {e}")
 
 
 if __name__ == "__main__":
