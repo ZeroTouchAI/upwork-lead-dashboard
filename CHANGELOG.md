@@ -3,7 +3,7 @@
 ## 2026-10-20
 - **Email alerts**: each refresh emails new leads the dashboard rates Bid now (score 80+, no red flags), with
   links to the jobs. Needs the `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` secrets.
-- Added `CLAUDE.md` (project memory) and this changelog.
+- Added `CLAUDE.md` (project memory) and this changelog; Python cache files ignored.
 - "Ready to bid" card renamed to "Favorites to bid on".
 - Compact view: Reject button on every row.
 - Applied leads leave the main lists and live under Applied.
