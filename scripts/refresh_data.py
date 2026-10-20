@@ -328,7 +328,7 @@ def send_alert(picks):
     msg = EmailMessage()
     top = picks[0][0]["title"]
     msg["Subject"] = f"{len(picks)} new Bid-now Upwork lead{'s' if len(picks) > 1 else ''}: {top[:60]}"
-    msg["From"] = msg["To"] = user
+    msg["From"], msg["To"] = user, os.environ.get("ALERT_TO") or user  # ALERT_TO: optional other inbox
     msg.set_content("New Upwork leads rated Bid now:\n\n" + "\n".join(f"- {l['title']}\n  {l['url']}" for l, *_ in picks)
                     + f"\n\nDashboard: {DASHBOARD}")
     msg.add_alternative(alert_html(picks), subtype="html")

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-20
+- Optional `ALERT_TO` secret sends alert emails to a different inbox than the Gmail account.
 - **Email alerts**: each refresh emails new leads the dashboard rates Bid now (score 80+, no red flags), with
   links to the jobs. Needs the `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` secrets.
 - Added `CLAUDE.md` (project memory) and this changelog; Python cache files ignored.
