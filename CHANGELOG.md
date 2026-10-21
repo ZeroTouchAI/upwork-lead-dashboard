@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-21
+- Alert emails show the same U.S. bubbles as the dashboard: "No U.S. required" (or "U.S. only") plus "U.S. client" / "Client: <country>".
+
 ## 2026-10-20
 - "Add to favorites" button on each lead in alert emails: opens the dashboard, saves the lead to Favorites and shows it.
 - Alert email footer: "Powered by ZeroTouchAI.com" button linking to https://zerotouchai.com.

@@ -304,6 +304,19 @@ def ago(iso_ts, now):
         else "yesterday" if h < 48 else f"{round(h / 24)} days ago"
 
 
+def us_pills(l):
+    """Same bubbles as the dashboard: can a Canadian apply (post text), and is the client American."""
+    pill = 'display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:4px;color:{};background:{}'
+    us_only = any(p.search(l["title"] + " . " + l["desc"]) for p in US_ONLY)
+    out = [f'<span style="{pill.format("#c62828", "#fdeaea")}">U.S. only</span>' if us_only
+           else f'<span style="{pill.format("#16a36a", "#e3f6ed")}">No U.S. required</span>']
+    if l.get("country") == "United States":
+        out.append(f'<span style="{pill.format("#5a6178", "#f1f2f8")}">U.S. client</span>')
+    elif l.get("country"):
+        out.append(f'<span style="{pill.format("#5a6178", "#f1f2f8")}">Client: {html.escape(l["country"])}</span>')
+    return "".join(out)
+
+
 def alert_html(picks, now, test=False):
     """Branded HTML email. Tables + inline styles only, so it renders the same in Gmail, Outlook and phones."""
     font = "font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;"
@@ -331,6 +344,7 @@ def alert_html(picks, now, test=False):
     <td valign="top" style="{font}">
       <span style="display:inline-block;font-size:11px;font-weight:700;color:{color};background:{soft};padding:3px 10px;border-radius:20px">{biz}</span>
       <span style="display:inline-block;font-size:11px;font-weight:600;color:#5a6178;background:#f1f2f8;padding:3px 10px;border-radius:20px;margin-left:4px">{html.escape(l["service"])}</span>
+      {us_pills(l)}
       <div style="margin-top:10px"><a href="{html.escape(l["url"])}" style="font-size:17px;line-height:1.3;font-weight:700;color:#141a33;text-decoration:none">{html.escape(l["title"])}</a></div>
     </td>
     <td width="70" align="right" valign="top">
