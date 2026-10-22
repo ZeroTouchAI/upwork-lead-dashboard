@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-22
+- "Can't apply" button on each lead: pick a reason (U.S. only, location restricted, criteria…), the job is rejected and the client is remembered. Later jobs from the same client (same country, spend to the cent, reviews and rating) show a ⚠ warning and are rated Avoid. Undo on the rejected card forgets the client.
+
 ## 2026-10-21
 - Alert emails show the same U.S. bubbles as the dashboard: "No U.S. required" (or "U.S. only") plus "U.S. client" / "Client: <country>".
 

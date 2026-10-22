@@ -421,6 +421,21 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   </form>
 </dialog>
 
+<dialog id="blockDlg">
+  <h2>Can't apply to this job?</h2>
+  <p class="dsub" id="blockSub"></p>
+  <label>Why not?
+    <select class="select" id="blockReason">
+      <option>U.S. only</option>
+      <option>Location restricted to another region</option>
+      <option>Client only hires in their own country</option>
+      <option>I don't meet the client's criteria</option>
+      <option>Other</option>
+    </select></label>
+  <p class="dsub">The job moves to Rejected. If this client posts again, their new jobs get a ⚠ warning and are rated Avoid. Clients are matched by country, spend and reviews, so it's a best guess. Undo on the rejected card removes the warning.</p>
+  <div class="foot"><button class="btn" type="button" id="blockNo">Cancel</button><button class="btn go" type="button" id="blockYes">Reject and remember client</button></div>
+</dialog>
+
 <dialog id="runDlg">
   <h2>Run the scraper now?</h2>
   <p class="dsub">This opens GitHub, where you press <b>Run workflow</b> to start a fresh Upwork search. It uses a small amount of Apify credit, and new leads appear here about 2 minutes later. The scraper also runs on its own every 3 hours.</p>
@@ -470,6 +485,7 @@ if(favFromLink){
 let notes  = store.get('pf_notes', {});    // id -> text
 let calc   = store.get('pf_calc', {});     // id -> {bid, rate, hours, costs, value}
 let props  = store.get('pf_props', {});    // id -> {text, t}
+let blocked = store.get('pf_blocked', []); // clients you couldn't apply to: [{id, title, reason, country, spent, rating, reviews, t}]
 let ui = Object.assign({view:'best', rec:'', sort:'score', layout:'list', density:'comfortable', age:14, hideUS:true}, store.get('pf_ui', {}));
 // "New" = scraped since your previous visit; reloads in the same tab keep the same baseline.
 let prevVisit;
@@ -672,6 +688,7 @@ function score(l, p){
   parts.push({label:'Win likelihood', v:fr + ex + sp, max:15, note:`Freshness ${fr}/6 · level ${ex}/4 · niche fit ${sp}/5`, est:true});
   const total = parts.reduce((s, x) => s + x.v, 0);
   if(l._us) flags.push('Looks U.S.-only, so you likely can\'t apply');
+  if(l._blk && l._blk.id !== l.id) flags.push(`Possibly the same client you couldn't apply to before (${l._blk.reason})`);
   for(const [re, why] of SUSPICIOUS) if(re.test(l.desc)) flags.push('Post ' + why);
   if(p.known && p.net <= 0) flags.push('Loses money after fees and costs');
   else if(p.known && p.eff < minR * .5) flags.push(`Pays under half your minimum rate (~${rate(p.eff)}/hr)`);
@@ -809,6 +826,18 @@ const st = l => status[l.id]?.s || '';
 const isOpen = l => !['applied','rejected'].includes(st(l));
 const fresh = l => !!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY;
 
+// Upwork doesn't give scrapers a client ID, so a client is recognised by its footprint: same country,
+// total spend, review count and rating. A strong hint, not proof, and the card says so.
+function sameClient(l, b){
+  if(l.id === b.id) return true;
+  if(!l.country || l.country !== b.country || !b.spent || !l.spent || b.spent % 50 === 0) return false;  // round sums collide
+  const r = l.spent / b.spent, dr = (l.reviews ?? 0) - (b.reviews ?? 0);
+  if(b.rating && l.rating && Math.abs(l.rating - b.rating) > .2) return false;
+  // Same spend to the cent and same review count. Looser rules (spend grew a bit) matched unrelated clients
+  // in testing, so a client who has hired since will slip through until you mark them again.
+  return Math.abs(r - 1) < .002 && dr === 0;
+}
+const blockedMatch = l => blocked.find(b => sameClient(l, b)) || null;
 function enrichOne(l){
   l._p = plan(l);
   l._s = score(l, l._p);
@@ -820,6 +849,7 @@ function enrich(){
     l._scraped = Date.parse(l.scraped) || l._posted;
     l._seen = Date.parse(l.seen) || l._scraped;
     l._usText = usHit(l); l._us = !!l._usText;
+    l._blk = blockedMatch(l);
     l._new = prevVisit ? l._scraped > prevVisit : Date.now() - l._scraped < DAY;
     l._dups = (l.dups || []).map(id => byId.get(id)).filter(Boolean);
     l.service = l.service || (l.cat === 'AI' ? 'AI agent & LLM build' : 'New website build');
@@ -1000,6 +1030,7 @@ function leadHtml(l, i){
         ${l._us ? `<span class="chip us" title="${esc('Matched: “' + l._usText + '”')}">U.S. required</span>` : '<span class="chip ok" title="No U.S.-only wording found in the post">No U.S. required</span>'}
         ${l._dups.length ? `<span class="chip dup" title="Reposts or near-identical posts, folded into this card">+${l._dups.length} similar</span>` : ''}
         ${l.repost ? '<span class="chip dup">Repost</span>' : ''}
+        ${l._blk && l._blk.id !== l.id ? `<span class="chip us" title="${esc(`Same country, similar spend and reviews as “${l._blk.title}”, which you marked on ${new Date(l._blk.t).toLocaleDateString()}. Check before bidding.`)}">⚠ Client you couldn't apply to before</span>` : ''}
         ${stale ? '<span class="chip stale" title="Not seen in recent searches; it may be filled or closed">May be closed</span>' : ''}
       </div>
       ${client.length ? `<div class="client">${client.join('')}</div>` : ''}
@@ -1007,7 +1038,7 @@ function leadHtml(l, i){
         <a class="btn go" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
         <button type="button" class="btn prop" data-act="proposal">${icon('doc')}${props[l.id] ? 'Edit proposal' : 'Generate proposal'}</button>
         <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Favorited' : 'Favorite'}</button>
-        ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button>`}
+        ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button><button type="button" class="btn rj" data-act="cantapply" title="You can't apply (location or other restriction). Rejects it and warns you about this client next time.">${icon('minus')}Can't apply</button>`}
         <select class="status-sel" data-act="status" aria-label="Pipeline status">
           <option value="">Move to…</option>${STATUSES.map(([v,lab]) => `<option value="${v}" ${s === v ? 'selected' : ''}>${lab}</option>`).join('')}<option value="clear">Clear status</option>
         </select>
@@ -1155,7 +1186,8 @@ document.addEventListener('click', e => {
   else if(act === 'proposal') openProposal(id);
   else if(act === 'shortlist') setStatus(id, st(l) === 'shortlisted' ? '' : 'shortlisted');
   else if(act === 'reject') setStatus(id, 'rejected');
-  else if(act === 'clear') setStatus(id, '');
+  else if(act === 'clear'){ blocked = blocked.filter(b => b.id !== id); store.set('pf_blocked', blocked); DATA.forEach(x => { x._blk = blockedMatch(x); enrichOne(x); }); setStatus(id, ''); }
+  else if(act === 'cantapply') openCantApply(id);
 });
 document.addEventListener('change', e => {
   if(e.target.matches('[data-act="status"]')) setStatus(e.target.closest('.lead').dataset.id, e.target.value);
@@ -1242,6 +1274,26 @@ function exportCsv(){
 $('exportBtn').addEventListener('click', exportCsv);
 $('navExport').addEventListener('click', exportCsv);
 $('navRun').addEventListener('click', () => $('runDlg').showModal());
+let blockId = null;
+function openCantApply(id){
+  const l = DATA.find(x => x.id === id); if(!l) return;
+  blockId = id;
+  $('blockSub').textContent = l.title + (l.country ? ` · client in ${l.country}${l.spent ? ', ' + money(l.spent) + ' spent' : ''}` : '');
+  $('blockReason').value = l._us ? 'U.S. only' : 'Location restricted to another region';
+  $('blockDlg').showModal();
+}
+$('blockNo').addEventListener('click', () => $('blockDlg').close());
+$('blockYes').addEventListener('click', () => {
+  const l = DATA.find(x => x.id === blockId); $('blockDlg').close(); if(!l) return;
+  blocked = blocked.filter(b => b.id !== l.id).concat({id:l.id, title:l.title, reason:$('blockReason').value, country:l.country, spent:l.spent, rating:l.rating, reviews:l.reviews, t:Date.now()});
+  store.set('pf_blocked', blocked);
+  DATA.forEach(x => { x._blk = blockedMatch(x); enrichOne(x); });
+  const others = DATA.filter(x => x.id !== l.id && x._blk && x._blk.id === l.id).length;
+  setStatus(l.id, 'rejected');
+  toast(!l.spent ? "Rejected. This client has no spend history, so later jobs can't be matched to them."
+    : others ? `Rejected. ${others} other job${others === 1 ? '' : 's'} from what looks like the same client now ${others === 1 ? 'shows' : 'show'} a warning.`
+    : "Rejected. You'll be warned if this client posts again.");
+});
 $('runNo').addEventListener('click', () => $('runDlg').close());
 $('runYes').addEventListener('click', () => { $('runDlg').close(); window.open('https://github.com/ZeroTouchAI/upwork-lead-dashboard/actions/workflows/refresh.yml', '_blank', 'noopener'); });
 
