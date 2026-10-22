@@ -220,8 +220,8 @@ button.kpi:hover{border-color:var(--primary)}
 .rows.compact .lead:not(.open) :is(.desc, .client, .actions, .scraped, .ring){display:none}
 .rows.compact .lead-meta{border:0; padding:0; flex-direction:row; gap:12px; align-items:center; white-space:nowrap}
 .rows.compact .lead-meta :is(.eff, .dur, .cx){display:none}
-.quick-rj{display:none}
-.rows.compact .lead:not(.open) .quick-rj{display:inline-flex; padding:4px 9px}
+.quick-rj, .quick-open{display:none}
+.rows.compact .lead:not(.open) :is(.quick-rj, .quick-open){display:inline-flex; padding:4px 9px}
 .rows.compact .mini-score{display:inline-block}
 .mini-score{display:none; font-weight:700; font-size:12px; padding:1px 8px; border-radius:20px}
 .rows.grid .lead{grid-template-columns:minmax(0,1fr) 84px}
@@ -1056,6 +1056,7 @@ function leadHtml(l, i){
       <span class="row">${icon('send')}<span>Bid <b class="num">${rangeText(l, p)}</b></span></span>
       <span class="row eff" title="Net after Upwork fee, Connects and direct costs, divided by estimated hours">${icon('coin')}<span><b class="num">~${rate(p.eff)}/hr</b> effective${p.known ? '' : ' <span class="est">no budget</span>'}</span></span>
       <span class="row cx" title="Rough estimate from job size. Upwork shows the exact number on the job page.">${icon('target')}<span>${p.cx ? `~${p.cx} Connects (≈$${(p.cx * .15).toFixed(2)})` : 'Connects: check on Upwork'}</span></span>
+      <a class="btn go quick-open" href="${esc(url)}" target="_blank" rel="noopener" title="Open on Upwork">Open ${icon('ext')}</a>
       ${s === 'rejected' ? '' : `<button type="button" class="btn rj quick-rj" data-act="reject" title="Reject">${icon('x')}Reject</button>`}
     </div>
     <div class="intel">
