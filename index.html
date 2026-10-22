@@ -409,6 +409,10 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
       <label>Hours you can deliver per week<input class="input num" id="sCap" type="number" min="1"></label>
     </div>
     <div class="row2">
+      <label>Signature on Zero Touch AI proposals<textarea class="input" id="sSigAI" style="min-height:56px"></textarea></label>
+      <label>Signature on Rapid Rank proposals<textarea class="input" id="sSigWeb" style="min-height:56px"></textarea></label>
+    </div>
+    <div class="row2">
       <label>Zero Touch AI: what you offer<textarea class="input" id="sProfAI"></textarea></label>
       <label>Rapid Rank Agency: what you offer<textarea class="input" id="sProfWeb"></textarea></label>
     </div>
@@ -465,13 +469,15 @@ const store = {
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
 const DEFAULTS = {
-  name:'Jeremy', minRate:50, fee:10, capacity:15,
+  name:'Jeremy Reid', minRate:50, fee:10, capacity:15,
+  sigAI:'Jeremy Reid\nZero Touch AI | AI Solutions Architect', sigWeb:'Jeremy Reid\nRapid Rank Agency',
   keywords:['AI agent','chatbot','voice','n8n','Make.com','Zapier','automation','integration','dashboard','WordPress','Shopify','Webflow','redesign','hosting','maintenance','landing page'],
   profAI:'Zero Touch AI Automation builds AI agents, chatbots, voice AI receptionists, n8n / Make.com workflow automation, CRM and API integrations, AI dashboards and apps, and AI training for teams.',
   profWeb:'Rapid Rank Agency designs and builds WordPress, Shopify and Webflow websites, handles redesigns, landing pages, hosting, maintenance, speed and security, and builds sites that turn visitors into leads.',
   portAI:'', portWeb:''
 };
 let settings = Object.assign({}, DEFAULTS, store.get('pf_settings', {}));
+if(settings.name === 'Jeremy') settings.name = DEFAULTS.name;
 if(typeof settings.keywords === 'string') settings.keywords = settings.keywords.split(',');
 let status = store.get('pf_status', {});   // id -> {s, t}
 for(const id in status){ const s = status[id].s; if(s === 'interviewing' || s === 'won') status[id].s = 'applied'; else if(s === 'lost') status[id].s = 'rejected'; }
@@ -548,7 +554,7 @@ const SERVICE_INFO = {
     ask:['Which platforms and how many posts per week?', 'Who approves content before it goes out?', 'Do you have brand guidelines or past posts we can learn from?'],
     position:'Sell consistency: a steady content calendar without the daily grind.', edge:'Keep a human approval step; clients trust that more than full auto-posting.'},
   'AI training & consulting': {hours:8,
-    steps:['Short discovery call on your goals and current tools', 'Tailored session or roadmap with hands-on examples from your business', 'Follow-up notes, templates and a 30-day action plan'],
+    steps:['Short written brief on your goals and current tools', 'Tailored session or roadmap with hands-on examples from your business', 'Follow-up notes, templates and a 30-day action plan'],
     deliver:['Live session(s) or written AI roadmap', 'Prompt and workflow templates', 'Recorded walkthrough'],
     ask:['Who is the audience and how comfortable are they with AI today?', 'Which tasks do you most want AI to help with?', 'Live sessions, recorded content, or both?'],
     position:'Sell practical results: your team using AI on real tasks by the end.', edge:'Use examples from their own industry, not generic demos.'},
@@ -759,12 +765,10 @@ function draftProposal(l){
     '',
     `Suggested investment: ${rangeText(l, p)}${l.type === 'hourly' ? ` (about ${p.hours} hours for the first version)` : ''}. Timeline: ${p.delivery}.`,
     '',
-    'Happy to jump on a quick call to confirm the details.',
-    '',
-    settings.name,
-    BIZ_FULL[l.cat]
+    signature(l)
   ].join('\n');
 }
+const signature = l => ((l.cat === 'AI' ? settings.sigAI : settings.sigWeb) || settings.name).trim();
 function aiPrompt(l){
   const p = l._p, si = info(l), work = portfolio(l);
   return `Write an Upwork proposal for the job below on behalf of ${settings.name} at ${BIZ_FULL[l.cat]}.
@@ -779,6 +783,9 @@ Structure, under 220 words, plain text, no headings or emojis:
 4. The relevant past work, if any.
 5. Three smart questions.
 6. Price ${rangeText(l, p)} and timeline ${p.delivery}.
+7. Sign off exactly as:
+${signature(l)}
+Do not suggest or ask for a call.
 Positioning: ${si.position} ${si.edge}
 
 JOB TITLE: ${l.title}
@@ -1243,6 +1250,7 @@ $('navSettings').addEventListener('click', () => {
   $('sName').value = settings.name; $('sRate').value = settings.minRate; $('sFee').value = settings.fee; $('sCap').value = settings.capacity;
   $('sProfAI').value = settings.profAI; $('sProfWeb').value = settings.profWeb; $('sPortAI').value = settings.portAI; $('sPortWeb').value = settings.portWeb;
   $('sKw').value = settings.keywords.join(', ');
+  $('sSigAI').value = settings.sigAI; $('sSigWeb').value = settings.sigWeb;
   $('settingsDlg').showModal();
 });
 $('settingsDlg').addEventListener('close', () => {
@@ -1251,7 +1259,8 @@ $('settingsDlg').addEventListener('close', () => {
     name: $('sName').value.trim() || 'Me', minRate: +$('sRate').value || DEFAULTS.minRate,
     fee: +$('sFee').value >= 0 ? +$('sFee').value : DEFAULTS.fee, capacity: +$('sCap').value || DEFAULTS.capacity,
     profAI: $('sProfAI').value.trim(), profWeb: $('sProfWeb').value.trim(), portAI: $('sPortAI').value, portWeb: $('sPortWeb').value,
-    keywords: $('sKw').value.split(',').map(s => s.trim()).filter(Boolean)
+    keywords: $('sKw').value.split(',').map(s => s.trim()).filter(Boolean),
+    sigAI: $('sSigAI').value.trim() || DEFAULTS.sigAI, sigWeb: $('sSigWeb').value.trim() || DEFAULTS.sigWeb
   };
   store.set('pf_settings', settings);
   DATA.forEach(enrichOne);
