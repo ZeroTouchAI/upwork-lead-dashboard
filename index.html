@@ -481,13 +481,17 @@ if(settings.name === 'Jeremy') settings.name = DEFAULTS.name;
 if(typeof settings.keywords === 'string') settings.keywords = settings.keywords.split(',');
 let status = store.get('pf_status', {});   // id -> {s, t}
 for(const id in status){ const s = status[id].s; if(s === 'interviewing' || s === 'won') status[id].s = 'applied'; else if(s === 'lost') status[id].s = 'rejected'; }
-// "Add to favorites" links in alert emails open the dashboard with ?fav=<job id>.
-const favFromLink = new URLSearchParams(location.search).get('fav');
-if(favFromLink){
-  if(!['applied','rejected'].includes(status[favFromLink]?.s)) status[favFromLink] = {s:'shortlisted', t:Date.now()};
+// Alert-email links: ?fav=<id> saves a favorite, ?lead=<id> opens that lead, ?proposal=<id> opens its proposal.
+const linkParams = new URLSearchParams(location.search);
+const favFromLink = linkParams.get('fav');
+const leadFromLink = linkParams.get('proposal') || linkParams.get('lead') || favFromLink;
+const proposalFromLink = linkParams.get('proposal');
+if(favFromLink && !['applied','rejected'].includes(status[favFromLink]?.s)){
+  status[favFromLink] = {s:'shortlisted', t:Date.now()};
   store.set('pf_status', status);
-  history.replaceState(null, '', location.pathname + location.hash);
 }
+if(leadFromLink) history.replaceState(null, '', location.pathname + location.hash);
+let singleId = null;  // the one lead an email link points at
 let notes  = store.get('pf_notes', {});    // id -> text
 let calc   = store.get('pf_calc', {});     // id -> {bid, rate, hours, costs, value}
 let props  = store.get('pf_props', {});    // id -> {text, t}
@@ -825,6 +829,7 @@ const VIEWS = {
   highfit:{title:'High-fit opportunities', sub:'Open leads scoring 80+'},
   new:{title:'New since last visit', sub:'Scraped since you last opened the dashboard'},
   analytics:{title:'Analytics', sub:'Open leads at a glance'},
+  single:{title:'Lead from your email', sub:'Use the sidebar to go back to your lists'},
   shortlisted:{title:'Favorites', sub:'Ready to bid'}, applied:{title:'Applied', sub:'Proposal sent'}, rejected:{title:'Rejected', sub:''}
 };
 
@@ -865,6 +870,7 @@ function enrich(){
 }
 
 function base(view = ui.view){
+  if(view === 'single') return DATA.filter(l => l.id === singleId);
   return DATA.filter(l => {
     if(l.dupOf && byIdHas(l.dupOf)) return false;  // folded into the original
     const s = st(l);
@@ -1170,7 +1176,7 @@ function renderAll(){
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === ui.layout));
   document.querySelectorAll('#densSeg button').forEach(b => b.classList.toggle('on', b.dataset.d === ui.density));
 }
-const saveUi = () => store.set('pf_ui', ui);
+const saveUi = () => store.set('pf_ui', ui.view === 'single' ? {...ui, view:'best'} : ui);
 
 /* ================= actions ================= */
 function setStatus(id, s){
@@ -1340,12 +1346,16 @@ fetch('./data.json', {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error('
   const svcs = [...new Set(DATA.map(l => l.service))].sort();
   $('fSvc').insertAdjacentHTML('beforeend', ['AI','Website'].map(cat => `<optgroup label="${BIZ_FULL[cat]}">${svcs.filter(s => DATA.some(l => l.cat === cat && l.service === s)).map(s => `<option>${esc(s)}</option>`).join('')}</optgroup>`).join(''));
   if(!VIEWS[ui.view]) ui.view = 'best';
-  if(favFromLink){
-    const l = DATA.find(x => x.id === favFromLink);
-    ui.view = status[favFromLink]?.s === 'shortlisted' ? 'shortlisted' : ui.view; ui.rec = '';
-    toast(l ? `Added to favorites: ${l.title.slice(0, 60)}` : 'Added to favorites. It will show once the next data update is live.');
+  const linked = leadFromLink && DATA.find(x => x.id === leadFromLink);
+  if(linked){
+    singleId = linked.id; ui.view = 'single'; ui.rec = ''; openIds.add(linked.id);
+    if(favFromLink) toast(`Added to favorites: ${linked.title.slice(0, 60)}`);
+  } else if(leadFromLink){
+    toast(favFromLink ? 'Added to favorites. The job will show once the next data update is live (about a minute).'
+      : "This job isn't on the dashboard yet. Try the link again in a minute.");
   }
   renderAll();
+  if(linked && proposalFromLink) openProposal(linked.id);
 }).catch(err => {
   $('rows').innerHTML = `<div class="empty"><b>Couldn't load data.json</b>${esc(err.message)}<div style="margin-top:12px"><button class="btn" type="button" onclick="location.reload()">Retry</button></div></div>`;
 });

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-22
+- Alert emails: the job title opens that lead on the dashboard (expanded, on its own), and a new Generate proposal button opens the dashboard with the proposal draft ready. Links: `?lead=<id>`, `?proposal=<id>`, `?fav=<id>`.
 - Proposals: no "jump on a call" line (and the AI prompt says not to suggest one); signed "Jeremy Reid / Zero Touch AI | AI Solutions Architect" on AI leads and "Jeremy Reid / Rapid Rank Agency" on website leads. Both signatures are editable in Settings & profile.
 - Compact view: small Open button on each row (opens the job on Upwork), next to Reject.
 - "Can't apply" button on each lead: pick a reason (U.S. only, location restricted, criteria…), the job is rejected and the client is remembered. Later jobs from the same client (same country, spend to the cent, reviews and rating) show a ⚠ warning and are rated Avoid. Undo on the rejected card forgets the client.

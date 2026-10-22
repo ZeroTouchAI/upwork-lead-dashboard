@@ -345,7 +345,7 @@ def alert_html(picks, now, test=False):
       <span style="display:inline-block;font-size:11px;font-weight:700;color:{color};background:{soft};padding:3px 10px;border-radius:20px">{biz}</span>
       <span style="display:inline-block;font-size:11px;font-weight:600;color:#5a6178;background:#f1f2f8;padding:3px 10px;border-radius:20px;margin-left:4px">{html.escape(l["service"])}</span>
       {us_pills(l)}
-      <div style="margin-top:10px"><a href="{html.escape(l["url"])}" style="font-size:17px;line-height:1.3;font-weight:700;color:#141a33;text-decoration:none">{html.escape(l["title"])}</a></div>
+      <div style="margin-top:10px"><a href="{DASHBOARD}?lead={urllib.parse.quote(l["id"])}" title="Open this lead in Project Finder" style="font-size:17px;line-height:1.3;font-weight:700;color:#141a33;text-decoration:none">{html.escape(l["title"])}</a></div>
     </td>
     <td width="70" align="right" valign="top">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr><td align="center" style="width:58px;height:58px;border:4px solid #16a36a;border-radius:50%;{font}">
@@ -356,8 +356,9 @@ def alert_html(picks, now, test=False):
     {stat("Client budget", amount)}{stat("Suggested bid", bid_txt)}{stat("Effective rate", f"~{money(eff)}/hr")}
   </tr></table>
   <div style="font-size:13px;color:#5a6178;margin-bottom:14px">{html.escape(client)}</div>
-  <a href="{html.escape(l["url"])}" style="display:inline-block;background:#5b4ff5;color:#ffffff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none">View on Upwork &rarr;</a>
-  <a href="{DASHBOARD}?fav={urllib.parse.quote(l["id"])}" style="display:inline-block;margin-left:6px;background:#fdf2df;border:1px solid #e8930c;color:#9a5b00;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9733; Add to favorites</a>
+  <a href="{html.escape(l["url"])}" style="display:inline-block;background:#5b4ff5;color:#ffffff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;margin-top:6px">View on Upwork &rarr;</a>
+  <a href="{DASHBOARD}?fav={urllib.parse.quote(l["id"])}" style="display:inline-block;margin:6px 0 0 6px;background:#fdf2df;border:1px solid #e8930c;color:#9a5b00;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9733; Add to favorites</a>
+  <a href="{DASHBOARD}?proposal={urllib.parse.quote(l["id"])}" style="display:inline-block;margin:6px 0 0 6px;background:#ecebfe;border:1px solid #5b4ff5;color:#4338ca;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9998; Generate proposal</a>
 </td></tr></table>''')
     n = len(picks)
     when = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")

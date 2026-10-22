@@ -33,4 +33,5 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
 - Analytics lives on its own page.
 - "Can't apply" remembers clients in localStorage (`pf_blocked`) and matches later jobs by exact footprint
   (country, total spend, reviews, rating) because Upwork gives no client ID. Looser matching gave false hits.
-- Email "Add to favorites" links use `?fav=<job id>`; favorites are per browser (localStorage).
+- Email links: `?lead=<id>` (open that lead), `?proposal=<id>` (open its draft), `?fav=<id>` (favorite it).
+  Favorites and drafts are per browser (localStorage).
