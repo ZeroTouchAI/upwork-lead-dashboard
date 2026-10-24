@@ -158,8 +158,11 @@ def scrape(query):
         data=json.dumps({**COMMON, "query": query}).encode(), method="POST",
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {os.environ['APIFY_TOKEN']}"},
     )
-    with urllib.request.urlopen(req, timeout=300) as r:
-        return json.load(r)
+    try:
+        with urllib.request.urlopen(req, timeout=300) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:  # Apify explains refusals (credit, limits) in the body
+        raise RuntimeError(f"Apify refused the run ({e.code}): {e.read().decode(errors='replace')[:500]}") from None
 
 
 def num(v):
