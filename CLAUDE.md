@@ -24,6 +24,8 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
 - `lead_score()` in the Python script **mirrors** `plan()`/`score()` in `index.html` with default settings, so emailed
   leads match the dashboard's Bid now. Change both together.
 - `scripts/test_refresh.py`: run after editing the script.
+- Apify bills per job returned: runs use `lastScrape` in data.json to look back only since the last good run,
+  capped by `MAX_RESULTS`. Apify refusals set `scrapeError` (dashboard banner) instead of failing the workflow.
 - Secrets: `APIFY_TOKEN`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`.
 
 ## Owner preferences

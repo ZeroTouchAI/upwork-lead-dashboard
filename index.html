@@ -284,6 +284,8 @@ dialog table{width:100%; border-collapse:collapse; font-size:13px}
 dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
 #propText{width:100%; min-height:360px; font-size:13px; line-height:1.5}
 .toast{position:fixed; left:50%; bottom:70px; translate:-50% 0; background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:8px; font-size:13px; z-index:50}
+.scrape-banner{background:var(--red-soft); color:var(--fg); border:1px solid color-mix(in srgb, var(--red) 35%, transparent); border-radius:10px; padding:10px 14px; font-size:13px}
+.scrape-banner b{color:var(--red)}
 
 @media (max-width:1280px){
 }
@@ -343,6 +345,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
         </div>
       </header>
 
+      <div class="scrape-banner" id="scrapeBanner" role="status" hidden></div>
       <section class="kpis" id="kpis"></section>
       <section class="best" id="best"></section>
 
@@ -1339,6 +1342,11 @@ $('sort').value = ui.sort; $('ageSel').value = String(ui.age); $('fUS').checked 
 fetch('./data.json', {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => {
   DATA = (d.leads || []).filter(l => l.id && (l.cat === 'AI' || l.cat === 'Website'));
   $('synced').textContent = 'synced ' + (d.synced || '—');
+  if(d.scrapeError){
+    const since = new Date(d.scrapeError.since).toLocaleString(undefined, {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+    $("scrapeBanner").innerHTML = `<b>New leads are paused since ${esc(since)}.</b> ${/usage hard limit/i.test(d.scrapeError.msg) ? "Apify says this month's usage limit is used up. Leads already here still work; new ones resume when the limit resets or is raised in your Apify account." : esc(d.scrapeError.msg)}`;
+    $("scrapeBanner").hidden = false;
+  }
   enrich();
   const counts = {}; DATA.forEach(l => { if(l.country) counts[l.country] = (counts[l.country] || 0) + 1; });
   const countries = Object.keys(counts).sort((a,b) => (b === 'Canada') - (a === 'Canada') || counts[b] - counts[a]);

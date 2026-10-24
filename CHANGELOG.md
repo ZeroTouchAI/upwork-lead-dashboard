@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-24
+- Fix: runs failed from Oct 24 because Apify's monthly usage limit was used up. Each run re-fetched ~160 jobs (6-hour look-back on a 3-hour schedule). Runs now ask only for jobs posted since the last good run, capped at 30 AI / 30 Website / 10 Hidden.
+- When Apify refuses a run, the workflow no longer fails every 3 hours: it keeps the current leads, records why, and the dashboard shows a "New leads are paused" banner until runs succeed again.
+
 ## 2026-10-22
 - Alert emails: the job title opens that lead on the dashboard (expanded, on its own), and a new Generate proposal button opens the dashboard with the proposal draft ready. Links: `?lead=<id>`, `?proposal=<id>`, `?fav=<id>`.
 - Proposals: no "jump on a call" line (and the AI prompt says not to suggest one); signed "Jeremy Reid / Zero Touch AI | AI Solutions Architect" on AI leads and "Jeremy Reid / Rapid Rank Agency" on website leads. Both signatures are editable in Settings & profile.

@@ -145,24 +145,28 @@ def mark_duplicates(leads):
             del l["dups"]
 
 
-COMMON = {
-    "maxResults": 80, "maxAgeMinutes": 360,  # 6h window for a 3h schedule; dedupe absorbs the overlap
-    "sort": "newest",
-    "incrementalMode": True, "descriptionFormat": "text", "descriptionMaxLength": 3000,
-}
+COMMON = {"sort": "newest", "descriptionFormat": "text", "descriptionMaxLength": 3000}
+# Apify bills per job returned. Each run asks only for jobs posted since the last good run (see main), and
+# caps how many it takes, so a busy hour can't burn the monthly allowance.
+MAX_RESULTS = {"AI": 30, "Website": 30, "Hidden": 10}
 
 
-def scrape(query):
+def scrape(query, max_results, max_age):
     req = urllib.request.Request(
         f"https://api.apify.com/v2/acts/{ACTOR}/run-sync-get-dataset-items?timeout=280",
-        data=json.dumps({**COMMON, "query": query}).encode(), method="POST",
+        data=json.dumps({**COMMON, "query": query, "maxResults": max_results, "maxAgeMinutes": max_age}).encode(), method="POST",
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {os.environ['APIFY_TOKEN']}"},
     )
     try:
         with urllib.request.urlopen(req, timeout=300) as r:
             return json.load(r)
     except urllib.error.HTTPError as e:  # Apify explains refusals (credit, limits) in the body
-        raise RuntimeError(f"Apify refused the run ({e.code}): {e.read().decode(errors='replace')[:500]}") from None
+        body = e.read().decode(errors="replace")
+        try:
+            body = json.loads(body)["error"]["message"]
+        except (ValueError, KeyError, TypeError):
+            body = body[:300]
+        raise RuntimeError(f"Apify refused the run ({e.code}): {body}") from None
 
 
 def num(v):
@@ -424,21 +428,31 @@ def main():
             leads.setdefault(l["id"], l)
 
     added, new_ids = 0, set()
+    last_scrape, error = old.get("lastScrape"), old.get("scrapeError")
     if "--migrate" not in sys.argv:
-        for cat, q in SEARCHES.items():
-            items = scrape(q)
-            print(f"{cat}: {len(items)} jobs from Apify")
-            for it in items:
-                l = from_apify(it, cat, now)
-                if not l["id"]:
-                    continue
-                if l["id"] in leads:  # refresh live fields, keep first-seen category + scrape time
-                    keep = leads[l["id"]]
-                    l.update(cat=keep["cat"], scraped=keep["scraped"])
-                else:
-                    added += 1
-                    new_ids.add(l["id"])
-                leads[l["id"]] = l
+        # Look back to the last good run (+20 min slack for GitHub's late starts), between 1 and 24 hours.
+        gap = (now - datetime.fromisoformat(last_scrape.replace("Z", "+00:00"))).total_seconds() / 60 if last_scrape else 360
+        max_age = int(min(1440, max(60, gap + 20)))
+        try:
+            for cat, q in SEARCHES.items():
+                items = scrape(q, MAX_RESULTS[cat], max_age)
+                print(f"{cat}: {len(items)} jobs from Apify (last {max_age} min)")
+                for it in items:
+                    l = from_apify(it, cat, now)
+                    if not l["id"]:
+                        continue
+                    if l["id"] in leads:  # refresh live fields, keep first-seen category + scrape time
+                        keep = leads[l["id"]]
+                        l.update(cat=keep["cat"], scraped=keep["scraped"])
+                    else:
+                        added += 1
+                        new_ids.add(l["id"])
+                    leads[l["id"]] = l
+            last_scrape, error = iso(now), None
+        except RuntimeError as e:
+            # Keep the site up and say why on the dashboard instead of failing every 3 hours.
+            print(f"::warning::{e}")
+            error = {"msg": str(e), "since": (error or {}).get("since") or iso(now)}
 
     cutoff = iso(now - timedelta(days=KEEP_DAYS))
     final = []
@@ -452,7 +466,7 @@ def main():
     final.sort(key=lambda l: l["posted"], reverse=True)
     synced = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
     with open(DATA, "w", encoding="utf-8") as f:
-        json.dump({"v": 3, "synced": synced, "leads": final}, f, ensure_ascii=False)
+        json.dump({"v": 3, "synced": synced, "lastScrape": last_scrape, "scrapeError": error, "leads": final}, f, ensure_ascii=False)
     print(f"{added} new, {len(final)} total, synced={synced}")
 
     picks, test = [], "--test-alert" in sys.argv  # test: send the current best leads, new or not
