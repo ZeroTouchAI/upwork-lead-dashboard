@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-24
+- Apify budget plan: scrape every 4 hours, up to 8 AI + 8 Website + 2 Hidden jobs per run. Worst case $0.021/run = $3.91 per 31 days, ~22% under the $5 allowance. A $4.50 spending guard (tracked in data.json, cycle resets on the 31st) stops scraping for the rest of the cycle and shows the paused banner.
 - Fix: runs failed from Oct 24 because Apify's monthly usage limit was used up. Each run re-fetched ~160 jobs (6-hour look-back on a 3-hour schedule). Runs now ask only for jobs posted since the last good run, capped at 30 AI / 30 Website / 10 Hidden.
 - When Apify refuses a run, the workflow no longer fails every 3 hours: it keeps the current leads, records why, and the dashboard shows a "New leads are paused" banner until runs succeed again.
 

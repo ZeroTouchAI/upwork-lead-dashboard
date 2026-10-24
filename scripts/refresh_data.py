@@ -146,9 +146,27 @@ def mark_duplicates(leads):
 
 
 COMMON = {"sort": "newest", "descriptionFormat": "text", "descriptionMaxLength": 3000}
-# Apify bills per job returned. Each run asks only for jobs posted since the last good run (see main), and
-# caps how many it takes, so a busy hour can't burn the monthly allowance.
-MAX_RESULTS = {"AI": 30, "Website": 30, "Hidden": 10}
+# Apify budget. This actor charges $0.001 per job returned + $0.001 per run start (one start per search).
+# Every 4 hours (6 runs/day) at these caps: 3 starts + 18 jobs = $0.021/run, $0.126/day, $3.91 per 31 days
+# even if every run hits its caps, which leaves ~22% of the $5 free allowance for manual runs.
+# Each run also asks only for jobs posted since the last good run (see main).
+MAX_RESULTS = {"AI": 8, "Website": 8, "Hidden": 2}
+PRICE_START, PRICE_RESULT = 0.001, 0.001
+BUDGET_USD = 4.50   # hard stop for the cycle, under Apify's $5 limit
+RESET_DAY = 31      # Apify usage resets on this day of the month (last day in shorter months)
+
+
+def cycle_start(now):
+    """Date the current Apify usage cycle began, e.g. Oct 31 for any day from Oct 31 to Nov 29."""
+    import calendar
+    d = now.astimezone(ET).date()
+    def reset_in(y, m):
+        return d.replace(year=y, month=m, day=min(RESET_DAY, calendar.monthrange(y, m)[1]))
+    r = reset_in(d.year, d.month)
+    if d >= r:
+        return r.isoformat()
+    y, m = (d.year, d.month - 1) if d.month > 1 else (d.year - 1, 12)
+    return reset_in(y, m).isoformat()
 
 
 def scrape(query, max_results, max_age):
@@ -429,13 +447,26 @@ def main():
 
     added, new_ids = 0, set()
     last_scrape, error = old.get("lastScrape"), old.get("scrapeError")
-    if "--migrate" not in sys.argv:
+    usage = old.get("apifyUsage") or {}
+    if usage.get("cycle") != cycle_start(now):
+        usage = {"cycle": cycle_start(now), "usd": 0.0, "runs": 0, "jobs": 0}
+        if error and "budget" in error.get("msg", "").lower():
+            error = None
+    run_cost = len(SEARCHES) * PRICE_START + sum(MAX_RESULTS.values()) * PRICE_RESULT
+    over_budget = usage["usd"] + run_cost > BUDGET_USD
+    if over_budget and "--migrate" not in sys.argv:
+        print(f"::warning::Skipping scrape: ${usage['usd']:.2f} used this Apify cycle, budget ${BUDGET_USD:.2f}")
+        error = {"msg": f"Monthly Apify budget reached (${usage['usd']:.2f} of ${BUDGET_USD:.2f}). Scraping resumes when the cycle resets.",
+                 "since": (error or {}).get("since") or iso(now)}
+    if "--migrate" not in sys.argv and not over_budget:
         # Look back to the last good run (+20 min slack for GitHub's late starts), between 1 and 24 hours.
         gap = (now - datetime.fromisoformat(last_scrape.replace("Z", "+00:00"))).total_seconds() / 60 if last_scrape else 360
         max_age = int(min(1440, max(60, gap + 20)))
         try:
             for cat, q in SEARCHES.items():
                 items = scrape(q, MAX_RESULTS[cat], max_age)
+                usage["usd"] = round(usage["usd"] + PRICE_START + len(items) * PRICE_RESULT, 4)
+                usage["jobs"] += len(items)
                 print(f"{cat}: {len(items)} jobs from Apify (last {max_age} min)")
                 for it in items:
                     l = from_apify(it, cat, now)
@@ -449,8 +480,9 @@ def main():
                         new_ids.add(l["id"])
                     leads[l["id"]] = l
             last_scrape, error = iso(now), None
+            usage["runs"] += 1
         except RuntimeError as e:
-            # Keep the site up and say why on the dashboard instead of failing every 3 hours.
+            # Keep the site up and say why on the dashboard instead of failing every run.
             print(f"::warning::{e}")
             error = {"msg": str(e), "since": (error or {}).get("since") or iso(now)}
 
@@ -466,8 +498,9 @@ def main():
     final.sort(key=lambda l: l["posted"], reverse=True)
     synced = now.astimezone(ET).strftime("%b %d, %Y · %I:%M %p %Z").replace(" 0", " ")
     with open(DATA, "w", encoding="utf-8") as f:
-        json.dump({"v": 3, "synced": synced, "lastScrape": last_scrape, "scrapeError": error, "leads": final}, f, ensure_ascii=False)
-    print(f"{added} new, {len(final)} total, synced={synced}")
+        json.dump({"v": 3, "synced": synced, "lastScrape": last_scrape, "scrapeError": error,
+                   "apifyUsage": usage, "leads": final}, f, ensure_ascii=False)
+    print(f"{added} new, {len(final)} total, synced={synced}, Apify this cycle ${usage['usd']:.3f} ({usage['runs']} runs)")
 
     picks, test = [], "--test-alert" in sys.argv  # test: send the current best leads, new or not
     for l in final:

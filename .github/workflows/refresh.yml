@@ -2,9 +2,9 @@ name: Refresh Upwork lead data
 
 on:
   schedule:
-    # Every 3 hours. GitHub can start these late; the scraper looks back 24h and
-    # dedupes, so a late or skipped run just catches up on the next one.
-    - cron: '15 */3 * * *'
+    # Every 4 hours: sized to stay under the $5/month Apify allowance (see MAX_RESULTS in
+    # scripts/refresh_data.py). Each run looks back to the last good run, so late starts catch up.
+    - cron: '15 */4 * * *'
   workflow_dispatch:
     inputs:
       test_alert:

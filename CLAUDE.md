@@ -9,7 +9,7 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
 ## Working rules
 - **Every change gets committed and pushed to `main`** as soon as it's verified. The owner wants GitHub to hold the
   full history. Add a line to `CHANGELOG.md` for each user-facing change.
-- Pull with `git pull --rebase --autostash` before committing: the bot commits `data.json` every 3 hours.
+- Pull with `git pull --rebase --autostash` before committing: the bot commits `data.json` every 4 hours.
 - Keep it free: no paid AI APIs. AI features use templates in the page plus a "Copy AI prompt" button the owner
   pastes into their own ChatGPT/Claude.
 - Never automate bidding, messaging or proposal submission on Upwork. The dashboard drafts; the owner submits.
@@ -25,7 +25,8 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
   leads match the dashboard's Bid now. Change both together.
 - `scripts/test_refresh.py`: run after editing the script.
 - Apify bills per job returned: runs use `lastScrape` in data.json to look back only since the last good run,
-  capped by `MAX_RESULTS`. Apify refusals set `scrapeError` (dashboard banner) instead of failing the workflow.
+  capped by `MAX_RESULTS` (8/8/2 every 4h = $3.91 per 31 days worst case). `apifyUsage` in data.json tracks spend per
+  cycle (resets on the 31st); at `BUDGET_USD` ($4.50) scraping stops until the reset. Apify refusals set `scrapeError` (dashboard banner) instead of failing the workflow.
 - Secrets: `APIFY_TOKEN`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`.
 
 ## Owner preferences

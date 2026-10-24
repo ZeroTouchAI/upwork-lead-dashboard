@@ -3,7 +3,7 @@ Upwork lead intelligence for Zero Touch AI (AI) and Rapid Rank Agency (websites)
 https://zerotouchai.github.io/upwork-lead-dashboard/
 
 ## How it works
-- `.github/workflows/refresh.yml` runs every 3 hours (and on demand from the Actions tab).
+- `.github/workflows/refresh.yml` runs every 4 hours (and on demand from the Actions tab), sized to stay under the $5/month Apify free allowance with a $4.50 hard stop.
 - `scripts/refresh_data.py` runs the Apify actor `blackfalcondata/upwork-scraper` for three searches
   (AI, Website, and "Hidden" business-problem phrases), then for every job:
   - sorts it into AI or Website by what the title/description is about, and drops off-target gigs,
