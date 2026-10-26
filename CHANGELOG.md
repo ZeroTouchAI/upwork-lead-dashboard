@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2026-10-26
+- New "Rate increase" box on hourly leads (raise every Never / 3 / 6 / 10 months, by a percentage): shows your rate at each step, what you keep after the Upwork fee, and the 12-month average. Projection only; it does not change scores.
+- Opening a lead from an email now shows just that lead (no sidebar, stats or filters) with a "Back to dashboard" button. Acting on it (favorite, reject, can't apply, applied) takes you to the full dashboard.
+- Alert emails: "Open dashboard" is the first button and opens that lead; the job title links to the Upwork job; new Reject button (`?reject=<id>`) files the lead as Rejected. "Generate proposal" is now "Create proposal".
 - Proposals: "Edit proposal" is now "Create proposal". The proposal window has a Can't apply button (rejects the lead and remembers the client).
 - Buttons are color-coded: Open on Upwork blue, Copy proposal teal, Copy AI prompt violet, Rebuild amber, Mark applied green, Favorite yellow outline, Reject bright red, Can't apply deep crimson.
 - Favorited leads now leave All leads (and Today's best, AI, Website…) and only show under Favorites. Un-favorite puts them back.
