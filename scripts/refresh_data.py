@@ -384,7 +384,6 @@ def alert_html(picks, now, test=False):
   <a href="{DASHBOARD}?lead={urllib.parse.quote(l["id"])}" style="display:inline-block;background:#5b4ff5;color:#ffffff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;margin-top:6px">Open dashboard &rarr;</a>
   <a href="{DASHBOARD}?fav={urllib.parse.quote(l["id"])}" style="display:inline-block;margin:6px 0 0 6px;background:#fdf2df;border:1px solid #e8930c;color:#9a5b00;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9733; Add to favorites</a>
   <a href="{DASHBOARD}?proposal={urllib.parse.quote(l["id"])}" style="display:inline-block;margin:6px 0 0 6px;background:#ecebfe;border:1px solid #5b4ff5;color:#4338ca;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#9998; Create proposal</a>
-  <a href="{html.escape(l["url"])}" style="display:inline-block;margin:6px 0 0 6px;background:#e6efff;border:1px solid #2563eb;color:#1d4ed8;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">View on Upwork &rarr;</a>
   <a href="{DASHBOARD}?reject={urllib.parse.quote(l["id"])}" style="display:inline-block;margin:6px 0 0 6px;background:#fdeaea;border:1px solid #e5484d;color:#b42318;font-size:13px;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none">&#10005; Reject</a>
 </td></tr></table>''')
     n = len(picks)

@@ -334,13 +334,10 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
 .btn.cantapply{background:var(--crimson); border-color:var(--crimson); color:#fff}
 .btn.cantapply:hover{background:var(--crimson); border-color:var(--crimson); color:#fff; filter:brightness(1.15)}
 
-/* single lead page (opened from an email) */
+/* single lead page (opened from an email): hide only the stats and "best" strip so the lead is at the top */
 #backBtn{display:none; margin-left:auto}
 body.single #backBtn{display:inline-flex}
-body.single .side, body.single header.top, body.single .kpis, body.single .best, body.single #recTabs, body.single #filters,
-body.single #countLine, body.single .scrape-banner, body.single footer.bar{display:none !important}
-body.single .app{grid-template-columns:minmax(0,1fr)}
-body.single .inner{max-width:1000px; width:100%; margin:0 auto}
+body.single .kpis, body.single .best{display:none !important}
 </style>
 </head>
 <body>
