@@ -1,7 +1,6 @@
 # Changelog
 
 ## 2026-10-26
-- New "Rate increase" box on hourly leads (raise every Never / 3 / 6 / 10 months, by a percentage): shows your rate at each step, what you keep after the Upwork fee, and the 12-month average. Projection only; it does not change scores.
 - Opening a lead from an email now shows just that lead, with the stat cards and "best" strip hidden so the listing is at the top (sidebar stays). "Back to dashboard" button added. Acting on it (favorite, reject, can't apply, applied) takes you to All leads.
 - Alert emails: "Open dashboard" is the first button and opens that lead; the job title links to the Upwork job; the separate "View on Upwork" button is gone; new Reject button (`?reject=<id>`) files the lead as Rejected. "Generate proposal" is now "Create proposal".
 - Proposals: "Edit proposal" is now "Create proposal". The proposal window has a Can't apply button (rejects the lead and remembers the client).

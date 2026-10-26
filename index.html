@@ -1108,7 +1108,6 @@ function leadHtml(l, i){
         </div>
         <div class="calc-out"><span>Revenue<b class="num">${money(p.bid)}</b></span><span>Net after ${settings.fee}% fee<b class="num">${money(p.net)}</b></span><span>Effective rate<b class="num" style="color:${p.eff >= settings.minRate ? 'var(--green)' : 'var(--red)'}">${rate(p.eff)}/hr</b></span></div>
         <p class="muted" style="font-size:11.5px">Hours default to a typical ${esc(l.service)} job. Change any number; it is saved for this lead.</p></div>
-      ${l.type === 'hourly' ? incBox(l, p, o) : ''}
       <div class="box"><h4>Bid strategy</h4>
         <div class="kv"><span>Suggested bid</span><span><b>${rangeText(l, p)}</b>${l.type === 'hourly' ? ` (~${money(p.lo)}–${money(p.hi)} for ${p.hours}h)` : ''}</span>
           <span>Delivery</span><span>${p.delivery}</span>
@@ -1122,28 +1121,6 @@ function leadHtml(l, i){
       </div>
     </div>
   </article>`;
-}
-
-const d2 = x => '$' + (Math.round(x * 100) / 100).toFixed(2);
-function incBox(l, p, o){
-  const every = +o.incEvery || 0, pct = o.incPct != null ? +o.incPct : 5, r = p.rate || 0, keep = x => x * (1 - settings.fee / 100);
-  const at = m => every && pct > 0 ? r * Math.pow(1 + pct / 100, Math.floor(m / every)) : r;
-  let body = `<p class="muted" style="font-size:12px">No raises: your rate stays at ${d2(r)}/hr for the whole contract.</p>`;
-  if(every && pct > 0 && r){
-    const months = [0]; for(let m = every; m <= 12; m += every) months.push(m); months.push(24);
-    let sum = 0; for(let m = 0; m < 12; m++) sum += at(m);
-    const avg = sum / 12;
-    body = `<div class="kv">${months.map(m => `<span>${m ? 'Month ' + m : 'Start'}</span><span><b class="num">${d2(at(m))}/hr</b>${m ? ` (+${Math.round((at(m) / r - 1) * 100)}%)` : ''} · you keep ${d2(keep(at(m)))}/hr</span>`).join('')}</div>
-      <div class="calc-out"><span>Average, first 12 months<b class="num">${d2(avg)}/hr</b></span><span>Gain vs. no raises<b class="num" style="color:var(--green)">+${d2(avg - r)}/hr</b></span></div>`;
-  }
-  return `<div class="box"><h4>Rate increase <span class="est">est.</span></h4>
-    <div class="calc">
-      <label>Raise every<select class="select" data-calc="incEvery">${[[0, 'Never'], [3, '3 months'], [6, '6 months'], [10, '10 months']].map(([v, t]) => `<option value="${v}" ${every === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-      <label>Increase (%)<input class="input num" type="number" min="0" max="100" step="1" data-calc="incPct" value="${pct}"></label>
-    </div>
-    ${body}
-    <p class="muted" style="font-size:11.5px">Projection only: it does not change your score or bid advice. Pick the same raise in Upwork's apply form. Saved for this lead.</p></div>
-      `;
 }
 
 function renderList(){
