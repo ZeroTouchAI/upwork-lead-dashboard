@@ -524,7 +524,7 @@ function ago(ts){
 const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) + ' ' : '';
 const dayKey = ts => { const d = new Date(ts); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
 function lastDays(n){ const out = []; const d = new Date(); d.setHours(0,0,0,0); for(let i = n-1; i >= 0; i--) out.push(new Date(d - i*DAY)); return out; }
-function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), msg.length > 20 ? 4000 : 1800); }
+function toast(msg){ document.querySelectorAll('.toast').forEach(x => x.remove()); const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), msg.length > 20 ? 4000 : 1800); }
 async function copyText(text){
   try{ await navigator.clipboard.writeText(text); toast('Copied'); }
   catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Copied'); }
@@ -1173,10 +1173,16 @@ function renderAll(){
 const saveUi = () => store.set('pf_ui', ui.view === 'single' ? {...ui, view:'best'} : ui);
 
 /* ================= actions ================= */
+// Filing a lead (favorite, applied, rejected) puts it in its section and takes you back to All leads.
+const FILED = {shortlisted:'Favorites', applied:'Applied', rejected:'Rejected'};
 function setStatus(id, s){
   if(!s || s === 'clear') delete status[id]; else status[id] = {s, t: Date.now()};
   store.set('pf_status', status);
-  renderAll();
+  if(FILED[s]){
+    openIds.delete(id);
+    setView('all');
+    toast(`Moved to ${FILED[s]}`);
+  } else renderAll();
 }
 function setView(v){ ui.view = v; ui.rec = ''; limit = 40; focusIdx = -1; saveUi(); renderAll(); window.scrollTo({top:0}); }
 
@@ -1236,7 +1242,7 @@ $('propText').addEventListener('input', saveProposal);
 $('propReset').addEventListener('click', () => { const l = DATA.find(x => x.id === propId); $('propText').value = draftProposal(l); saveProposal(); });
 $('propCopy').addEventListener('click', () => copyText($('propText').value));
 $('propPrompt').addEventListener('click', () => copyText(aiPrompt(DATA.find(x => x.id === propId))));
-$('propApplied').addEventListener('click', () => { saveProposal(); $('propDlg').close(); setStatus(propId, 'applied'); toast('Marked as applied'); });
+$('propApplied').addEventListener('click', () => { saveProposal(); $('propDlg').close(); setStatus(propId, 'applied'); });
 $('propClose').addEventListener('click', () => $('propDlg').close());
 $('propDlg').addEventListener('close', () => { saveProposal(); renderAll(); });
 
