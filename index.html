@@ -317,6 +317,22 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   dialog .row2, dialog .row3{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:no-preference){ .btn,.kpi,.nav button,.mini{transition:background-color .15s, border-color .15s, color .15s} }
+
+/* colored actions */
+:root{--violet:#7c3aed; --crimson:#9f1239}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--violet:#a78bfa; --crimson:#be123c} }
+:root[data-theme="dark"]{--violet:#a78bfa; --crimson:#be123c}
+.btn.bc-blue{--c:var(--ai)} .btn.bc-teal{--c:var(--teal)} .btn.bc-violet{--c:var(--violet)} .btn.bc-amber{--c:var(--amber)} .btn.bc-green{--c:var(--green)} .btn.bc-gray{--c:var(--dim)}
+.btn[class*="bc-"]{color:var(--c); border-color:color-mix(in srgb, var(--c) 55%, var(--line)); background:color-mix(in srgb, var(--c) 9%, var(--surface))}
+.btn[class*="bc-"]:hover{color:var(--c); border-color:var(--c); background:color-mix(in srgb, var(--c) 18%, var(--surface))}
+.btn.solid[class*="bc-"]{background:var(--c); border-color:var(--c); color:#fff}
+.btn.solid[class*="bc-"]:hover{background:var(--c); border-color:var(--c); color:#fff; filter:brightness(1.1)}
+.btn.sl{color:var(--web); border:1.5px solid var(--web-bar)}
+.btn.sl:hover{color:var(--web); border-color:var(--web-bar); background:var(--web-soft)}
+.btn.sl.on{background:var(--web-soft); border-color:var(--web-bar); color:var(--web)}
+.btn.rj{color:var(--red); border-color:var(--red); background:var(--red-soft)}
+.btn.cantapply{background:var(--crimson); border-color:var(--crimson); color:#fff}
+.btn.cantapply:hover{background:var(--crimson); border-color:var(--crimson); color:#fff; filter:brightness(1.15)}
 </style>
 </head>
 <body>
@@ -394,13 +410,14 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   <textarea class="input" id="propText" aria-label="Proposal draft"></textarea>
   <p class="dsub" style="margin:8px 0 0">Saved automatically in this browser. Nothing is sent to Upwork: copy it, open the job and submit it yourself.</p>
   <div class="foot">
-    <button class="btn" type="button" id="propReset">Rebuild draft</button>
-    <button class="btn" type="button" id="propPrompt" title="Copies a prompt you can paste into ChatGPT or Claude for a polished rewrite">Copy AI prompt</button>
+    <button class="btn bc-amber" type="button" id="propReset">Rebuild draft</button>
+    <button class="btn bc-violet" type="button" id="propPrompt" title="Copies a prompt you can paste into ChatGPT or Claude for a polished rewrite">Copy AI prompt</button>
+    <button class="btn cantapply" type="button" id="propCant" title="You can't apply (location or other restriction). Rejects it and warns you about this client next time.">Can't apply</button>
     <span class="grow"></span>
-    <button class="btn" type="button" id="propCopy">Copy proposal</button>
-    <a class="btn" id="propOpen" target="_blank" rel="noopener">Open on Upwork</a>
-    <button class="btn go" type="button" id="propApplied">Mark applied</button>
-    <button class="btn" type="button" id="propClose">Close</button>
+    <button class="btn bc-teal" type="button" id="propCopy">Copy proposal</button>
+    <a class="btn bc-blue solid" id="propOpen" target="_blank" rel="noopener">Open on Upwork</a>
+    <button class="btn go bc-green solid" type="button" id="propApplied">Mark applied</button>
+    <button class="btn bc-gray" type="button" id="propClose">Close</button>
   </div>
 </dialog>
 
@@ -455,7 +472,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
   <table>
     <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td>Next / previous lead</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Open or close the analysis</td></tr>
-    <tr><td><kbd>p</kbd></td><td>Generate proposal</td></tr>
+    <tr><td><kbd>p</kbd></td><td>Create proposal</td></tr>
     <tr><td><kbd>o</kbd></td><td>Open on Upwork</td></tr>
     <tr><td><kbd>f</kbd></td><td>Add to favorites</td></tr>
     <tr><td><kbd>a</kbd></td><td>Mark applied</td></tr>
@@ -1042,10 +1059,10 @@ function leadHtml(l, i){
       </div>
       ${client.length ? `<div class="client">${client.join('')}</div>` : ''}
       <div class="actions">
-        <a class="btn go" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
-        <button type="button" class="btn prop" data-act="proposal">${icon('doc')}${props[l.id] ? 'Edit proposal' : 'Generate proposal'}</button>
+        <a class="btn go bc-blue solid" href="${esc(url)}" target="_blank" rel="noopener">Open on Upwork ${icon('ext')}</a>
+        <button type="button" class="btn prop" data-act="proposal">${icon('doc')}Create proposal</button>
         <button type="button" class="btn sl ${s === 'shortlisted' ? 'on' : ''}" data-act="shortlist">${icon('star')}${s === 'shortlisted' ? 'Favorited' : 'Favorite'}</button>
-        ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button><button type="button" class="btn rj" data-act="cantapply" title="You can't apply (location or other restriction). Rejects it and warns you about this client next time.">${icon('minus')}Can't apply</button>`}
+        ${s === 'rejected' ? `<button type="button" class="btn" data-act="clear">Undo</button>` : `<button type="button" class="btn rj" data-act="reject">${icon('x')}Reject</button><button type="button" class="btn cantapply" data-act="cantapply" title="You can't apply (location or other restriction). Rejects it and warns you about this client next time.">${icon('minus')}Can't apply</button>`}
         <select class="status-sel" data-act="status" aria-label="Pipeline status">
           <option value="">Move to…</option>${STATUSES.map(([v,lab]) => `<option value="${v}" ${s === v ? 'selected' : ''}>${lab}</option>`).join('')}<option value="clear">Clear status</option>
         </select>
@@ -1063,7 +1080,7 @@ function leadHtml(l, i){
       <span class="row">${icon('send')}<span>Bid <b class="num">${rangeText(l, p)}</b></span></span>
       <span class="row eff" title="Net after Upwork fee, Connects and direct costs, divided by estimated hours">${icon('coin')}<span><b class="num">~${rate(p.eff)}/hr</b> effective${p.known ? '' : ' <span class="est">no budget</span>'}</span></span>
       <span class="row cx" title="Rough estimate from job size. Upwork shows the exact number on the job page.">${icon('target')}<span>${p.cx ? `~${p.cx} Connects (≈$${(p.cx * .15).toFixed(2)})` : 'Connects: check on Upwork'}</span></span>
-      <a class="btn go quick-open" href="${esc(url)}" target="_blank" rel="noopener" title="Open on Upwork">Open ${icon('ext')}</a>
+      <a class="btn go bc-blue solid quick-open" href="${esc(url)}" target="_blank" rel="noopener" title="Open on Upwork">Open ${icon('ext')}</a>
       ${s === 'rejected' ? '' : `<button type="button" class="btn rj quick-rj" data-act="reject" title="Reject">${icon('x')}Reject</button>`}
     </div>
     <div class="intel">
@@ -1115,7 +1132,7 @@ function renderList(){
   $('countLine').textContent = `${shown.length} of ${rows.length} shown`;
   $('more').hidden = rows.length <= limit;
   $('empty').hidden = rows.length > 0;
-  $('emptySub').textContent = ui.view === 'proposals' ? 'Open a lead and press Generate proposal to start a draft.' : ['best','all','AI','Website','hidden','highfit','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
+  $('emptySub').textContent = ui.view === 'proposals' ? 'Open a lead and press Create proposal to start a draft.' : ['best','all','AI','Website','hidden','highfit','new'].includes(ui.view) ? 'Try clearing filters or widening the auto-hide window.' : 'No leads in this stage yet.';
 }
 
 function renderRail(){
@@ -1244,6 +1261,7 @@ $('propCopy').addEventListener('click', () => copyText($('propText').value));
 $('propPrompt').addEventListener('click', () => copyText(aiPrompt(DATA.find(x => x.id === propId))));
 $('propApplied').addEventListener('click', () => { saveProposal(); $('propDlg').close(); setStatus(propId, 'applied'); });
 $('propClose').addEventListener('click', () => $('propDlg').close());
+$('propCant').addEventListener('click', () => { const id = propId; saveProposal(); $('propDlg').close(); openCantApply(id); });
 $('propDlg').addEventListener('close', () => { saveProposal(); renderAll(); });
 
 /* theme */
