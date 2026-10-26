@@ -402,7 +402,7 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
 <dialog id="settingsDlg" class="wide">
   <form method="dialog" id="settingsForm">
     <h2>Settings &amp; profile</h2>
-    <p class="dsub">Saved in this browser. Your rates drive the scores and bid advice; the portfolio feeds the proposal drafts. Only list work you can back up.</p>
+    <p class="dsub">Saved in this browser. Your rates drive the scores and bid advice; your service descriptions and signatures feed the proposal drafts.</p>
     <div class="row3">
       <label>Your name<input class="input" id="sName"></label>
       <label>Minimum rate ($/hr)<input class="input num" id="sRate" type="number" min="1"></label>
@@ -418,10 +418,6 @@ dialog td{padding:6px 4px; border-bottom:1px solid var(--line)}
     <div class="row2">
       <label>Zero Touch AI: what you offer<textarea class="input" id="sProfAI"></textarea></label>
       <label>Rapid Rank Agency: what you offer<textarea class="input" id="sProfWeb"></textarea></label>
-    </div>
-    <div class="row2">
-      <label>Zero Touch AI portfolio<small>One per line: project, result, link</small><textarea class="input" id="sPortAI" placeholder="Dental clinic voice receptionist: books 40+ appointments/week. https://…"></textarea></label>
-      <label>Rapid Rank portfolio<small>One per line: project, result, link</small><textarea class="input" id="sPortWeb" placeholder="Roofing company WordPress redesign: 3x more quote requests. https://…"></textarea></label>
     </div>
     <label>Niche keywords<small>Comma-separated. Matches raise the service-match score.</small><textarea class="input" id="sKw" style="min-height:56px"></textarea></label>
     <div class="foot"><button class="btn" value="cancel" type="submit">Cancel</button><button class="btn go" value="save" type="submit">Save</button></div>
@@ -476,8 +472,7 @@ const DEFAULTS = {
   sigAI:'Jeremy Reid\nZero Touch AI | AI Solutions Architect', sigWeb:'Jeremy Reid\nRapid Rank Agency',
   keywords:['AI agent','chatbot','voice','n8n','Make.com','Zapier','automation','integration','dashboard','WordPress','Shopify','Webflow','redesign','hosting','maintenance','landing page'],
   profAI:'Zero Touch AI Automation builds AI agents, chatbots, voice AI receptionists, n8n / Make.com workflow automation, CRM and API integrations, AI dashboards and apps, and AI training for teams.',
-  profWeb:'Rapid Rank Agency designs and builds WordPress, Shopify and Webflow websites, handles redesigns, landing pages, hosting, maintenance, speed and security, and builds sites that turn visitors into leads.',
-  portAI:'', portWeb:''
+  profWeb:'Rapid Rank Agency designs and builds WordPress, Shopify and Webflow websites, handles redesigns, landing pages, hosting, maintenance, speed and security, and builds sites that turn visitors into leads.'
 };
 let settings = Object.assign({}, DEFAULTS, store.get('pf_settings', {}));
 if(settings.name === 'Jeremy') settings.name = DEFAULTS.name;
@@ -742,17 +737,12 @@ function clientIntel(l, p){
 }
 
 /* ================= proposals ================= */
-function portfolio(l){
-  const lines = (l.cat === 'AI' ? settings.portAI : settings.portWeb).split('\n').map(s => s.trim()).filter(Boolean);
-  const words = (l.service + ' ' + l.title).toLowerCase().split(/\W+/).filter(w => w.length > 3);
-  return lines.map(x => ({x, s: words.filter(w => x.toLowerCase().includes(w)).length})).sort((a,b) => b.s - a.s).slice(0, 2).map(o => o.x);
-}
 function firstSentence(t){
   const s = (t || '').replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s/)[0] || '';
   return s.length > 180 ? s.slice(0, 177) + '…' : s;
 }
 function draftProposal(l){
-  const p = l._p, si = info(l), work = portfolio(l);
+  const p = l._p, si = info(l);
   return [
     'Hi there,',
     '',
@@ -764,9 +754,6 @@ function draftProposal(l){
     'What you get:',
     ...si.deliver.map(s => `- ${s}`),
     '',
-    work.length ? 'Relevant work:' : 'Relevant work: [add a real example from your portfolio, or delete this line]',
-    ...work.map(s => `- ${s}`),
-    '',
     'A few questions so I can scope this precisely:',
     ...si.ask.map((s, i) => `${i + 1}. ${s}`),
     '',
@@ -777,20 +764,19 @@ function draftProposal(l){
 }
 const signature = l => ((l.cat === 'AI' ? settings.sigAI : settings.sigWeb) || settings.name).trim();
 function aiPrompt(l){
-  const p = l._p, si = info(l), work = portfolio(l);
+  const p = l._p, si = info(l);
   return `Write an Upwork proposal for the job below on behalf of ${settings.name} at ${BIZ_FULL[l.cat]}.
 
 About us: ${l.cat === 'AI' ? settings.profAI : settings.profWeb}
-Relevant past work (use ONLY these; never invent experience, clients or numbers): ${work.length ? work.join(' | ') : 'none provided, so do not claim any specific past project'}
+Do not include a past work or portfolio section, and never invent experience, clients or numbers.
 
 Structure, under 220 words, plain text, no headings or emojis:
 1. A personal opening that restates the client's actual problem in their words.
 2. The recommended solution (${l.service}) and why it fits.
 3. A short approach and deliverables.
-4. The relevant past work, if any.
-5. Three smart questions.
-6. Price ${rangeText(l, p)} and timeline ${p.delivery}.
-7. Sign off exactly as:
+4. Three smart questions.
+5. Price ${rangeText(l, p)} and timeline ${p.delivery}.
+6. Sign off exactly as:
 ${signature(l)}
 Do not suggest or ask for a call.
 Positioning: ${si.position} ${si.edge}
@@ -1257,7 +1243,7 @@ $('theme').addEventListener('change', e => { const t = e.target.value; store.set
 /* settings */
 $('navSettings').addEventListener('click', () => {
   $('sName').value = settings.name; $('sRate').value = settings.minRate; $('sFee').value = settings.fee; $('sCap').value = settings.capacity;
-  $('sProfAI').value = settings.profAI; $('sProfWeb').value = settings.profWeb; $('sPortAI').value = settings.portAI; $('sPortWeb').value = settings.portWeb;
+  $('sProfAI').value = settings.profAI; $('sProfWeb').value = settings.profWeb;
   $('sKw').value = settings.keywords.join(', ');
   $('sSigAI').value = settings.sigAI; $('sSigWeb').value = settings.sigWeb;
   $('settingsDlg').showModal();
@@ -1267,7 +1253,7 @@ $('settingsDlg').addEventListener('close', () => {
   settings = {
     name: $('sName').value.trim() || 'Me', minRate: +$('sRate').value || DEFAULTS.minRate,
     fee: +$('sFee').value >= 0 ? +$('sFee').value : DEFAULTS.fee, capacity: +$('sCap').value || DEFAULTS.capacity,
-    profAI: $('sProfAI').value.trim(), profWeb: $('sProfWeb').value.trim(), portAI: $('sPortAI').value, portWeb: $('sPortWeb').value,
+    profAI: $('sProfAI').value.trim(), profWeb: $('sProfWeb').value.trim(),
     keywords: $('sKw').value.split(',').map(s => s.trim()).filter(Boolean),
     sigAI: $('sSigAI').value.trim() || DEFAULTS.sigAI, sigWeb: $('sSigWeb').value.trim() || DEFAULTS.sigWeb
   };

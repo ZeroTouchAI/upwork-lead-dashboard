@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-26
+- Proposals: removed the "Relevant work" section from drafts and from the Copy AI prompt (which now tells the AI not to add one). The unused portfolio fields were removed from Settings & profile.
+
 ## 2026-10-24
 - Apify budget plan: scrape every 4 hours, up to 8 AI + 8 Website + 2 Hidden jobs per run. Worst case $0.021/run = $3.91 per 31 days, ~22% under the $5 allowance. A $4.50 spending guard (tracked in data.json, cycle resets on the 31st) stops scraping for the rest of the cycle and shows the paused banner.
 - Fix: runs failed from Oct 24 because Apify's monthly usage limit was used up. Each run re-fetched ~160 jobs (6-hour look-back on a 3-hour schedule). Runs now ask only for jobs posted since the last good run, capped at 30 AI / 30 Website / 10 Hidden.
