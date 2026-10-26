@@ -828,8 +828,8 @@ const VIEWS = {
 };
 
 const st = l => status[l.id]?.s || '';
-// Applied and rejected leads leave the main lists; they live in their own sections.
-const isOpen = l => !['applied','rejected'].includes(st(l));
+// Filed leads (favorites, applied, rejected) leave the main lists; they live in their own sections.
+const isOpen = l => !st(l);
 const fresh = l => !!st(l) || !ui.age || l._posted >= Date.now() - ui.age * DAY;
 
 // Upwork doesn't give scrapers a client ID, so a client is recognised by its footprint: same country,

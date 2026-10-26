@@ -32,7 +32,8 @@ Live site: https://zerotouchai.github.io/upwork-lead-dashboard/ (GitHub Pages fr
 ## Owner preferences
 - Canadian freelancer: hide U.S.-only jobs (detected from post text; Upwork hides the real flag from scrapers).
 - Mixed lists alternate AI and Website.
-- Pipeline is only Favorites → Applied (or Rejected). Applied leads leave the main lists.
+- Pipeline is only Favorites → Applied (or Rejected). Any filed lead leaves the main lists, and filing one
+  returns to All leads.
 - Analytics lives on its own page.
 - "Can't apply" remembers clients in localStorage (`pf_blocked`) and matches later jobs by exact footprint
   (country, total spend, reviews, rating) because Upwork gives no client ID. Looser matching gave false hits.

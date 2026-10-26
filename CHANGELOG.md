@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-26
+- Favorited leads now leave All leads (and Today's best, AI, Website…) and only show under Favorites. Un-favorite puts them back.
 - Favorite, Reject, Can't apply, Mark applied (and the Move to… menu) now file the lead, jump back to All leads at the top and confirm with "Moved to …". Undo and un-favorite stay where you are.
 - Sidebar: "My Upwork stats" link under Analytics, opening https://www.upwork.com/nx/my-stats/ in a new tab.
 - Proposals: removed the "Relevant work" section from drafts and from the Copy AI prompt (which now tells the AI not to add one). The unused portfolio fields were removed from Settings & profile.
