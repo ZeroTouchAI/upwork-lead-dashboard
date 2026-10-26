@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-26
+- Sidebar: "My Upwork stats" link under Analytics, opening https://www.upwork.com/nx/my-stats/ in a new tab.
 - Proposals: removed the "Relevant work" section from drafts and from the Copy AI prompt (which now tells the AI not to add one). The unused portfolio fields were removed from Settings & profile.
 
 ## 2026-10-24
